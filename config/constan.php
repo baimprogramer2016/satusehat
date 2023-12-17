@@ -21,22 +21,22 @@ return [
     'default_organization' => [
         "type_code" => "dept",
         "type_display" => "Hospital Departement",
-        "province_code" => 32,
-        "city_code" => 3201,
-        "district_code" => 320107,
-        "village_code" => 3201072008,
-        "address" => "Jl. Raya Cileungsi - Jonggol No.KM, 10, Cipeucang, Kec. Cileungsi, Kabupaten Bogor, Jawa Barat 16820",
-        "postal_code" => 16820,
+        "province_code" => 64,
+        "city_code" => 6474,
+        "district_code" => 647402,
+        "village_code" => 6474021004,
+        "address" => "RS LNG BADAK Kel. Satimpo, Kec. Bontang Selatan, Bontang - 75324, Kalimantan Timur",
+        "postal_code" => 75324,
         "country_code" => "ID",
-        "city" => "Kabupaten Bogor",
-        "url" => "https://rsudcileungsi.bogorkab.go.id/",
-        "email" => "rsudcileungsi@bogorkab.go.id",
-        "phone" => "021-89934667",
-        "fax" => "021-89934666",
+        "city" => "Kota Bontang",
+        "url" => "https://www.rslngbadak.co.id/",
+        "email" => "humasmarketing.rslngbadak@gmail.com",
+        "phone" => "0548-552049",
+        "fax" => "0548-552128",
         "rt" => "1",
         "rw" => "1",
-        "position_longitude" => -6.4328904,
-        "position_latitude" => 107.0485798,
+        "position_longitude" => 0.11768,
+        "position_latitude" => 117.47088,
         "position_altitude" => 0
     ],
     "limit" => [
@@ -46,10 +46,20 @@ return [
         "failed_catch" => "Terjadi Kesalahan",
         "failed_success" => "Proses Sukses",
         "failed_ss_1" => "TIdak bisa dihapus, data sudah dikirm ke satu sehat",
-        "message_waiting" => "Please Wait...."
+        "message_waiting" => "Please Wait....",
+        "id_ihs_error" => "ID IHS Tidak Ditemukan "
     ],
     "fhir" => [
         "patient" => "Patient?identifier=https://fhir.kemkes.go.id/id/nik",
         "practitioner" => "Practitioner?identifier=https://fhir.kemkes.go.id/id/nik",
+    ],
+    "status" => [
+        "terkirim" => "<span class='text-success'>Terkirim ke Satu Sehat</span>",
+        "menunggu" => "<span class='text-warning'>Menunggu</span>",
+    ],
+    "job_name" => [
+        "patient" => "patient_id",
+        "practitioner" => "practitioner_id",
+        "bundle" => "bundle",
     ]
 ];

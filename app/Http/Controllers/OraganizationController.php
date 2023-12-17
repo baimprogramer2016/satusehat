@@ -2,26 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Organization;
-use App\Models\Status;
 use App\Repositories\Organization\OrganizationInterface;
+use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\Status\StatusInterface;
 use Illuminate\Http\Request;
 use Throwable;
 use App\Traits\GeneralTrait;
+use App\Traits\ApiTrait;
+use App\Traits\JsonTrait;
 
 class OraganizationController extends Controller
 {
 
     use GeneralTrait;
+    use ApiTrait;
+    use JsonTrait;
 
     protected $organization_repo;
     protected $status_repo;
+    protected $parameter_repo;
 
-    public function __construct(OrganizationInterface $organizationRepository, StatusInterface $statusRepository)
-    {
+    public function __construct(
+        ParameterInterface $parameterInterface,
+        OrganizationInterface $organizationRepository,
+        StatusInterface $statusRepository
+    ) {
         $this->organization_repo = $organizationRepository;
         $this->status_repo = $statusRepository;
+        $this->parameter_repo = $parameterInterface;
     }
     public function index()
     {
@@ -32,9 +40,14 @@ class OraganizationController extends Controller
     public function tambah()
     {
         return view("pages.organization.organization-tambah", [
+            "seq_no" => $this->autoSeq('ORG'),
             "data_bagian" => $this->organization_repo->getDataOrganizationIdSuccess(),
             "data_status" => $this->status_repo->getDataStatusNotSend()
         ]);
+    }
+    public function struktur()
+    {
+        return view("pages.organization.organization-struktur");
     }
     public function simpan(Request $request)
     {
@@ -74,9 +87,6 @@ class OraganizationController extends Controller
             ]);
         }
     }
-    public function struktur()
-    {
-    }
     public function ubah(Request $request, $id)
     {
         return view('pages.organization.organization-ubah', [
@@ -106,6 +116,42 @@ class OraganizationController extends Controller
             return view('pages.organization.organization-response-ss', [
                 "data_response" => $response_satusehat
             ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+    public function modalKirimSS(Request $request, $id)
+    {
+        try {
+            return view('pages.organization.organization-kirim-ss', [
+                "data_organization" => $this->organization_repo->getDataOrganizationFind($this->dec($id)),
+            ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function kirimSS(Request $request)
+    {
+        try {
+            $data_organization = $this->organization_repo->getDataOrganizationFind($this->dec($request->id));
+            $data_parameter = $this->parameter_repo->getDataParameterFirst();
+
+            $payload_organization = $this->bodyOrganization($data_organization, $data_parameter);
+            $response = $this->post_general_ss('Organization', $payload_organization);
+            $body_parse = json_decode($response->body());
+
+            $satusehat_id = null;
+            if ($response->successful()) {
+                $satusehat_id = $body_parse->id;
+            }
+            # update status ke database
+            $this->organization_repo->updateStatusOrganization($this->dec($request->id), $satusehat_id, $payload_organization, $response);;
+            return $response;
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

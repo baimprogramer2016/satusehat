@@ -73,7 +73,7 @@
                 <div class="form-group">
                     <label class="form-label" for="access_token">Token</label>
                     <div class="form-control-wrap">
-                        <input name="access_token" readonly type="text" value="{{ $data_parameter->access_token }}"
+                        <input name="access_token" type="text" value="{{ $data_parameter->access_token }}"
                             class="form-control form-control-sm" id="access_token" required>
                     </div>
                 </div>

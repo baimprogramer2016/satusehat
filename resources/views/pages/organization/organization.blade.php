@@ -20,7 +20,7 @@
                                 class="btn btn-white btn-dim btn-outline-primary" data-toggle="modal"><em
                                     class="icon ni ni-plus"></em><span>Tambah</span></a>
                         </li>
-                        <li><a href="#file-upload" onClick="modalLihat()" data-toggle="modal"
+                        <li><a href="#file-upload" onClick="modalStruktur()" data-toggle="modal"
                                 class="btn btn-white btn-dim btn-outline-primary"><em
                                     class="icon ni ni-eye"></em><span>struktur</span></a>
                         </li>
@@ -77,7 +77,9 @@
                                                             href="#file-upload" data-toggle="modal"><em
                                                                 class="icon ni ni-trash"></em><span>Hapus</span></a>
                                                     </li>
-                                                    <li><a><em class="icon ni ni-send"></em><span>Kirim ke Satu
+                                                    <li><a onClick="return modalKirimSatuSehat('{{ Crypt::encrypt($item_organisasi->id) }}')"
+                                                            href="#file-upload" data-toggle="modal"><em
+                                                                class="icon ni ni-send"></em><span>Kirim ke Satu
                                                                 Sehat</span></a>
                                                     </li>
                                                     @endif
@@ -104,7 +106,7 @@
 
 </div>
 <div class="modal fade" tabindex="-1" role="dialog" id="file-upload">
-    <div class="modal-dialog modal-lg  modal-dialog-top" role="document">
+    <div class="modal-dialog modal-xl  modal-dialog-top" role="document">
         <div class="modal-content">
             <a href="#" class="close" data-dismiss="modal"><em class="icon ni ni-cross-sm"></em></a>
             <div class="modal-body modal-body-md" id="content-modal">
@@ -122,11 +124,26 @@
 
 @push('script')
 <script>
-    $('.data-table').DataTable({
+    var table =  $('.data-table').DataTable({
+         stateSave: true,
           language : {
                 sLengthMenu: "Show _MENU_"
             },
-        });
+    });
+
+    function modalStruktur()
+    {
+        loadingProcess(); //dari custom.js
+        $.ajax({
+            type:"GET",
+            url:"{{ route('organisasi-struktur') }}",
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
 
     function modalTambah()
     {
@@ -185,6 +202,60 @@
             {
                 $("#content-modal").html("");
                 $("#content-modal").html(response);
+            }
+        })
+    }
+    function modalKirimSatuSehat(id)
+    {
+        loadingProcess(); //dari custom.js
+
+        var url     = '{{ route("organisasi-modal-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+
+    function kirimSatuSehat(id)
+    {
+        // loadingProcess(); //dari custom.js
+
+        $(".btn-action").html('Proses Kirim....')
+        $(".result-message").html('...');
+        var url     = '{{ route("organisasi-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"POST",
+            data: {
+                id: id,
+                _token: "{{ csrf_token() }}",
+
+            },
+            url:url,
+            success: function(response)
+            {//resourceType = OperationOutcome
+
+                result = JSON.parse(response);
+                console.log(result.resourceType)
+                if(result.resourceType == 'OperationOutcome')
+                {
+                    $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
+                    $(".btn-action").hide();
+                }else
+                {
+                    $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
+                    location.reload();
+                    $(".btn-action").html('Selesai');
+                }
+
+                $("#response_ss").val(response);
+
             }
         })
     }

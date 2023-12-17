@@ -77,7 +77,7 @@
                                                             href="#file-upload" data-toggle="modal"><em
                                                                 class="icon ni ni-trash"></em><span>Hapus</span></a>
                                                     </li>
-                                                    <li><a onClick="return modalHapus('{{ Crypt::encrypt($item_lokasi->id) }}')"
+                                                    <li><a onClick="return modalKirimSatuSehat('{{ Crypt::encrypt($item_lokasi->id) }}')"
                                                             href="#file-upload" data-toggle="modal"><em
                                                                 class="icon ni ni-send"></em><span>Kirim ke Satu
                                                                 Sehat</span></a>
@@ -126,6 +126,7 @@
 
 <script>
     $('.data-table').DataTable({
+        stateSave: true,
           language : {
                 sLengthMenu: "Show _MENU_"
             },
@@ -133,6 +134,7 @@
 
     function modalTambah()
     {
+        loadingProcess(); //dari custom.js
         $.ajax({
             type:"GET",
             url:"{{ route('lokasi-tambah') }}",
@@ -146,6 +148,7 @@
     function modalHapus(id)
     {
 
+        loadingProcess(); //dari custom.js
         var url     = '{{ route("lokasi-hapus", ":id") }}';
         url         = url.replace(':id',id);
         $.ajax({
@@ -160,6 +163,7 @@
     }
     function modalUbah(id)
     {
+        loadingProcess(); //dari custom.js
         var url     = '{{ route("lokasi-ubah", ":id") }}';
         url         = url.replace(':id',id);
 
@@ -175,6 +179,7 @@
     }
     function modalResponseSS(id)
     {
+        loadingProcess(); //dari custom.js
         var url     = '{{ route("lokasi-response-ss", ":id") }}';
         url         = url.replace(':id',id);
         $.ajax({
@@ -187,6 +192,64 @@
             }
         })
     }
+
+
+    function modalKirimSatuSehat(id)
+    {
+        loadingProcess(); //dari custom.js
+
+        var url     = '{{ route("lokasi-modal-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+
+    function kirimSatuSehat(id)
+    {
+        // loadingProcess(); //dari custom.js
+
+        $(".btn-action").html('Proses Kirim....')
+        $(".result-message").html('...');
+        var url     = '{{ route("lokasi-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"POST",
+            data: {
+                id: id,
+                _token: "{{ csrf_token() }}",
+
+            },
+            url:url,
+            success: function(response)
+            {//resourceType = OperationOutcome
+
+                result = JSON.parse(response);
+                console.log(result.resourceType)
+                if(result.resourceType === 'OperationOutcome')
+                {
+                    $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
+                    $(".btn-action").hide();
+                }else
+                {
+                    $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
+                    location.reload();
+                    $(".btn-action").html('Selesai');
+                }
+
+
+                $("#response_ss").val(response);
+
+            }
+        })
+    }
+
 
 
 </script>

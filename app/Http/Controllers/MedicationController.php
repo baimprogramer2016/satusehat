@@ -6,12 +6,14 @@ use App\Repositories\Kfa\KfaInterface;
 use App\Repositories\Medication\MedicationInterface;
 use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
+use App\Traits\ApiTrait;
 use Yajra\DataTables\Facades\Datatables;
 use Throwable;
 
 class MedicationController extends Controller
 {
     use GeneralTrait;
+    use ApiTrait;
 
     public $medication_repo;
     public $kfa_repo;
@@ -84,7 +86,8 @@ class MedicationController extends Controller
         }
     }
 
-    public function update()
+    public function updateKfa(Request $request)
     {
+        return $this->medication_repo->updateMedicationKfa($request->all());
     }
 }

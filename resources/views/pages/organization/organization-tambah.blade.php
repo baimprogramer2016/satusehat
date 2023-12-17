@@ -9,8 +9,8 @@
                 <div class="form-group">
                     <label class="form-label" for="original_code">Kode</label>
                     <div class="form-control-wrap">
-                        <input name="original_code" type="text" class="form-control form-control-sm" id="original_code"
-                            required>
+                        <input name="original_code" value="{{ $seq_no }}" type="text"
+                            class="form-control form-control-sm" id="original_code" required>
                     </div>
                 </div>
             </div>
@@ -36,7 +36,9 @@
                     <label class="form-label" for="default-06">Bagian</label>
                     <div class="form-control-wrap ">
                         <div class="form-control-select">
-                            <select class="form-control" id="default-06" name="partof_id" id="partof_id">
+                            <select class="form-control" id="default-06" name="partof_id" id="partof_id"
+                                data-search="on">
+                                <option value="">Pilih Bagian</option>
                                 @foreach ($data_bagian as $item_bagian)
                                 <option value="{{ $item_bagian->satusehat_id }}">{{ $item_bagian->name }}</option>
                                 @endforeach

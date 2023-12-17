@@ -7,4 +7,6 @@ interface MedicationInterface
 {
     public function getQuery();
     public function getMedicationId($id);
+
+    public function updateMedicationKfa($param);
 }

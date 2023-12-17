@@ -170,6 +170,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
+        LaravelPdoOdbc\ODBCServiceProvider::class,
 
     ])->toArray(),
 

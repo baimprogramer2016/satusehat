@@ -107,11 +107,45 @@
         })
     }
 
+    // saat dipilih kfa nya , akan langsung update ke dalam table
+
     function updateKfa(id_medication,kode_kfa)
     {
         var inputElement = document.querySelector('input[name="id_medication_'+id_medication+'"]');
-        inputElement.value = kode_kfa;
+
+
+        var param = {
+            id_medication : id_medication,
+            kode_kfa : kode_kfa,
+            _token : "{{csrf_token()}}"
+        }
+
+        $.ajax({
+            type:"POST",
+            url: "{{ route('medication-kfa-update') }}",
+            data: param,
+            success: function(response)
+            {
+                // console.log(response.kfa_code+ '-'+ inputElement.value)
+                if(response.kfa_code != inputElement.value)
+                {
+                    inputElement.value = kode_kfa;
+                    toastMessage("Kfa Berhasil di Update","success");
+                }
+                else{
+                    toastMessage("Tidak ada Perubahan","warning");
+                }
+            }
+        })
     }
 
+
+function toastMessage(message,color){
+    (function (NioApp, $) {
+        'use strict'; // Uses
+            toastr.clear();
+            NioApp.Toast('<p>'+message+'</p>',color);
+    })(NioApp, jQuery);
+}
 </script>
 @endpush

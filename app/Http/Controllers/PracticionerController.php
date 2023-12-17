@@ -2,20 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\PractitionerJob;
+use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\Practitioner\PractitionerInterface;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\Datatables;
 use App\Traits\GeneralTrait;
+use App\Traits\ApiTrait;
 use Throwable;
 
 
 class PracticionerController extends Controller
 {
     use GeneralTrait;
+    use ApiTrait;
     public $practitioner_repo;
-    public function __construct(PractitionerInterface $practitionerRepository)
-    {
+    public $job_logs_repo;
+    public function __construct(
+        PractitionerInterface $practitionerRepository,
+        JobLogsInterface $jobLogsInterface
+    ) {
         $this->practitioner_repo = $practitionerRepository;
+        $this->job_logs_repo = $jobLogsInterface;
     }
 
     public function index(Request $request)
@@ -140,11 +148,39 @@ class PracticionerController extends Controller
     {
         try {
             # update
-            $this->practitioner_repo->updateIhsPractitioner($request->all(), $this->dec($request->id_ubah));
+            $param['id'] = $this->dec($request->id_ubah);
+            $param['satusehat_id'] = $request->satusehat_id;
+            $param['satusehat_process'] = 1;
+            $param['satusehat_message'] = null;
+            $param['satusehat_statuscode'] = 200;
+
+            $this->practitioner_repo->updateIhsPractitioner($param);
 
             return redirect('praktisi')
                 ->with("pesan", config('constan.message.form.success_updated'))
                 ->with('warna', 'success');
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+
+    public function runJob(Request $request)
+    {
+        try {
+
+            $param['action'] = $request->action; // manual atau schedule
+            $param['start'] = $this->currentNow(); //dari APITrait
+            $param['id'] = config('constan.job_name.practitioner'); //id
+            $param['status'] = 'Process'; //status awal process , lalu ada Completed
+
+            # membuat Log status start job, job_report variable untuk mengambil last Id
+            $job_report = $this->job_logs_repo->insertJobLogsStart($param);
+
+            # jalan kan job
+            PractitionerJob::dispatch($this->practitioner_repo, $this->job_logs_repo, $job_report->id);
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

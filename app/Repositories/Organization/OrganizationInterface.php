@@ -10,4 +10,5 @@ interface OrganizationInterface
     public function getDataOrganizationFind($id);
     public function deleteOrganization($id);
     public function updateOrganization($request = [], $id);
+    public function updateStatusOrganization($id, $satusehat_id, $request, $response);
 }

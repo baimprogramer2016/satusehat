@@ -5,15 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Traits\GeneralTrait;
-use App\Models\Organization;
-use App\Models\Status;
-use App\Models\Location;
-use App\Models\PhysicalType;
-use App\Models\Poli;
+use App\Traits\ApiTrait;
 use App\Repositories\Location\LocationInterface;
 use App\Repositories\Organization\OrganizationInterface;
+use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\PhysicalType\PhysicalTypeInterface;
 use App\Repositories\Status\StatusInterface;
+use App\Traits\JsonTrait;
 use Throwable;
 
 
@@ -21,22 +19,27 @@ class LocationController extends Controller
 {
 
     use GeneralTrait;
+    use ApiTrait;
+    use JsonTrait;
 
     protected $location_repo;
     protected $organization_repo;
     protected $status_repo;
     protected $physical_type_repo;
+    protected $parameter_repo;
 
     public function __construct(
         LocationInterface $locationRepository,
         OrganizationInterface $organizationRepository,
         StatusInterface $statusRepository,
         PhysicalTypeInterface $physicalTypeRepository,
+        ParameterInterface $parameterInterface
     ) {
         $this->location_repo = $locationRepository;
         $this->organization_repo = $organizationRepository;
         $this->status_repo = $statusRepository;
         $this->physical_type_repo = $physicalTypeRepository;
+        $this->parameter_repo = $parameterInterface;
     }
     public function index()
     {
@@ -133,6 +136,45 @@ class LocationController extends Controller
             return view('pages.location.location-response-ss', [
                 "data_response" => $response_satusehat
             ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+
+    public function modalKirimSS(Request $request, $id)
+    {
+        try {
+            return view('pages.location.location-kirim-ss', [
+                "data_location" => $this->location_repo->getDataLocationFind($this->dec($id)),
+            ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function kirimSS(Request $request)
+    {
+        try {
+            $data_location = $this->location_repo->getDataLocationFind($this->dec($request->id));
+            $data_parameter = $this->parameter_repo->getDataParameterFirst();
+
+            $payload_location = $this->bodyLocation($data_location, $data_parameter);
+
+            $response = $this->post_general_ss('Location', $payload_location);
+            $body_parse = json_decode($response->body());
+
+            $satusehat_id = null;
+            if ($response->successful()) {
+                $satusehat_id = $body_parse->id;
+            }
+            # update status ke database
+            $this->location_repo->updateStatusLocation($this->dec($request->id), $satusehat_id, $payload_location, $response);;
+            return $response;
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

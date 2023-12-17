@@ -2,19 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\PatientJob;
+use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\Patient\PatientInterface;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\Datatables;
 use App\Traits\GeneralTrait;
+use App\Traits\ApiTrait;
 use Throwable;
+use Illuminate\Support\Str;
 
 class PatientController extends Controller
 {
     use GeneralTrait;
+    use ApiTrait;
     public $patient_repo;
-    public function __construct(PatientInterface $patientRepository)
-    {
+    public $job_logs_repo;
+    public function __construct(
+        PatientInterface $patientRepository,
+        JobLogsInterface $jobLogsInterface
+    ) {
         $this->patient_repo = $patientRepository;
+        $this->job_logs_repo = $jobLogsInterface;
     }
 
     public function index(Request $request)
@@ -104,19 +113,22 @@ class PatientController extends Controller
     public function ubahIHS(Request $request, $id)
     {
         try {
-            $data_patient = $this->patient_repo->getDataPatientFind($this->dec($id));
-
-            $endpoint = 'Patient?identifier=https://fhir.kemkes.go.id/id';
-            $nik = $this->enc('nik|' . $data_patient['nik']);
-            $response_satusehat  = json_decode($this->api_response_ss($endpoint, $nik));
-
             $id_ihs = 0;
-            $nama_ihs = 'ID belum tersedia';
+            $nama_ihs = config('constan.error_message.id_ihs_error');
             $color_ihs = 'danger';
-            if ($response_satusehat->total > 0) {
-                $id_ihs = $response_satusehat->entry[0]->resource->id;
-                $nama_ihs = $response_satusehat->entry[0]->resource->name[0]->text;
-                $color_ihs = 'success';
+
+            $data_patient = $this->patient_repo->getDataPatientFind($this->dec($id));
+            if (!empty($data_patient['nik'])) {
+                $endpoint = 'Patient?identifier=https://fhir.kemkes.go.id/id';
+                $nik = $this->enc('nik|' . $data_patient['nik']);
+                $response_satusehat  = json_decode($this->api_response_ss($endpoint, $nik));
+
+
+                if ($response_satusehat->total > 0) {
+                    $id_ihs = $response_satusehat->entry[0]->resource->id;
+                    $nama_ihs = $response_satusehat->entry[0]->resource->name[0]->text;
+                    $color_ihs = 'success';
+                }
             }
             return view('pages.patient.patient-ubah-ihs', [
                 "data_patient" => $data_patient,
@@ -135,11 +147,38 @@ class PatientController extends Controller
     {
         try {
             # update
-            $this->patient_repo->updateIhsPatient($request->all(), $this->dec($request->id_ubah));
+            $param['id'] = $this->dec($request->id_ubah);
+            $param['satusehat_id'] = $request->satusehat_id;
+            $param['satusehat_process'] = 1;
+            $param['satusehat_message'] = null;
+            $param['satusehat_statuscode'] = 200;
+
+            $this->patient_repo->updateIhsPatient($param);
 
             return redirect('pasien')
                 ->with("pesan", config('constan.message.form.success_updated'))
                 ->with('warna', 'success');
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function runJob(Request $request)
+    {
+        try {
+
+            $param['action'] = $request->action; // manual atau schedule
+            $param['start'] = $this->currentNow(); //dari APITrait
+            $param['id'] = config('constan.job_name.patient'); //id
+            $param['status'] = 'Process'; //status awal process , lalu ada Completed
+
+            # membuat Log status start job, job_report variable untuk mengambil last Id
+            $job_report = $this->job_logs_repo->insertJobLogsStart($param);
+
+            # jalan kan job
+            PatientJob::dispatch($this->patient_repo, $this->job_logs_repo, $job_report->id);
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

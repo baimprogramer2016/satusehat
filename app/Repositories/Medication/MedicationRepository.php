@@ -21,4 +21,12 @@ class MedicationRepository implements MedicationInterface
     {
         return $this->model->where('id', $id)->first();
     }
+
+    public function updateMedicationKfa($param)
+    {
+        $data = $this->model->find($param['id_medication']);
+        $data->kfa_code = $param['kode_kfa'];
+        $data->update();
+        return $data;
+    }
 }

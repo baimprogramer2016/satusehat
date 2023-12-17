@@ -22,6 +22,15 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Practitioner\PractitionerInterface::class, \App\Repositories\Practitioner\PractitionerRepository::class);
         $this->app->bind(\App\Repositories\Kfa\KfaInterface::class, \App\Repositories\Kfa\KfaRepository::class);
         $this->app->bind(\App\Repositories\Medication\MedicationInterface::class, \App\Repositories\Medication\MedicationRepository::class);
+        $this->app->bind(\App\Repositories\Encounter\EncounterInterface::class, \App\Repositories\Encounter\EncounterRepository::class);
+        $this->app->bind(\App\Repositories\Condition\ConditionInterface::class, \App\Repositories\Condition\ConditionRepository::class);
+        $this->app->bind(\App\Repositories\Observation\ObservationInterface::class, \App\Repositories\Observation\ObservationRepository::class);
+        $this->app->bind(\App\Repositories\Procedure\ProcedureInterface::class, \App\Repositories\Procedure\ProcedureRepository::class);
+        $this->app->bind(\App\Repositories\Composition\CompositionInterface::class, \App\Repositories\Composition\CompositionRepository::class);
+        $this->app->bind(\App\Repositories\Sinkronisasi\SinkronisasiInterface::class, \App\Repositories\Sinkronisasi\SinkronisasiRepository::class);
+        $this->app->bind(\App\Repositories\Jadwal\JadwalInterface::class, \App\Repositories\Jadwal\JadwalRepository::class);
+        $this->app->bind(\App\Repositories\Jobs\JobsInterface::class, \App\Repositories\Jobs\JobsRepository::class);
+        $this->app->bind(\App\Repositories\JobLogs\JobLogsInterface::class, \App\Repositories\JobLogs\JobLogsRepository::class);
     }
 
     /**

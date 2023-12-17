@@ -9,7 +9,20 @@
                 <p>Halaman Pengaturan atau Master Data</p>
             </div>
         </div><!-- .nk-block-head-content -->
-
+        <div class="nk-block-head-content">
+            <div class="toggle-wrap nk-block-tools-toggle">
+                <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="pageMenu"><em
+                        class="icon ni ni-more-v"></em></a>
+                <div class="toggle-expand-content" data-content="pageMenu">
+                    <ul class="nk-block-tools g-3">
+                        <li><button class="btn btn-white btn-dim btn-outline-primary btn-run-job"
+                                data-toggle="modal"><em class="icon ni ni-play"></em><span>Update ID
+                                    IHS<br>Max {{ env('MAX_RECORD') }} Record</span></button>
+                        </li>
+                    </ul>
+                </div><!-- .toggle-expand-content -->
+            </div><!-- .toggle-wrap -->
+        </div><!-- .nk-block-head-content -->
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 <div class="nk-block">
@@ -30,6 +43,7 @@
                                     <th>Nik</th>
                                     <th>Nama</th>
                                     <th>ID</th>
+                                    <th>Pesan</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -65,6 +79,7 @@
     $(function () {
 
       var table = $('.data-table').DataTable({
+          stateSave: true,
           processing: true,
           serverSide: true,
           language : {
@@ -78,6 +93,7 @@
               {data: 'nik', name: 'nik'},
               {data: 'name', name: 'name'},
               {data: 'satusehat_id', name: 'satusehat_id'},
+              {data: 'satusehat_message', name: 'satusehat_message'},
               {data: 'action', name: 'action', orderable: false, searchable: false},
           ]
       });
@@ -133,6 +149,50 @@
             }
         })
     }
+
+    $(document).ready(function() {
+
+        $('.btn-run-job').on("click", function(e) {
+
+            e.preventDefault();
+                Swal.fire({
+                    title: 'Konfirmasi',
+                    text: "Job Update ID IHS Pasien Akan dijalankan Maksimal {{ env('MAX_RECORD') }} Record",
+                    showCancelButton: true,
+                    confirmButtonColor: "#2c3782",
+                    confirmButtonText: 'Jalankan',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.value) {
+                        var url     = '{{ route("pasien-run-job") }}';
+                        $.ajax({
+                            type:"POST",
+                            url:url,
+                            data: {
+                                action : 'manual',
+                                _token : "{{csrf_token()}}"
+                            },
+                            success: function(response)
+                            {
+                                console.log(JSON.stringify(response));
+                                toastMessage("JOB TELAH DI JALANKAN","success");
+                            }
+                        })
+                    }
+                });
+
+        });
+    });
+
+
+    function toastMessage(message,color){
+        (function (NioApp, $) {
+            'use strict'; // Uses
+                toastr.clear();
+                NioApp.Toast('<p>'+message+'</p>',color);
+        })(NioApp, jQuery);
+    }
+
 </script>
 
 @endpush

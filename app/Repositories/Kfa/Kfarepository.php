@@ -18,4 +18,9 @@ class KfaRepository implements KfaInterface
         return $query->query();
         // return $this->model->select()->squery();
     }
+
+    public function insertKfa($request = [])
+    {
+        return $this->model->insert($request);
+    }
 }

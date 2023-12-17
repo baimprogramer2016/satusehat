@@ -32,6 +32,7 @@ class ParameterRepository implements ParameterInterface
         $this->data_parameter->username = $request['username'];
         $this->data_parameter->pass = $request['pass'];
         $this->data_parameter->farmasi_id = $request['farmasi_id'];
+        $this->data_parameter->access_token = $request['access_token'];
         $this->data_parameter->update();
 
         return $this->data_parameter;

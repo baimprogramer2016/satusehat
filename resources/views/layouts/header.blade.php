@@ -6,20 +6,20 @@
                         class="icon ni ni-menu"></em></a>
             </div>
             <div class="nk-header-brand">
-                <a href="html/index.html" class="logo-link">
-                    <img class="logo-light logo-img" src="{{ asset('images/logo.png') }}"
+                <a href="#" class="logo-link">
+                    <img class="logo-light logo-img" src="{{ asset('images/logo_sht.png') }}"
                         srcset="./images/logo2x.png 2x" alt="logo">
-                    <img class="logo-dark logo-img" src="{{ asset('images/logo-dark.png') }}"
+                    <img class="logo-dark logo-img" src="{{ asset('images/logo_sht_dark.png') }}"
                         srcset="./images/logo-dark2x.png 2x" alt="logo-dark">
                 </a>
             </div><!-- .nk-header-brand -->
             <div class="nk-header-menu" data-content="headerNav">
                 <div class="nk-header-mobile">
                     <div class="nk-header-brand">
-                        <a href="html/index.html" class="logo-link">
-                            <img class="logo-light logo-img" src="./images/logo.png" srcset="./images/logo2x.png 2x"
-                                alt="logo">
-                            <img class="logo-dark logo-img" src="./images/logo-dark.png"
+                        <a href="#" class="logo-link">
+                            <img class="logo-light logo-img" src="{{ asset('images/logo_sht.png') }}"
+                                srcset="./images/logo2x.png 2x" alt="logo">
+                            <img class="logo-dark logo-img" src="{{ asset('images/logo_sht_dark.png') }}"
                                 srcset="./images/logo-dark2x.png 2x" alt="logo-dark">
                         </a>
                     </div>
@@ -29,41 +29,10 @@
                     </div>
                 </div>
                 <ul class="nk-menu nk-menu-main ui-s2">
-                    <li class="nk-menu-item has-sub">
-                        <a href="#" class="nk-menu-link nk-menu-toggle">
-                            <span class="nk-menu-text">Dashboards</span>
+                    <li class="nk-menu-item ">
+                        <a href="{{ route('dashboard') }}" class="nk-menu-link ">
+                            <span class="nk-menu-text">Dashboard</span>
                         </a>
-                        <ul class="nk-menu-sub">
-                            <li class="nk-menu-item">
-                                <a href="html/index.html" class="nk-menu-link">
-                                    <span class="nk-menu-text">Default Dashboard</span>
-                                </a>
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-item">
-                                <a href="html/index-sales.html" class="nk-menu-link">
-                                    <span class="nk-menu-text">Sales Dashboard</span>
-                                </a>
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-item">
-                                <a href="html/index-crypto.html" class="nk-menu-link">
-                                    <span class="nk-menu-text">Crypto Dashboard</span>
-                                </a>
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-item">
-                                <a href="html/index-analytics.html" class="nk-menu-link">
-                                    <span class="nk-menu-text">Analytics Dashboard</span>
-                                </a>
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-heading">
-                                <h6 class="overline-title text-primary">Use-Case Concept</h6>
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-item">
-                                <a href="html/invest/index.html" class="nk-menu-link" target="_blank">
-                                    <span class="nk-menu-text">Investment Panel</span>
-                                    <span class="nk-menu-badge badge-danger">HOT</span>
-                                </a>
-                            </li><!-- .nk-menu-item -->
-                        </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
                     <li class="nk-menu-item has-sub">
                         <a href="#" class="nk-menu-link nk-menu-toggle">
@@ -74,6 +43,43 @@
                                 <a href="{{ route('parameter') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Parameter</span></a>
                             </li>
+
+                            <li class="nk-menu-item has-sub">
+                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                    <span class="nk-menu-text">Jobs</span>
+                                </a>
+                                <ul class="nk-menu-sub">
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('jadwal') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Jadwal</span></a>
+                                    </li>
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('jobs') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Queue</span></a>
+                                    </li>
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('job-logs') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Job Logs</span></a>
+                                    </li>
+                                    {{-- <li class="nk-menu-item">
+                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
+                                                class="nk-menu-text">Medication Dispense</span></a>
+                                    </li> --}}
+                                </ul><!-- .nk-menu-sub -->
+                            </li><!-- .nk-menu-item -->
+                            <li class="nk-menu-item">
+                                <a href="{{ route('sinkronisasi') }}" class="nk-menu-link"><span
+                                        class="nk-menu-text">Sinkronisasi</span></a>
+                            </li>
+
+                        </ul><!-- .nk-menu-sub -->
+                    </li><!-- .nk-menu-item -->
+                    <li class="nk-menu-item has-sub">
+                        <a href="#" class="nk-menu-link nk-menu-toggle">
+                            <span class="nk-menu-text">Master Data</span>
+                        </a>
+                        <ul class="nk-menu-sub">
+
                             <li class="nk-menu-item">
                                 <a href="{{ route('organisasi') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Organisasi</span></a>
@@ -94,20 +100,20 @@
                                 <a href="{{ route('kfa') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">KFA</span></a>
                             </li>
-                            <li class="nk-menu-item">
+                            {{-- <li class="nk-menu-item">
                                 <a href="html/apps-chats.html" class="nk-menu-link"><span
                                         class="nk-menu-text">Snomed</span></a>
                             </li>
                             <li class="nk-menu-item">
                                 <a href="html/apps-chats.html" class="nk-menu-link"><span
                                         class="nk-menu-text">Loinc</span></a>
-                            </li>
+                            </li> --}}
 
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
                     <li class="nk-menu-item has-sub">
                         <a href="#" class="nk-menu-link nk-menu-toggle">
-                            <span class="nk-menu-text">Data</span>
+                            <span class="nk-menu-text">Resource</span>
                         </a>
                         <ul class="nk-menu-sub">
                             <li class="nk-menu-item has-sub">
@@ -116,11 +122,11 @@
                                 </a>
                                 <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
-                                        <a href="html/transaction-basic.html" class="nk-menu-link"><span
+                                        <a href="{{ route('encounter') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Encounter</span></a>
                                     </li>
                                     <li class="nk-menu-item">
-                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
+                                        <a href="{{ route('condition') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Condition</span></a>
                                     </li>
                                 </ul><!-- .nk-menu-sub -->
@@ -131,15 +137,15 @@
                                 </a>
                                 <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
-                                        <a href="html/transaction-basic.html" class="nk-menu-link"><span
+                                        <a href="{{ route('observation') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Observation</span></a>
                                     </li>
                                     <li class="nk-menu-item">
-                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
+                                        <a href="{{ route('procedure') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Procedure</span></a>
                                     </li>
                                     <li class="nk-menu-item">
-                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
+                                        <a href="{{ route('composition') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Composition</span></a>
                                     </li>
                                 </ul><!-- .nk-menu-sub -->
@@ -157,10 +163,10 @@
                                         <a href="html/transaction-crypto.html" class="nk-menu-link"><span
                                                 class="nk-menu-text">Medication Request</span></a>
                                     </li>
-                                    <li class="nk-menu-item">
+                                    {{-- <li class="nk-menu-item">
                                         <a href="html/transaction-crypto.html" class="nk-menu-link"><span
                                                 class="nk-menu-text">Medication Dispense</span></a>
-                                    </li>
+                                    </li> --}}
                                 </ul><!-- .nk-menu-sub -->
                             </li><!-- .nk-menu-item -->
                         </ul><!-- .nk-menu-sub -->

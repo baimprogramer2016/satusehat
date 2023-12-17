@@ -58,7 +58,7 @@
                         <div class="form-control-select">
                             <select class="form-control" id="default-06" name="managing_organization"
                                 id="managing_organization">
-                                <option value="{{ $data_location->r_managing_organization->satusehat_id ??'' }}">
+                                <option value="{{ $data_location->r_managing_organization->satusehat_id ?? null }}">
                                     {{$data_location->r_managing_organization->name ?? '' }}</option>
                                 @foreach ($data_bagian as $item_bagian)
                                 <option value="{{ $item_bagian->satusehat_id }}">{{ $item_bagian->name }}</option>

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Location;
 
+use Carbon\Carbon;
 use App\Models\Location;
 
 class LocationRepository implements LocationInterface
@@ -24,9 +25,10 @@ class LocationRepository implements LocationInterface
         $this->model->create([
             "original_code" => $request['original_code'],
             "name"  => $request['name'],
+            "status" => "active",
             "identifier_value"  => $request['name'],
             "description"  => $request['name'],
-            "managing_organization" => $request['managing_organization'],
+            "managing_organization" => $request['managing_organization'] ?? "",
             "telecom_phone" => config('constan.default_organization.phone'),
             "telecom_fax" => config('constan.default_organization.fax'),
             "telecom_email" => config('constan.default_organization.email'),
@@ -78,6 +80,20 @@ class LocationRepository implements LocationInterface
         $data->physical_type_display = $physical_display;
         $data->managing_organization = $request['managing_organization'];
         $data->satusehat_send = $request['satusehat_send'];
+        $data->update();
+
+        return $data;
+    }
+
+    public function updateStatusLocation($id, $satusehat_id, $request, $response)
+    {
+        $data = $this->model->find($id);
+        $data->satusehat_id = $satusehat_id;
+        $data->satusehat_request = $request;
+        $data->satusehat_response = $response;
+        $data->satusehat_send = ($satusehat_id != null) ? 1 : 0;
+        $data->satusehat_statuscode =  ($satusehat_id != null) ? '200' : '500';
+        $data->satusehat_date = Carbon::now()->format('Y-m-d H:i:s');
         $data->update();
 
         return $data;

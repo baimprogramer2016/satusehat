@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\Parameter;
 use App\Models\Organization;
+use App\Repositories\Parameter\ParameterInterface;
 use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
@@ -16,66 +17,11 @@ trait GeneralTrait
 {
     public $result;
 
-
-    public function env()
-    {
-        return Parameter::first();
-    }
-    protected function expiryToken()
-    {
-        $datetime = Carbon::now()->addSeconds(env("EXPIRY_TOKEN"))->format('Y-m-d H:i:s'); // Current datetime + 3 Jam
-        return $datetime;
-    }
-    # Waktu Saat ini
-    protected function currentTime()
-    {
-        $datetime = Carbon::now()->format('Y-m-d H:i:s'); // Current datetime
-        return $datetime;
-    }
-
-    protected function replaceId($id)
-    {
-        return str_replace(env('REPLACE_ID'), '', $id);
-    }
-
-    public function auth_satu_sehat()
-    {
-        $data =  $this->env();
-
-        if ($this->currentTime() < $data->expiry_token) {
-            return $data->access_token;
-        } else {
-
-            $url = $data->auth_url . '/accesstoken?grant_type=client_credentials';
-            $response = Http::asForm()->post($url, [
-                'client_id' => $this->replaceId($data->client_id),
-                'client_secret' => $this->replaceId($data->client_secret),
-            ]);
-
-            $token = $response->json()['access_token']; //parsing token
-            $data->access_token = $token;
-            $data->expiry_token = $this->expiryToken();
-            $data->update();
-            return $token;
-        }
-    }
-
-    public function api_response_ss($endpoint, $id)
-    {
-        # generate token
-        $token = $this->auth_satu_sehat();
-        # hit ss
-        $url    = $this->env()->base_url . "/" . $endpoint . "/" . $this->dec($id);
-        //get detail
-        $response_satusehat  = Http::withToken($token)->get($url)->body();
-        return $response_satusehat;
-    }
-
     public function autoSeq($param)
     {
 
         if ($param == 'ORG') {
-            $number = Organization::orderBy('original_code', 'DESC')->first();
+            $number = Organization::orderBy('id', 'DESC')->first();
             $this->result = ($number == null) ? 'OR-1' : 'OR-' . preg_replace("/[^0-9]/", "", $number->original_code) + 1;
         }
 
@@ -142,5 +88,44 @@ trait GeneralTrait
     function dec($param)
     {
         return Crypt::decrypt($param);
+    }
+
+    # mendapatkan nilai numerator dan denominator
+    public function split_nominator($param)
+    {
+
+        $change_param = $param;
+        if (strpos($param, '/mg')) {
+            $change_param = str_replace('/mg', 'mg', $param);
+        }
+        if (strpos($change_param, '/ml')) {
+            $change_param = str_replace('/ml', 'ml', $change_param);
+        }
+
+        if (strpos($change_param, '/')) {
+            $split_kza = explode('/', $change_param);
+            $result = [
+                'numerator' => explode(' ', $split_kza[0])[0],
+                'numerator_satuan' => explode(' ', $split_kza[0])[1],
+                'denominator' => explode(' ', $split_kza[1])[0],
+                'denominator_satuan' => explode(' ', $split_kza[1])[1],
+            ];
+        } else {
+            $result = [
+                'numerator' => explode(' ', $change_param)[0],
+                'numerator_satuan' => explode(' ', $change_param)[1],
+                'denominator' => 0,
+                'denominator_satuan' => '-',
+            ];
+        }
+
+        # penyesuaian default 0
+        $result['denominator_penyesuaian'] = 1;
+
+        if ($result['denominator'] <> 0) {
+            $result['denominator_penyesuaian'] = $result['denominator'];
+        }
+
+        return $result;
     }
 }

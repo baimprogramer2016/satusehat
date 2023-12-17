@@ -54,10 +54,7 @@ a.paginate_button.current {
 }
 
 
-.data-table-kfa thead th {
-    background-color: #153a7f !important;
-    color: #ffffff !important;
-}
+.data-table-kfa thead th {}
 
 .btn-eye {
     /* background-color: #0775fc !important; */

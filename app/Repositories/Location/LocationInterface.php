@@ -9,4 +9,5 @@ interface LocationInterface
     public function getDataLocationFind($id);
     public function deleteLocation($id);
     public function updateLocation($request = [], $physical_display, $id);
+    public function updateStatusLocation($id, $satusehat_id, $request, $response);
 }

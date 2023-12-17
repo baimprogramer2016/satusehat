@@ -40,8 +40,8 @@
                     <div class="form-control-wrap ">
                         <div class="form-control-select">
                             <select class="form-control" id="default-06" name="partof_id" id="partof_id">
-                                <option value="{{ $data_organization->r_partof->satusehat_id }}">
-                                    {{$data_organization->r_partof->name }}</option>
+                                <option value="{{ $data_organization->r_partof->satusehat_id ?? null}}">
+                                    {{$data_organization->r_partof->name ?? '' }}</option>
                                 @foreach ($data_bagian as $item_bagian)
                                 <option value="{{ $item_bagian->satusehat_id }}">{{ $item_bagian->name }}</option>
                                 @endforeach

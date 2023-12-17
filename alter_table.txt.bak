@@ -1,0 +1,75 @@
+select * from ss_kfa_dev
+alter table ss_generate_token
+add access_token_kfa varchar(100);
+alter table ss_generate_token
+add expiry_token timestamp;
+alter table ss_generate_token
+add page_kfa int;
+
+create table ss_jadwal(
+id serial primary key,
+kode varchar(100),
+nama varchar(200),
+cron varchar(30),
+status int,
+created_at timestamp,
+updated_ar timestamp
+);
+
+create table ss_kfa_dev(
+kode_kfa varchar(30),
+nama_kfa varchar(200),
+kode_pv varchar(30),
+nama_pv varchar(200),
+kode_pa varchar(30),
+nama_pa varchar(200),
+numerator float,
+numerator_satuan varchar(10),
+kode_sistem varchar(100),
+denominator float,
+denominator_satuan varchar(10),
+denominator_penyesuaian float,
+satuan_disesuaikan varchar(30),
+bahan_baku_aktif varchar(100),
+bahan_baku_aktif_kode varchar(100),
+kode_sediaan varchar(100),
+nama_sediaan varchar(100),
+act_code varchar(100),
+act_display varchar(100),
+created_at timestamp,
+updated_at timestamp
+)
+select * from ss_sinkronisasi
+create table ss_sinkronisasi(
+id serial primary key,
+kode varchar(100),
+description varchar(100),
+query text,
+odbc varchar(50),
+target varchar(50),
+active int,
+record int,
+part int,
+page int,
+upload int,
+prefix varchar(50),
+schedule varchar(30),
+status varchar(1),
+sp varchar(30),
+last_process timestamp,
+created_at timestamp,
+updated_at timestamp
+)
+
+
+create table job_logs(
+id serial primary key,
+kode varchar(50),
+status varchar(50),
+start_date timestamp,
+end_date timestamp,
+error_message varchar(100),
+action  varchar(100),
+created_at timestamp,
+updated_at timestamp
+)

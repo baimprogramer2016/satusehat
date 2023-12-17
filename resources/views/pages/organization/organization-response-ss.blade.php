@@ -5,7 +5,7 @@
     @csrf
     <div class="row">
         <div class="col-md-12">
-            <textarea id="myTextArea" class="form-control bg-dark text-white" cols="30"
+            <textarea id="myTextArea" class="form-control bg-dark text-white" cols="40"
                 rows="10">{{ $data_response }}</textarea>
         </div>
         <div class="col-md-12 mt-3">
