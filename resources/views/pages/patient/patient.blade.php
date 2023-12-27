@@ -28,7 +28,7 @@
 <div class="nk-block">
     <div class="row g-gs">
 
-        <div class="col-xl-12 col-xxl-8">
+        <div class="col-xl-12 col-xxl-12">
 
             <div class="card card-bordered card-full">
                 @if (session('pesan'))
