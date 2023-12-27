@@ -4,6 +4,7 @@
 /public/uploads
 /public/hot
 /public/storage
+/app/config/database.php
 /storage/*.key
 /vendor
 .env
