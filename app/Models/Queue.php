@@ -10,4 +10,5 @@ class Queue extends Model
     use HasFactory;
 
     protected $table = 'tes';
+    protected $fillable = ['angka'];
 }

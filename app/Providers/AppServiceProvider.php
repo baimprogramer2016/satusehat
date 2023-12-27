@@ -31,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Jadwal\JadwalInterface::class, \App\Repositories\Jadwal\JadwalRepository::class);
         $this->app->bind(\App\Repositories\Jobs\JobsInterface::class, \App\Repositories\Jobs\JobsRepository::class);
         $this->app->bind(\App\Repositories\JobLogs\JobLogsInterface::class, \App\Repositories\JobLogs\JobLogsRepository::class);
+        $this->app->bind(\App\Repositories\MedicationRequest\MedicationRequestInterface::class, \App\Repositories\MedicationRequest\MedicationRequestRepository::class);
     }
 
     /**

@@ -46,6 +46,7 @@
                                     <th>Nama</th>
                                     <th>ID</th>
                                     <th>Pesan</th>
+                                    <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -95,6 +96,7 @@
               {data: 'name', name: 'name'},
               {data: 'satusehat_id', name: 'satusehat_id'},
               {data: 'satusehat_message', name: 'satusehat_message'},
+              {data: 'status_update', name: 'status_update'},
               {data: 'action', name: 'action', orderable: false, searchable: false},
           ]
       });
@@ -170,13 +172,12 @@
                         type:"POST",
                         url:url,
                         data: {
-                            action : 'manual',
                             _token : "{{csrf_token()}}"
                         },
                         success: function(response)
                         {
-                            console.log(JSON.stringify(response));
-                            toastMessage("JOB TELAH DI JALANKAN","success");
+                            // console.log(JSON.stringify(response));
+                            toastMessage(response,"success");
                         }
                     })
                 }

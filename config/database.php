@@ -72,6 +72,9 @@ return [
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
             'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
+            // 'charset' => 'utf8mb4',
+            // 'collation' => 'utf8mb4_unicode_ci',
             'prefix' => '',
             'prefix_indexes' => true,
             'search_path' => 'public',
@@ -94,10 +97,19 @@ return [
         ],
         'odbc_mssql' => [
             'driver' => 'odbc',
-            'dsn' => 'odbc:odbc_mssql', // odbc: will be prefixed
+            'dsn' => 'odbc_mssql', // odbc: will be prefixed
             'username' => 'sa',
+            'database' => 'db_demo',
             'password' => 'P@ssw0rd'
+        ],
+        'odbc_lng_badak' => [
+            'driver' => 'odbc',
+            'dsn' => 'odbc_lng_badak', // odbc: will be prefixed
+            'username' => 'readonly',
+            'database' => 'db_rslng_simulasi',
+            'password' => '12345678'
         ]
+
 
     ],
 

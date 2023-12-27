@@ -72,7 +72,7 @@ class ConditionControlller extends Controller
     public function responseSS(Request $request, $id)
     {
         try {
-            $response_satusehat  = $this->api_response_ss('Condition', $id);
+            $response_satusehat  = $this->api_response_ss('/Condition', $id);
             return view('pages.condition.condition-response-ss', [
                 "data_response" => $response_satusehat
             ]);

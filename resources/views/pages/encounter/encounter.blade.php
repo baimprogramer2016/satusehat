@@ -32,6 +32,7 @@
                                     <th>Nama Praktisi</th>
                                     <th>Poli</th>
                                     <th>Tanggal</th>
+                                    <th>Response</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -83,6 +84,7 @@
               {data: 'participant_individual_display', name: 'participant_individual_display'},
               {data: 'location_display', name: 'location_display'},
               {data: 'period_start', name: 'period_start'},
+              {data: 'satusehat_statuscode', name: 'satusehat_statuscode'},
               {data: 'status', name: 'status', orderable: false, searchable: false},
               {data: 'action', name: 'action', orderable: false, searchable: false},
           ]

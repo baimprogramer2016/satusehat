@@ -23,6 +23,7 @@ class ParameterRepository implements ParameterInterface
     {
         $this->data_parameter = $this->model->first();
         $this->data_parameter->client_id = $request['client_id'];
+        $this->data_parameter->corporate = $request['corporate'];
         $this->data_parameter->client_secret = $request['client_secret'];
         $this->data_parameter->auth_url = $request['auth_url'];
         $this->data_parameter->base_url = $request['base_url'];

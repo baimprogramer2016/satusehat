@@ -18,6 +18,7 @@ class PatientController extends Controller
     use ApiTrait;
     public $patient_repo;
     public $job_logs_repo;
+    protected $job_id = 0;
     public function __construct(
         PatientInterface $patientRepository,
         JobLogsInterface $jobLogsInterface
@@ -33,6 +34,12 @@ class PatientController extends Controller
             $data = $this->patient_repo->getQuery();
             return Datatables::of($data)
                 ->addIndexColumn()
+                ->addColumn('status_update', function ($item_patient) {
+                    // $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">' . $item_patient . '</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+                    $status_update = ($item_patient->satusehat_process == 1) ? '<span class=text-success>Berhasil Update</span>' : '';
+
+                    return $status_update;
+                })
                 ->addColumn('action', function ($item_patient) {
                     // $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">' . $item_patient . '</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
                     if ($item_patient->satusehat_process == 1) {
@@ -58,7 +65,7 @@ class PatientController extends Controller
 
                     return $action_update;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['status_update', 'action'])
                 ->make(true);
         }
 
@@ -70,7 +77,7 @@ class PatientController extends Controller
     public function responseSS(Request $request, $id)
     {
         try {
-            $endpoint = 'Patient?identifier=https://fhir.kemkes.go.id/id';
+            $endpoint = '/Patient?identifier=https://fhir.kemkes.go.id/id';
             $nik = $this->enc('nik|' . $this->dec($id));
             $response_satusehat  = $this->api_response_ss($endpoint, $nik);
             return view('pages.patient.patient-response-ss', [
@@ -119,7 +126,7 @@ class PatientController extends Controller
 
             $data_patient = $this->patient_repo->getDataPatientFind($this->dec($id));
             if (!empty($data_patient['nik'])) {
-                $endpoint = 'Patient?identifier=https://fhir.kemkes.go.id/id';
+                $endpoint = '/Patient?identifier=https://fhir.kemkes.go.id/id';
                 $nik = $this->enc('nik|' . $data_patient['nik']);
                 $response_satusehat  = json_decode($this->api_response_ss($endpoint, $nik));
 
@@ -165,20 +172,35 @@ class PatientController extends Controller
         }
     }
 
+    # untuk Scheduler dan Manual
     public function runJob(Request $request)
     {
         try {
-
-            $param['action'] = $request->action; // manual atau schedule
-            $param['start'] = $this->currentNow(); //dari APITrait
-            $param['id'] = config('constan.job_name.patient'); //id
-            $param['status'] = 'Process'; //status awal process , lalu ada Completed
+            # buat job log
+            $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
+            $param_start['start'] = $this->currentNow(); //dari APITrait
+            $param_start['id'] = config('constan.job_name.patient'); //id
+            $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
 
             # membuat Log status start job, job_report variable untuk mengambil last Id
-            $job_report = $this->job_logs_repo->insertJobLogsStart($param);
+            if ($this->patient_repo->getDataPatientReadyJob()->count() > 0) {
 
-            # jalan kan job
-            PatientJob::dispatch($this->patient_repo, $this->job_logs_repo, $job_report->id);
+                if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
+                    return config('constan.error_message.toast_job_already');
+                } else {
+                    $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
+                    $this->job_id = $job_report->id;
+                    # jalan kan job
+                    PatientJob::dispatch(
+                        $this->patient_repo,
+                        $this->job_logs_repo,
+                        $this->job_id
+                    );
+                    return config('constan.error_message.toast_job_running');
+                }
+            } else {
+                return config('constan.error_message.toast_job_data_update');
+            }
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

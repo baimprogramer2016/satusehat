@@ -27,6 +27,7 @@ class PractitionerRepository implements PractitionerInterface
     {
         $data = $this->getDataPractitionerFind($id);
         $data->nik = $request['nik'];
+        $data->satusehat_statuscode = null;
         $data->update();
 
         return $data;
@@ -45,6 +46,7 @@ class PractitionerRepository implements PractitionerInterface
         return $data;
     }
 
+    # data untuk Job/ Scheduler
     public function getDataPractitionerReadyJob()
     {
         return $this->model

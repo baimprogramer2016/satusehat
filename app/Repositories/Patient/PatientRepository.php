@@ -27,6 +27,7 @@ class PatientRepository implements PatientInterface
     {
         $data = $this->getDataPatientFind($id);
         $data->nik = $request['nik'];
+        $data->satusehat_statuscode = null;
         $data->update();
 
         return $data;
@@ -45,6 +46,7 @@ class PatientRepository implements PatientInterface
         return $data;
     }
 
+    # data untuk Job/ Scheduler
     public function getDataPatientReadyJob()
     {
         return $this->model

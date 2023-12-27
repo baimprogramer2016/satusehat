@@ -72,7 +72,7 @@ class CompositionControlller extends Controller
     public function responseSS(Request $request, $id)
     {
         try {
-            $response_satusehat  = $this->api_response_ss('Composition', $id);
+            $response_satusehat  = $this->api_response_ss('/Composition', $id);
             return view('pages.composition.composition-response-ss', [
                 "data_response" => $response_satusehat
             ]);

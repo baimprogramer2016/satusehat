@@ -32,7 +32,7 @@ class ProcQueueJob implements ShouldQueue
     public function handle(): void
     {
         //
-        for ($i = 1; $i <= 10000; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             Queue::insert([
                 'angka' => $this->angka
             ]);

@@ -86,7 +86,7 @@ trait ApiTrait
         # generate token
         $token = $this->auth_satu_sehat();
         # hit ss
-        $url    = $this->env()->base_url . "/" . $endpoint . "/" . $this->dec($id);
+        $url    = $this->env()->base_url . $endpoint . "/" . $this->dec($id);
         //get detail
         $response_satusehat  = Http::withToken($token)->get($url)->body();
         return $response_satusehat;
@@ -96,7 +96,7 @@ trait ApiTrait
     {
         # generate token
         $token = $this->auth_satu_sehat();
-        $url    = $this->env()->base_url . "/" . $endpoint;
+        $url    = $this->env()->base_url  . $endpoint;
 
         $response = Http::withToken($token)->post($url, $payload);
         return $response;

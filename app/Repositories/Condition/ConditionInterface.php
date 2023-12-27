@@ -6,4 +6,6 @@ interface ConditionInterface
 {
     public function getQuery();
     public function getDataConditionByOriginalCode($original_code);
+
+    public function updateDataBundleConditionJob($param = [], $rank);
 }

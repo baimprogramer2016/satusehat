@@ -4,7 +4,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">Jadwal</h3>
+            <h3 class="nk-block-title page-title">Jadwal (Kirim ke Satu Sehat)</h3>
             <div class="nk-block-des text-soft">
                 <p>Halaman Pengaturan</p>
             </div>
@@ -31,6 +31,7 @@
                                     <th>Kode</th>
                                     <th>Nama</th>
                                     <th>Cron</th>
+                                    <th>Command</th>
                                     <th>Status</th>
                                     <th>Updated At</th>
                                     <th>Aksi</th>
@@ -42,7 +43,10 @@
                                     <td>{{ $item_jadwal->kode }}</td>
                                     <td>{{ $item_jadwal->name }}</td>
                                     <td>{{ $item_jadwal->cron }}</td>
-                                    <td>{{ ($item_jadwal->status == 1) ? 'Aktif' : 'Tidak Aktif' }}</td>
+                                    <td>{{ $item_jadwal->command }}</td>
+                                    <td class='{{ ($item_jadwal->status==1) ? ' text-success' : 'text-danger' }}'>{{
+                                        ($item_jadwal->status == 1) ? 'Aktif' : 'Tidak Aktif' }}
+                                    </td>
                                     <td>{{ $item_jadwal->updated_at }}</td>
                                     <td>
                                         <div class="drodown">

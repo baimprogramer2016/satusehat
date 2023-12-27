@@ -12,12 +12,13 @@ use App\Traits\ApiTrait;
 use Throwable;
 
 
-class PracticionerController extends Controller
+class PractitionerController extends Controller
 {
     use GeneralTrait;
     use ApiTrait;
     public $practitioner_repo;
     public $job_logs_repo;
+    protected $job_id = 0;
     public function __construct(
         PractitionerInterface $practitionerRepository,
         JobLogsInterface $jobLogsInterface
@@ -33,6 +34,12 @@ class PracticionerController extends Controller
             $data = $this->practitioner_repo->getQuery();
             return Datatables::of($data)
                 ->addIndexColumn()
+                ->addColumn('status_update', function ($item_patient) {
+                    // $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">' . $item_patient . '</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
+                    $status_update = ($item_patient->satusehat_process == 1) ? '<span class=text-success>Berhasil Update</span>' : '';
+
+                    return $status_update;
+                })
                 ->addColumn('action', function ($item_practitioner) {
                     // $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">' . $item_practitioner . '</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
                     if ($item_practitioner->satusehat_process == 1) {
@@ -58,7 +65,7 @@ class PracticionerController extends Controller
 
                     return $action_update;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['status_update', 'action'])
                 ->make(true);
         }
 
@@ -70,7 +77,7 @@ class PracticionerController extends Controller
     public function responseSS(Request $request, $id)
     {
         try {
-            $endpoint = 'Practitioner?identifier=https://fhir.kemkes.go.id/id';
+            $endpoint = '/Practitioner?identifier=https://fhir.kemkes.go.id/id';
             $nik = $this->enc('nik|' . $this->dec($id));
             $response_satusehat  = $this->api_response_ss($endpoint, $nik);
             return view('pages.practitioner.practitioner-response-ss', [
@@ -120,7 +127,7 @@ class PracticionerController extends Controller
             $data_practitioner = $this->practitioner_repo->getDataPractitionerFind($this->dec($id));
 
             if (!empty($data_practitioner['nik'])) {
-                $endpoint = 'Practitioner?identifier=https://fhir.kemkes.go.id/id';
+                $endpoint = '/Practitioner?identifier=https://fhir.kemkes.go.id/id';
                 $nik = $this->enc('nik|' . $data_practitioner['nik']);
                 $response_satusehat  = json_decode($this->api_response_ss($endpoint, $nik));
 
@@ -167,20 +174,36 @@ class PracticionerController extends Controller
     }
 
 
+    # untuk Scheduler dan Manual
     public function runJob(Request $request)
     {
         try {
-
-            $param['action'] = $request->action; // manual atau schedule
-            $param['start'] = $this->currentNow(); //dari APITrait
-            $param['id'] = config('constan.job_name.practitioner'); //id
-            $param['status'] = 'Process'; //status awal process , lalu ada Completed
+            # buat job log
+            $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
+            $param_start['start'] = $this->currentNow(); //dari APITrait
+            $param_start['id'] = config('constan.job_name.practitioner'); //id
+            $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
 
             # membuat Log status start job, job_report variable untuk mengambil last Id
-            $job_report = $this->job_logs_repo->insertJobLogsStart($param);
-
+            if ($this->practitioner_repo->getDataPractitionerReadyJob()->count() > 0) {
+                if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
+                    return config('constan.error_message.toast_job_already');
+                } else {
+                    $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
+                    $this->job_id = $job_report->id;
+                    # jalan kan job
+                    PractitionerJob::dispatch(
+                        $this->practitioner_repo,
+                        $this->job_logs_repo,
+                        $this->job_id
+                    );
+                    return config('constan.error_message.toast_job_running');
+                }
+            } else {
+                return config('constan.error_message.toast_job_data_update');
+            }
             # jalan kan job
-            PractitionerJob::dispatch($this->practitioner_repo, $this->job_logs_repo, $job_report->id);
+
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

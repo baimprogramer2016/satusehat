@@ -99,7 +99,7 @@ class EncounterController extends Controller
     public function responseSS(Request $request, $id)
     {
         try {
-            $response_satusehat  = $this->api_response_ss('Encounter', $id);
+            $response_satusehat  = $this->api_response_ss('/Encounter', $id);
             return view('pages.encounter.encounter-response-ss', [
                 "data_response" => $response_satusehat
             ]);

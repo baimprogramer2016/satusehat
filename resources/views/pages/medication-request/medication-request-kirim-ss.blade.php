@@ -1,18 +1,16 @@
 <div class="nk-upload-form">
-    <h5 class="title mb-3">Ubah Organisasi</h5>
+    <h5 class="title mb-3">Tambah Organisasi</h5>
 </div>
 <div class="nk-upload-list">
-
-    <form action="{{ route('organisasi-update') }}" method="POST" id="form-action">
+    <form action="{{ route('organisasi-simpan') }}" method="POST" id="form-action">
         @csrf
         <div class="row g">
             <div class="col-md-4">
                 <div class="form-group">
-                    <input type="hidden" name="id_ubah" value="{{ Crypt::encrypt($data_organization->id) }}">
                     <label class="form-label" for="original_code">Kode</label>
                     <div class="form-control-wrap">
                         <input name="original_code" type="text" class="form-control form-control-sm" id="original_code"
-                            value="{{ $data_organization->original_code }}" required>
+                            required>
                     </div>
                 </div>
             </div>
@@ -20,8 +18,7 @@
                 <div class="form-group">
                     <label class="form-label" for="name">Nama</label>
                     <div class="form-control-wrap">
-                        <input name="name" value="{{ $data_organization->name }}" type="text"
-                            class="form-control form-control-sm" id="name" required>
+                        <input name="name" type="text" class="form-control form-control-sm" id="name" required>
                     </div>
                 </div>
             </div>
@@ -29,8 +26,8 @@
                 <div class="form-group">
                     <label class="form-label" for="satusehat_id">Satu Sehat ID</label>
                     <div class="form-control-wrap">
-                        <input name="satusehat_id" value="{{ $data_organization->satusehat_id }}" readonly type="text"
-                            class="form-control form-control-sm" id="satusehat_id" required>
+                        <input name="satusehat_id" readonly type="text" class="form-control form-control-sm"
+                            id="satusehat_id" required>
                     </div>
                 </div>
             </div>
@@ -40,10 +37,6 @@
                     <div class="form-control-wrap ">
                         <div class="form-control-select">
                             <select class="form-control" id="default-06" name="partof_id" id="partof_id">
-                                <option value="{{ $data_organization->r_partof->satusehat_id ?? null}}">
-                                    {{$data_organization->r_partof->name ?? '' }}</option>
-                                <option value="{{ $data_parameter->organization_id }}">{{ $data_parameter->corporate }}
-                                </option>
                                 @foreach ($data_bagian as $item_bagian)
                                 <option value="{{ $item_bagian->satusehat_id }}">{{ $item_bagian->name }}</option>
                                 @endforeach
@@ -57,8 +50,6 @@
                     <label class="form-label" for="satusehat_send">Status</label>
                     <div class="form-control-wrap">
                         <select class="form-control" id="default-06" name="satusehat_send" id="satusehat_send">
-                            <option value="{{ $data_organization->r_status->status }}">{{
-                                $data_organization->r_status->description }}</option>
                             @foreach ($data_status as $item_status)
                             <option value="{{ $item_status->status }}">{{ $item_status->description }}</option>
                             @endforeach
@@ -70,7 +61,7 @@
 
             <div class="col-md-12 mt-3">
                 <div class="form-group">
-                    <button type="submit" class="btn btn-lg btn-primary btn-sm btn-action">Ubah</button>
+                    <button type="submit" class="btn btn-lg btn-primary btn-sm btn-action">Simpan</button>
                 </div>
             </div>
         </div>
@@ -91,7 +82,7 @@
             e.preventDefault();
                 Swal.fire({
                     title: 'Konfirmasi',
-                    text: "Anda akan Mengubah Data?",
+                    text: "Anda akan Menambahkan Data?",
                     showCancelButton: true,
                     confirmButtonColor: "#2c3782",
                     confirmButtonText: 'Lanjut',

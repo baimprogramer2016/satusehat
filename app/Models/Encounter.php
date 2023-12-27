@@ -19,6 +19,6 @@ class Encounter extends Model
 
     public function r_condition()
     {
-        return $this->hasMany(Condition::class, 'encounter_id', 'satusehat_id');
+        return $this->hasMany(Condition::class, 'encounter_original_code', 'original_code')->orderBy('ss_condition.rank', 'asc');;
     }
 }

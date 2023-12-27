@@ -71,7 +71,7 @@
 <script>
     var table =  $('.data-table').DataTable({
          stateSave: true,
-         "order": [[ 2, "desc" ]]
+
           language : {
                 sLengthMenu: "Show _MENU_"
             },

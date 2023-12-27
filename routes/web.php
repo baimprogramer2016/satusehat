@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BundleController;
 use App\Http\Controllers\CompositionControlller;
 use App\Http\Controllers\ConditionControlller;
 use App\Http\Controllers\DashboardController;
@@ -11,11 +12,12 @@ use App\Http\Controllers\KfaController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MedicationController;
+use App\Http\Controllers\MedicationRequestController;
 use App\Http\Controllers\ObservationControlller;
-use App\Http\Controllers\OraganizationController;
+use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PatientController;
-use App\Http\Controllers\PracticionerController;
+use App\Http\Controllers\PractitionerController;
 use App\Http\Controllers\ProcedureControlller;
 use App\Http\Controllers\QueueController;
 use App\Http\Controllers\SinkronisasiController;
@@ -27,13 +29,18 @@ Route Application
 */
 
 # TES
-
-Route::get('/queue', [QueueController::class, 'index'])->name('queue');
+// Route::get('/queue', [QueueController::class, 'index'])->name('queue');
+// Route::get('/query', [SinkronisasiController::class, 'query'])->name('query');
 
 # KFA
 Route::get('/get-kfa', [KfaController::class, 'getKfa'])->name('get-kfa')->middleware('auth');
-
 # BUNDLE
+// Route::get('/bundle', [BundleController::class, 'runJob'])->name('bundle')->middleware('auth');
+Route::post('/sinkronisasi-run/{param_id_sinkronisasi}', [SinkronisasiController::class, 'runJob'])->name('sinkronisasi-run')->middleware('auth');
+// Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');
+
+
+
 
 
 /*
@@ -55,18 +62,18 @@ Route::get('/parameter-ubah', [ParameterController::class, 'ubah'])->name('param
 Route::post('/parameter-update', [ParameterController::class, 'update'])->name('parameter-update')->middleware('auth');
 Route::get('/parameter-lihat', [ParameterController::class, 'lihat'])->name('parameter-lihat')->middleware('auth');
 
-Route::get('/organisasi', [OraganizationController::class, 'index'])->name('organisasi')->middleware('auth');
-Route::get('/organisasi-tambah', [OraganizationController::class, 'tambah'])->name('organisasi-tambah')->middleware('auth');
-Route::get('/organisasi-struktur', [OraganizationController::class, 'struktur'])->name('organisasi-struktur')->middleware('auth');
-Route::post('/organisasi-simpan', [OraganizationController::class, 'simpan'])->name('organisasi-simpan')->middleware('auth');
-Route::get('/organisasi-struktur', [OraganizationController::class, 'struktur'])->name('organisasi-struktur')->middleware('auth');
-Route::get('/organisasi-ubah/{id}', [OraganizationController::class, 'ubah'])->name('organisasi-ubah')->middleware('auth');
-Route::post('/organisasi-update', [OraganizationController::class, 'update'])->name('organisasi-update')->middleware('auth');
-Route::get('/organisasi-hapus/{id}', [OraganizationController::class, 'hapus'])->name('organisasi-hapus')->middleware('auth');
-Route::post('/organisasi-hapus-data', [OraganizationController::class, 'hapusData'])->name('organisasi-hapus-data')->middleware('auth');
-Route::get('/organisasi-response-ss/{id}', [OraganizationController::class, 'responseSS'])->name('organisasi-response-ss')->middleware('auth');
-Route::get('/organisasi-modal-kirim-ss/{id}', [OraganizationController::class, 'modalKirimSS'])->name('organisasi-modal-kirim-ss')->middleware('auth');
-Route::post('/organisasi-kirim-ss/{id}', [OraganizationController::class, 'kirimSS'])->name('organisasi-kirim-ss')->middleware('auth');
+Route::get('/organisasi', [OrganizationController::class, 'index'])->name('organisasi')->middleware('auth');
+Route::get('/organisasi-tambah', [OrganizationController::class, 'tambah'])->name('organisasi-tambah')->middleware('auth');
+Route::get('/organisasi-struktur', [OrganizationController::class, 'struktur'])->name('organisasi-struktur')->middleware('auth');
+Route::post('/organisasi-simpan', [OrganizationController::class, 'simpan'])->name('organisasi-simpan')->middleware('auth');
+Route::get('/organisasi-struktur', [OrganizationController::class, 'struktur'])->name('organisasi-struktur')->middleware('auth');
+Route::get('/organisasi-ubah/{id}', [OrganizationController::class, 'ubah'])->name('organisasi-ubah')->middleware('auth');
+Route::post('/organisasi-update', [OrganizationController::class, 'update'])->name('organisasi-update')->middleware('auth');
+Route::get('/organisasi-hapus/{id}', [OrganizationController::class, 'hapus'])->name('organisasi-hapus')->middleware('auth');
+Route::post('/organisasi-hapus-data', [OrganizationController::class, 'hapusData'])->name('organisasi-hapus-data')->middleware('auth');
+Route::get('/organisasi-response-ss/{id}', [OrganizationController::class, 'responseSS'])->name('organisasi-response-ss')->middleware('auth');
+Route::get('/organisasi-modal-kirim-ss/{id}', [OrganizationController::class, 'modalKirimSS'])->name('organisasi-modal-kirim-ss')->middleware('auth');
+Route::post('/organisasi-kirim-ss/{id}', [OrganizationController::class, 'kirimSS'])->name('organisasi-kirim-ss')->middleware('auth');
 
 
 Route::get('/lokasi', [LocationController::class, 'index'])->name('lokasi')->middleware('auth');
@@ -90,19 +97,24 @@ Route::get('/pasien-ubah/{id}', [PatientController::class, 'ubah'])->name('pasie
 Route::post('/pasien-update', [PatientController::class, 'update'])->name('pasien-update')->middleware('auth');
 Route::post('/pasien-run-job', [PatientController::class, 'runJob'])->name('pasien-run-job')->middleware('auth');
 
-Route::get('/praktisi', [PracticionerController::class, 'index'])->name('praktisi')->middleware('auth');
-Route::get('/praktisi-response-ss/{id}', [PracticionerController::class, 'responseSS'])->name('praktisi-response-ss')->middleware('auth');
-Route::get('/praktisi-ubah-ihs/{id}', [PracticionerController::class, 'ubahIHS'])->name('praktisi-ubah-ihs')->middleware('auth');
-Route::post('/praktisi-update-ihs', [PracticionerController::class, 'updateIHS'])->name('praktisi-update-ihs')->middleware('auth');
-Route::get('/praktisi-ubah/{id}', [PracticionerController::class, 'ubah'])->name('praktisi-ubah')->middleware('auth');
-Route::post('/praktisi-update', [PracticionerController::class, 'update'])->name('praktisi-update')->middleware('auth');
-Route::post('/praktisi-run-job', [PracticionerController::class, 'runJob'])->name('praktisi-run-job')->middleware('auth');
+Route::get('/praktisi', [PractitionerController::class, 'index'])->name('praktisi')->middleware('auth');
+Route::get('/praktisi-response-ss/{id}', [PractitionerController::class, 'responseSS'])->name('praktisi-response-ss')->middleware('auth');
+Route::get('/praktisi-ubah-ihs/{id}', [PractitionerController::class, 'ubahIHS'])->name('praktisi-ubah-ihs')->middleware('auth');
+Route::post('/praktisi-update-ihs', [PractitionerController::class, 'updateIHS'])->name('praktisi-update-ihs')->middleware('auth');
+Route::get('/praktisi-ubah/{id}', [PractitionerController::class, 'ubah'])->name('praktisi-ubah')->middleware('auth');
+Route::post('/praktisi-update', [PractitionerController::class, 'update'])->name('praktisi-update')->middleware('auth');
+Route::post('/praktisi-run-job', [PractitionerController::class, 'runJob'])->name('praktisi-run-job')->middleware('auth');
 
 Route::get('/kfa', [KfaController::class, 'index'])->name('kfa')->middleware('auth');
 Route::get('/medication', [MedicationController::class, 'index'])->name('medication')->middleware('auth');
 Route::get('/medication-kfa/{id}', [MedicationController::class, 'modalKfa'])->name('medication-kfa')->middleware('auth');
 Route::get('/medication-kfa-data/{id}', [MedicationController::class, 'getDataKFa'])->name('medication-kfa-data')->middleware('auth');
 Route::post('/medication-kfa-update', [MedicationController::class, 'updateKfa'])->name('medication-kfa-update')->middleware('auth');
+
+
+Route::get('/medication-request', [MedicationRequestController::class, 'index'])->name('medication-request')->middleware('auth');
+Route::get('/medication-request-response-ss/{id}', [MedicationRequestController::class, 'responseSS'])->name('medication-request-response-ss')->middleware('auth');
+
 
 Route::get('/encounter', [EncounterController::class, 'index'])->name('encounter')->middleware('auth');
 Route::get('/encounter-detail/{original_code}', [EncounterController::class, 'detail'])->name('encounter-detail')->middleware('auth');
@@ -124,7 +136,11 @@ Route::get('/composition-detail/{id}', [CompositionControlller::class, 'detail']
 Route::get('/sinkronisasi', [SinkronisasiController::class, 'index'])->name('sinkronisasi')->middleware('auth');
 Route::get('/sinkronisasi-tambah', [SinkronisasiController::class, 'tambah'])->name('sinkronisasi-tambah')->middleware('auth');
 Route::post('/sinkronisasi-simpan', [SinkronisasiController::class, 'simpan'])->name('sinkronisasi-simpan')->middleware('auth');
-
+Route::get('/sinkronisasi-ubah/{id}', [SinkronisasiController::class, 'ubah'])->name('sinkronisasi-ubah')->middleware('auth');
+Route::post('/sinkronisasi-update', [SinkronisasiController::class, 'update'])->name('sinkronisasi-update')->middleware('auth');
+Route::post('/sinkronisasi-query', [SinkronisasiController::class, 'query'])->name('sinkronisasi-query')->middleware('auth');
+Route::get('/sinkronisasi-hapus/{id}', [SinkronisasiController::class, 'hapus'])->name('sinkronisasi-hapus')->middleware('auth');
+Route::post('/sinkronisasi-hapus-data', [SinkronisasiController::class, 'hapusData'])->name('sinkronisasi-hapus-data')->middleware('auth');
 
 Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal')->middleware('auth');
 Route::get('/jadwal-ubah/{id}', [JadwalController::class, 'ubah'])->name('jadwal-ubah')->middleware('auth');

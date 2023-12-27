@@ -47,19 +47,29 @@ return [
         "failed_success" => "Proses Sukses",
         "failed_ss_1" => "TIdak bisa dihapus, data sudah dikirm ke satu sehat",
         "message_waiting" => "Please Wait....",
-        "id_ihs_error" => "ID IHS Tidak Ditemukan "
+        "id_ihs_error" => "ID IHS Tidak Ditemukan ",
+        "toast_job_already" => "Gagal - Job Sudah ada dalam Proses Antrian",
+        "toast_job_running" => "Job dijalankan",
+        "toast_job_data_update" => "Data Sudah Update Semua",
+        "toast_job_data_no" => "Tidak Ada Jadwal Sinkronisasi",
     ],
     "fhir" => [
         "patient" => "Patient?identifier=https://fhir.kemkes.go.id/id/nik",
         "practitioner" => "Practitioner?identifier=https://fhir.kemkes.go.id/id/nik",
+    ],
+    "sinkronisasi" => [
+        "run" => "App\Http\Controllers\SinkronisasiController@runJob"
     ],
     "status" => [
         "terkirim" => "<span class='text-success'>Terkirim ke Satu Sehat</span>",
         "menunggu" => "<span class='text-warning'>Menunggu</span>",
     ],
     "job_name" => [
-        "patient" => "patient_id",
-        "practitioner" => "practitioner_id",
-        "bundle" => "bundle",
+        "patient" => "patient_job",
+        "practitioner" => "practitioner_job",
+        "bundle" => "bundle_job",
+        "sync" => "sync_job",
+        "job_manual" => "manual",
+        "job_scheduler" => "scheduler",
     ]
 ];

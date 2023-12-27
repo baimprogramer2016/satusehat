@@ -11,7 +11,7 @@ use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
 use App\Traits\JsonTrait;
 
-class OraganizationController extends Controller
+class OrganizationController extends Controller
 {
 
     use GeneralTrait;
@@ -41,6 +41,7 @@ class OraganizationController extends Controller
     {
         return view("pages.organization.organization-tambah", [
             "seq_no" => $this->autoSeq('ORG'),
+            "data_parameter" => $this->parameter_repo->getDataParameterFirst(),
             "data_bagian" => $this->organization_repo->getDataOrganizationIdSuccess(),
             "data_status" => $this->status_repo->getDataStatusNotSend()
         ]);
@@ -112,7 +113,7 @@ class OraganizationController extends Controller
     public function responseSS(Request $request, $id)
     {
         try {
-            $response_satusehat  = $this->api_response_ss('Organization', $id);
+            $response_satusehat  = $this->api_response_ss('/Organization', $id);
             return view('pages.organization.organization-response-ss', [
                 "data_response" => $response_satusehat
             ]);
@@ -142,7 +143,7 @@ class OraganizationController extends Controller
             $data_parameter = $this->parameter_repo->getDataParameterFirst();
 
             $payload_organization = $this->bodyOrganization($data_organization, $data_parameter);
-            $response = $this->post_general_ss('Organization', $payload_organization);
+            $response = $this->post_general_ss('/Organization', $payload_organization);
             $body_parse = json_decode($response->body());
 
             $satusehat_id = null;
@@ -150,7 +151,7 @@ class OraganizationController extends Controller
                 $satusehat_id = $body_parse->id;
             }
             # update status ke database
-            $this->organization_repo->updateStatusOrganization($this->dec($request->id), $satusehat_id, $payload_organization, $response);;
+            $this->organization_repo->updateStatusOrganization($this->dec($request->id), $satusehat_id, $payload_organization, $response);
             return $response;
         } catch (Throwable $e) {
             return view("layouts.error", [

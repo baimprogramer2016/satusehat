@@ -6,15 +6,26 @@ add expiry_token timestamp;
 alter table ss_generate_token
 add page_kfa int;
 
+
+
 create table ss_jadwal(
 id serial primary key,
 kode varchar(100),
-nama varchar(200),
+name varchar(200),
 cron varchar(30),
+command varchar(50),
 status int,
 created_at timestamp,
-updated_ar timestamp
+updated_at timestamp
 );
+
+insert into ss_jadwal(kode,name,cron,command,status)
+select 'patient_job','Pasien','* * * * *', 'App\Http\Controllers\PatientController@runJob',0
+union all
+select 'practitioner_job','Praktisi','* * * * *', 'App\Http\Controllers\PractitionerController@runJob',0
+union all
+select 'bundle_job','Bundle','* * * * *', 'App\Http\Controllers\BundleController@runJob',0
+
 
 create table ss_kfa_dev(
 kode_kfa varchar(30),
@@ -39,22 +50,23 @@ act_display varchar(100),
 created_at timestamp,
 updated_at timestamp
 )
-select * from ss_sinkronisasi
+
 create table ss_sinkronisasi(
 id serial primary key,
 kode varchar(100),
 description varchar(100),
+command varchar(50),
 query text,
 odbc varchar(50),
 target varchar(50),
-active int,
+status int,
 record int,
 part int,
 page int,
 upload int,
 prefix varchar(50),
-schedule varchar(30),
-status varchar(1),
+cron varchar(30),
+process varchar(1),
 sp varchar(30),
 last_process timestamp,
 created_at timestamp,
@@ -68,7 +80,7 @@ kode varchar(50),
 status varchar(50),
 start_date timestamp,
 end_date timestamp,
-error_message varchar(100),
+error_message text,
 action  varchar(100),
 created_at timestamp,
 updated_at timestamp

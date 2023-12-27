@@ -2,16 +2,16 @@
     <h5 class="title mb-3">Hapus Organisasi</h5>
 </div>
 <div class="nk-upload-list">
-    <form action="{{ route('organisasi-hapus-data') }}" method="POST" id="form-action">
+    <form action="{{ route('sinkronisasi-hapus-data') }}" method="POST" id="form-action">
         @csrf
         <div class="row g">
             <div class="col-md-12">
                 <div class="form-group">
-                    <input type="hidden" name="id_hapus" value="{{ Crypt::encrypt($data_organization->id) }}">
+                    <input type="hidden" name="id_hapus" value="{{ Crypt::encrypt($data_sinkronisasi->id) }}">
                     <label class="form-label" for="original_code">Nama</label>
                     <div class="form-control-wrap">
-                        <input name="name" readonly value="{{ $data_organization->name }}" type="text"
-                            class="form-control form-control-sm" id="name" required>
+                        <input name="description" readonly value="{{ $data_sinkronisasi->description }}" type="text"
+                            class="form-control form-control-sm" id="description" required>
                     </div>
                 </div>
             </div>

@@ -160,7 +160,7 @@
                                                 class="nk-menu-text">Medication</span></a>
                                     </li>
                                     <li class="nk-menu-item">
-                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
+                                        <a href="{{ route('medication-request') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Medication Request</span></a>
                                     </li>
                                     {{-- <li class="nk-menu-item">

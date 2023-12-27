@@ -48,8 +48,8 @@
                                     <th>Sukses</th>
                                     <th>Jadwal</th>
                                     <th>Terakhir</th>
-                                    <th>Status</th>
-                                    <th>Start/Stop</th>
+                                    <th>Aktif</th>
+
                                     <th>Aksi</th>
 
                                 </tr>
@@ -63,10 +63,12 @@
                                     <td>{{ $item_sinkronisasi->part }}</td>
                                     <td>{{ $item_sinkronisasi->page }}</td>
                                     <td>{{ $item_sinkronisasi->upload }}</td>
-                                    <td>{{ $item_sinkronisasi->schedule }}</td>
+                                    <td>{{ $item_sinkronisasi->cron }}</td>
                                     <td>{{ $item_sinkronisasi->last_process }}</td>
-                                    <td>{{ $item_sinkronisasi->status }}</td>
-                                    <td><button class="btn btn-success"><em class="icon ni ni-play"></em></button>
+                                    <td class='{{ ($item_sinkronisasi->status==1) ? ' text-success' : 'text-danger' }}'>
+                                        {{
+                                        ($item_sinkronisasi->status == 1) ? 'Aktif' : 'Tidak Aktif' }}
+                                    </td>
                                     </td>
                                     <td>
                                         <div class="drodown">
@@ -81,6 +83,10 @@
                                                     <li><a onClick="return modalHapus('{{ Crypt::encrypt($item_sinkronisasi->id) }}')"
                                                             href="#file-upload" data-toggle="modal"><em
                                                                 class="icon ni ni-trash"></em><span>Hapus</span></a>
+                                                    </li>
+                                                    <li><a style="cursor: pointer;"
+                                                            onClick="return modalSinkron('{{ Crypt::encrypt($item_sinkronisasi->id) }}')"><em
+                                                                class="icon ni ni-reload "></em><span>Sinkronisasi</span></a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -118,6 +124,7 @@
 @push('script')
 <script>
     $('.data-table').DataTable({
+        stateSave: true,
           language : {
                 sLengthMenu: "Show _MENU_"
             },
@@ -138,34 +145,98 @@
     }
     function modalHapus(id)
     {
-        // loadingProcess(); //dari custom.js
-        // var url     = '{{ route("organisasi-hapus", ":id") }}';
-        // url         = url.replace(':id',id);
-        // $.ajax({
-        //     type:"GET",
-        //     url:url,
-        //     success: function(response)
-        //     {
-        //         $("#content-modal").html("");
-        //         $("#content-modal").html(response);
-        //     }
-        // })
+        loadingProcess(); //dari custom.js
+        var url     = '{{ route("sinkronisasi-hapus", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
     }
     function modalUbah(id)
     {
-        // loadingProcess(); //dari custom.js
-        // var url     = '{{ route("organisasi-ubah", ":id") }}';
-        // url         = url.replace(':id',id);
+        loadingProcess(); //dari custom.js
+        var url     = '{{ route("sinkronisasi-ubah", ":id") }}';
+        url         = url.replace(':id',id);
 
-        // $.ajax({
-        //     type:"GET",
-        //     url:url,
-        //     success: function(response)
-        //     {
-        //         $("#content-modal").html("");
-        //         $("#content-modal").html(response);
-        //     }
-        // })
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+
+    function modalExecQuery()
+    {
+
+        odbc = $("#odbc").val();
+        query = $("#query").val();
+        $(".result-table").html("<h5>Load Data...</h5>");
+
+        var url     = '{{ route("sinkronisasi-query") }}';
+        $.ajax({
+            type:"POST",
+            url:url,
+            data:  {
+                odbc : $("#odbc").val(),
+                text_query : $("#query").val(),
+                _token: "{{ csrf_token() }}",
+            },
+            success: function(response)
+            {
+                $(".result-table").html("");
+                $(".result-table").html(response);
+            }
+        })
+    }
+
+
+    function modalSinkron(id)
+    {
+
+        Swal.fire({
+                    title: 'Konfirmasi',
+                    text: "Sinkronisasi Akan di jalankan ",
+                    showCancelButton: true,
+                    confirmButtonColor: "#2c3782",
+                    confirmButtonText: 'Jalankan',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.value) {
+                        var url     = '{{ route("sinkronisasi-run", ":param_id_sinkronisasi") }}';
+                        url         = url.replace(':param_id_sinkronisasi',id);
+
+                        $.ajax({
+                            type:"POST",
+                            url:url,
+                            data: {
+                                _token : "{{csrf_token()}}"
+                            },
+                            success: function(response)
+                            {
+                                // console.log(JSON.stringify(response));
+                                toastMessage(response,"success");
+                            }
+                        })
+                    }
+                });
+    }
+
+    function toastMessage(message,color){
+        (function (NioApp, $) {
+            'use strict'; // Uses
+                toastr.clear();
+                NioApp.Toast('<p>'+message+'</p>',color);
+        })(NioApp, jQuery);
     }
 
 </script>

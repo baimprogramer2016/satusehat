@@ -4,7 +4,7 @@ namespace App\Jobs;
 
 use App\Traits\ApiTrait;
 use App\Traits\GeneralTrait;
-use Exception;
+use Throwable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -27,11 +27,11 @@ class PractitionerJob implements ShouldQueue
     public function __construct(
         $practitioner_repo,
         $job_logs_repo,
-        $job_report_id
+        $job_id #job_id untuk id unik job logs
     ) {
         $this->practitioner_repo = $practitioner_repo;
         $this->job_logs_repo = $job_logs_repo;
-        $this->job_id = $job_report_id;
+        $this->job_id = $job_id;
     }
 
     /**
@@ -43,20 +43,23 @@ class PractitionerJob implements ShouldQueue
         $data_practitioner = $this->practitioner_repo->getDataPractitionerReadyJob();
 
         if ($data_practitioner->count() > 0) {
+
+            # default isi
+            $param['satusehat_id'] = null;
+            $param['satusehat_process'] = 0;
+            $param['satusehat_message'] =  config('constan.error_message.id_ihs_error');
+            $param['satusehat_statuscode'] = 500;
+            $param['satusehat_name'] = null;
+
+
             foreach ($data_practitioner as $item_practitioner) {
 
-                # default isi
                 $param['id'] = $item_practitioner->id;
-                $param['satusehat_id'] = null;
-                $param['satusehat_process'] = 0;
-                $param['satusehat_message'] =  config('constan.error_message.id_ihs_error');
-                $param['satusehat_statuscode'] = 500;
-                $param['satusehat_name'] = null;
 
                 # jika nik tidak kosong lakukan tarik data dari API
                 if (!empty($item_practitioner->nik)) {
                     # API get Data Practitioner
-                    $endpoint = 'Practitioner?identifier=https://fhir.kemkes.go.id/id';
+                    $endpoint = '/Practitioner?identifier=https://fhir.kemkes.go.id/id';
                     $nik = $this->enc('nik|' . $item_practitioner->nik);
                     $response_satusehat  = json_decode($this->api_response_ss($endpoint, $nik));
 
@@ -72,16 +75,17 @@ class PractitionerJob implements ShouldQueue
                 # jika ada ID IHS update satusehat_id
                 $this->practitioner_repo->updateIhsPractitioner($param);
             }
+
+            # membuat Update status Completed end job pada Log
+            $param_log['id'] = $this->job_id;
+            $param_log['end'] =  $this->currentNow();
+            $param_log['status'] =  'Completed';
+            $param_log['error_message'] =  null;
+            $this->job_logs_repo->updateJobLogsEnd($param_log);
         }
-        # membuat Update status Completed end job pada Log
-        $param_log['id'] = $this->job_id;
-        $param_log['end'] =  $this->currentNow();
-        $param_log['status'] =  'Completed';
-        $param_log['error_message'] =  null;
-        $this->job_logs_repo->updateJobLogsEnd($param_log);
     }
 
-    public function failed(Exception $e)
+    public function failed(Throwable $e)
     {
         // Called when the job is failing...
         $param_log['id'] = $this->job_id;

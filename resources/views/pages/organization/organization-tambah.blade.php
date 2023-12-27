@@ -39,6 +39,8 @@
                             <select class="form-control" id="default-06" name="partof_id" id="partof_id"
                                 data-search="on">
                                 <option value="">Pilih Bagian</option>
+                                <option value="{{ $data_parameter->organization_id }}">{{ $data_parameter->corporate }}
+                                </option>
                                 @foreach ($data_bagian as $item_bagian)
                                 <option value="{{ $item_bagian->satusehat_id }}">{{ $item_bagian->name }}</option>
                                 @endforeach

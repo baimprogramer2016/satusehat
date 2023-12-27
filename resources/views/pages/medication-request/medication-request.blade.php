@@ -4,7 +4,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">Condition</h3>
+            <h3 class="nk-block-title page-title">Medication Request</h3>
             <div class="nk-block-des text-soft">
                 <p>Halaman Kunjungan Pasien</p>
             </div>
@@ -27,9 +27,11 @@
                             <thead>
                                 <tr>
                                     <th>Kode</th>
+                                    <th>Kode Resep</th>
+                                    <th>Kode Item</th>
+                                    <th>Nama Obat</th>
                                     <th>Nama Pasien</th>
-                                    <th>ICD</th>
-                                    <th>Deskripsi</th>
+                                    <th>Instruksi</th>
                                     <th>Satu Sehat ID</th>
                                     <th>Tanggal</th>
                                     <th>Status</th>
@@ -73,16 +75,18 @@
           language : {
                 sLengthMenu: "Show _MENU_"
             },
-          ajax: "{{ route('condition') }}",
+          ajax: "{{ route('medication-request') }}",
           columns: [
 
             //   {data: 'id', name: 'id'},
               {data: 'encounter_original_code', name: 'encounter_original_code'},
+              {data: 'identifier_1', name: 'identifier_1'},
+              {data: 'identifier_2', name: 'identifier_2'},
+              {data: 'identifier_2', name: 'identifier_2'},
               {data: 'subject_display', name: 'subject_display'},
-              {data: 'code_icd', name: 'code_icd'},
-              {data: 'code_icd_display', name: 'code_icd_display'},
+              {data: 'ins_patient', name: 'ins_patient'},
               {data: 'satusehat_id', name: 'satusehat_id'},
-              {data: 'onset_datetime', name: 'onset_datetime'},
+              {data: 'satusehat_date', name: 'satusehat_date'},
               {data: 'status', name: 'status', orderable: false, searchable: false},
               {data: 'action', name: 'action', orderable: false, searchable: false},
           ]
@@ -95,7 +99,7 @@
     function modalResponseSS(id)
     {
         loadingProcess(); //dari custom.js
-        var url     = '{{ route("condition-response-ss", ":id") }}';
+        var url     = '{{ route("medication-request-response-ss", ":id") }}';
         url         = url.replace(':id',id);
         $.ajax({
             type:"GET",

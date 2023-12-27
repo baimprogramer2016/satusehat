@@ -40,4 +40,9 @@ class JobLogsRepository implements JobLogsInterface
 
         return $result;
     }
+
+    public function getDataJobLogAlreadyRun($kode)
+    {
+        return $this->model->where('kode', $kode)->where('status', 'Process')->get()->count();
+    }
 }

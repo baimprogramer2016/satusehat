@@ -72,7 +72,7 @@ class ObservationControlller extends Controller
     public function responseSS(Request $request, $id)
     {
         try {
-            $response_satusehat  = $this->api_response_ss('Observation', $id);
+            $response_satusehat  = $this->api_response_ss('/Observation', $id);
             return view('pages.observation.observation-response-ss', [
                 "data_response" => $response_satusehat
             ]);

@@ -2,51 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Repositories\Procedure\ProcedureInterface;
+use App\Repositories\MedicationRequest\MedicationRequestInterface;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\Datatables;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
 use Throwable;
 
-
-class ProcedureControlller extends Controller
+class MedicationRequestController extends Controller
 {
     use GeneralTrait;
     use ApiTrait;
-    private $procedure_repo;
+    private $medication_request_repo;
 
     public function __construct(
-        ProcedureInterface $procedureInterface,
+        MedicationRequestInterface $medicationRequestInterface,
 
     ) {
-        $this->procedure_repo = $procedureInterface;
+        $this->medication_request_repo = $medicationRequestInterface;
     }
+
 
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->procedure_repo->getQuery();
+            $data = $this->medication_request_repo->getQuery();
             return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('status', function ($item_procedure) {
+                ->addColumn('status', function ($item_medication_request) {
                     // $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">' . $item_patient . '</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
                     $clr = 'text-warning';
-                    if ($item_procedure->satusehat_send == 1) {
+                    if ($item_medication_request->satusehat_send == 1) {
                         $clr = 'text-success';
                     }
-                    $status = '<td><span class=' . $clr . '>' . $item_procedure->r_status->description ?? '' . '</span></td>';
+                    $status = '<td><span class=' . $clr . '>' . $item_medication_request->r_status->description ?? '' . '</span></td>';
 
                     return $status;
                 })
-                ->addColumn('action', function ($item_procedure) {
+                ->addColumn('action', function ($item_medication_request) {
 
 
-                    if ($item_procedure->satusehat_send == 1) {
+                    if ($item_medication_request->satusehat_send == 1) {
                         $li_kirim_ss = '';
-                        $li_response_ss = "<li><a href='#file-upload' data-toggle='modal' onClick=modalResponseSS('" . $this->enc($item_procedure->satusehat_id) . "')><em class='icon ni ni-eye'></em><span>Response Satu Sehat</span></a></li>";
+                        $li_response_ss = "<li><a href='#file-upload' data-toggle='modal' onClick=modalResponseSS('" . $this->enc($item_medication_request->satusehat_id) . "')><em class='icon ni ni-eye'></em><span>Response Satu Sehat</span></a></li>";
                     } else {
-                        $li_kirim_ss = "<li><a  onClick=modalKirimSS('" . $this->enc($item_procedure->id) . "')><em class='icon ni ni-send'></em><span>Kirim ke Satu Sehat</span></a></li>";
+                        $li_kirim_ss = "<li><a  onClick=modalKirimSS('" . $this->enc($item_medication_request->id) . "')><em class='icon ni ni-send'></em><span>Kirim ke Satu Sehat</span></a></li>";
                         $li_response_ss = '';
                     }
                     $action_update = ' <div class="drodown">
@@ -66,14 +66,14 @@ class ProcedureControlller extends Controller
                 ->make(true);
         }
 
-        return view("pages.procedure.procedure");
+        return view("pages.medication-request.medication-request");
     }
 
     public function responseSS(Request $request, $id)
     {
         try {
-            $response_satusehat  = $this->api_response_ss('/Procedure', $id);
-            return view('pages.procedure.procedure-response-ss', [
+            $response_satusehat  = $this->api_response_ss('/MedicationRequest', $id);
+            return view('pages.medication-request.medication-request-response-ss', [
                 "data_response" => $response_satusehat
             ]);
         } catch (Throwable $e) {

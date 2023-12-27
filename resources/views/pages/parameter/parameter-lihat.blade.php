@@ -4,6 +4,15 @@
 <div class="nk-upload-list">
     @csrf
     <div class="row g">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label class="form-label" for="corporate">Corporate</label>
+                <div class="form-control-wrap">
+                    <input name="corporate" readonly type="text" value="{{ $data_parameter->corporate }}"
+                        class="form-control form-control-sm" id="corporate" required>
+                </div>
+            </div>
+        </div>
         <div class="col-md-6">
             <div class="form-group">
                 <label class="form-label" for="client_id">Client ID</label>

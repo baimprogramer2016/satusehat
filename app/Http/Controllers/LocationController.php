@@ -132,7 +132,7 @@ class LocationController extends Controller
     public function responseSS(Request $request, $id)
     {
         try {
-            $response_satusehat  = $this->api_response_ss('Location', $id);
+            $response_satusehat  = $this->api_response_ss('/Location', $id);
             return view('pages.location.location-response-ss', [
                 "data_response" => $response_satusehat
             ]);
@@ -165,7 +165,7 @@ class LocationController extends Controller
 
             $payload_location = $this->bodyLocation($data_location, $data_parameter);
 
-            $response = $this->post_general_ss('Location', $payload_location);
+            $response = $this->post_general_ss('/Location', $payload_location);
             $body_parse = json_decode($response->body());
 
             $satusehat_id = null;
@@ -173,7 +173,7 @@ class LocationController extends Controller
                 $satusehat_id = $body_parse->id;
             }
             # update status ke database
-            $this->location_repo->updateStatusLocation($this->dec($request->id), $satusehat_id, $payload_location, $response);;
+            $this->location_repo->updateStatusLocation($this->dec($request->id), $satusehat_id, $payload_location, $response);
             return $response;
         } catch (Throwable $e) {
             return view("layouts.error", [

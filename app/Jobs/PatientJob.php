@@ -6,7 +6,7 @@ use App\Models\Queue;
 
 use App\Traits\ApiTrait;
 use App\Traits\GeneralTrait;
-use Exception;
+
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -30,11 +30,11 @@ class PatientJob implements ShouldQueue
     public function __construct(
         $patient_repo,
         $job_logs_repo,
-        $job_report_id
+        $job_id #job_id untuk id unik job logs
     ) {
         $this->patient_repo = $patient_repo;
         $this->job_logs_repo = $job_logs_repo;
-        $this->job_id = $job_report_id;
+        $this->job_id = $job_id;
     }
 
     /**
@@ -46,20 +46,23 @@ class PatientJob implements ShouldQueue
         $data_patient = $this->patient_repo->getDataPatientReadyJob();
 
         if ($data_patient->count() > 0) {
+
+            # default isi
+            $param['satusehat_id'] = null;
+            $param['satusehat_process'] = 0;
+            $param['satusehat_message'] =  config('constan.error_message.id_ihs_error');
+            $param['satusehat_statuscode'] = 500;
+            $param['satusehat_name'] = null;
+
             foreach ($data_patient as $item_patient) {
 
-                # default isi
                 $param['id'] = $item_patient->id;
-                $param['satusehat_id'] = null;
-                $param['satusehat_process'] = 0;
-                $param['satusehat_message'] =  config('constan.error_message.id_ihs_error');
-                $param['satusehat_statuscode'] = 500;
-                $param['satusehat_name'] = null;
+
 
                 # jika nik tidak kosong lakukan tarik data dari API
                 if (!empty($item_patient->nik)) {
                     # API get Data Patient
-                    $endpoint = 'Patient?identifier=https://fhir.kemkes.go.id/id';
+                    $endpoint = '/Patient?identifier=https://fhir.kemkes.go.id/id';
                     $nik = $this->enc('nik|' . $item_patient->nik);
                     $response_satusehat  = json_decode($this->api_response_ss($endpoint, $nik));
 
@@ -76,21 +79,21 @@ class PatientJob implements ShouldQueue
                 $this->patient_repo->updateIhsPatient($param);
             }
         }
-        # membuat Update status Completed end job pada Log
-        $param_log['id'] = $this->job_id;
-        $param_log['end'] =  $this->currentNow();
-        $param_log['status'] =  'Completed';
-        $param_log['error_message'] =  null;
-        $this->job_logs_repo->updateJobLogsEnd($param_log);
+        # membuat Update status Completed end job pada job Log
+        $param_end['id'] = $this->job_id;
+        $param_end['end'] =  $this->currentNow();
+        $param_end['status'] =  'Completed';
+        $param_end['error_message'] =  null;
+        $this->job_logs_repo->updateJobLogsEnd($param_end);
     }
 
-    public function failed(Exception $e)
+    public function failed(Throwable $e)
     {
         // Called when the job is failing...
-        $param_log['id'] = $this->job_id;
-        $param_log['end'] =  $this->currentNow();
-        $param_log['status'] =  'Failed';
-        $param_log['error_message'] = $e->getMessage();
-        $this->job_logs_repo->updateJobLogsEnd($param_log);
+        $param_end['id'] = $this->job_id;
+        $param_end['end'] =  $this->currentNow();
+        $param_end['status'] =  'Failed';
+        $param_end['error_message'] = $e->getMessage();
+        $this->job_logs_repo->updateJobLogsEnd($param_end);
     }
 }
