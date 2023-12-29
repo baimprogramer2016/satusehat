@@ -88,7 +88,7 @@ trait JsonTrait
                 ]
             ],
             "partOf" => [
-                "reference" => "Organization/" . $data_parameter['partof_id']
+                "reference" => "Organization/" . $data_organization['partof_id']
             ]
         ];
 
