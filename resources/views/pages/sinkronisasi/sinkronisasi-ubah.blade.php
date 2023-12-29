@@ -29,7 +29,7 @@
             </div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <label class="form-label" for="odbc">Odbc</label>
+                    <label class="form-label" for="odbc">Koneksi</label>
                     <div class="form-control-wrap">
                         <input name="odbc" type="text" value='{{ $data_sinkronisasi->odbc }}'
                             class="form-control form-control-sm" id="odbc" required>
@@ -134,10 +134,17 @@
                         <input name="status" type="checkbox" {{ ($data_sinkronisasi->status==1) ? 'checked':''}}
                         class="custom-control-input"
                         id="status">
-                        <label class="custom-control-label" for="status">Aktif / Tidak Aktif</label>
+                        <label class="custom-control-label" for="status">Jadwal Aktif / Tidak Aktif</label>
+                    </div>
+                    <div class="custom-control custom-control-sm custom-checkbox mt-3 ml-3">
+                        <input name="tr_table" type="checkbox" {{ ($data_sinkronisasi->tr_table==1) ? 'checked':''}}
+                        class="custom-control-input"
+                        id="tr_table">
+                        <label class="custom-control-label" for="tr_table">Kosongkan Target</label>
                     </div>
                 </div>
             </div>
+
             <div class="col-sm-12">
                 <div class="form-group">
                     <label class="form-label" for="query">Query</label>

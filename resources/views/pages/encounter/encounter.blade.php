@@ -85,7 +85,7 @@
               {data: 'location_display', name: 'location_display'},
               {data: 'period_start', name: 'period_start'},
               {data: 'satusehat_statuscode', name: 'satusehat_statuscode'},
-              {data: 'status', name: 'status', orderable: false, searchable: false},
+              {data: 'status', name: 'status', orderable: true, searchable: true},
               {data: 'action', name: 'action', orderable: false, searchable: false},
           ]
       });

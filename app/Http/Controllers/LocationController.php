@@ -54,6 +54,7 @@ class LocationController extends Controller
             "data_bagian" => $this->organization_repo->getDataOrganizationIdSuccess(),
             "data_status" => $this->status_repo->getDataStatusNotSend(),
             "data_type" => $this->physical_type_repo->getDataPhysicalType(),
+            "data_poli" => $this->location_repo->getDataPoli()
         ]);
     }
     public function simpan(Request $request)

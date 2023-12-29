@@ -4,14 +4,16 @@ namespace App\Repositories\Location;
 
 use Carbon\Carbon;
 use App\Models\Location;
+use App\Models\Poli;
 
 class LocationRepository implements LocationInterface
 {
-    private $model;
+    private $model, $poli_model;
 
     public function __construct()
     {
         $this->model = new Location();
+        $this->poli_model = new Poli();
     }
 
     # mendapatkan nilai keseluruhan
@@ -97,5 +99,11 @@ class LocationRepository implements LocationInterface
         $data->update();
 
         return $data;
+    }
+
+    public function getDataPoli()
+    {
+        $location_data = $this->model->select('original_code')->get();;
+        return $this->poli_model->whereNotIn('original_code', $location_data)->get();
     }
 }

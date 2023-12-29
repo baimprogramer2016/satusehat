@@ -2,9 +2,27 @@
     <h5 class="title mb-3">Tambah Lokasi</h5>
 </div>
 <div class="nk-upload-list">
+    <div class="row g">
+        <div class="col-md-12 mb-2">
+            <div class="form-group">
+                <label class="form-label" for="poli">Poli</label>
+                <div class="form-control-wrap ">
+                    <div class="form-control-select">
+                        <select onClick="return getValuePoli()" class="form-control" id="poli" name="poli" id="poli">
+                            @foreach ($data_poli as $item_poli)
+                            <option value="{{ $item_poli->original_code }}">{{ $item_poli->name
+                                .'-'.$item_poli->original_code }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <form action="{{ route('lokasi-simpan') }}" method="POST" id="form-action">
         @csrf
         <div class="row g">
+
             <div class="col-md-4 mb-2">
                 <div class="form-group">
                     <label class="form-label" for="original_code">Kode</label>
@@ -111,4 +129,15 @@
 
         });
     });
+
+    function getValuePoli(){
+        var e = document.getElementById("poli");
+        var value = e.value;
+        var text = e.options[e.selectedIndex].text;
+
+        poli_split = text.split("-");
+        document.getElementById("original_code").value = poli_split[1];
+        document.getElementById("name").value = poli_split[0];
+
+    }
 </script>

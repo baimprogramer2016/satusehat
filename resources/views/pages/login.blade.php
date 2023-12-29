@@ -17,7 +17,7 @@
     <link id="skin-default" rel="stylesheet" href="{{ asset('assets/css/theme.css?ver=2.2.0') }}">
 </head>
 
-<body class="nk-body bg-white npc-general pg-auth">
+<body class="nk-body bg-white npc-general pg-auth ">
     <div class="nk-app-root">
         <!-- main @s -->
         <div class="nk-main ">
@@ -27,22 +27,22 @@
                 <div class="nk-content ">
                     <div class="nk-block nk-block-middle nk-auth-body  wide-xs">
                         <div class="brand-logo pb-4 text-center">
-                            <a href="html/index.html" class="logo-link">
+                            <a href="#" class="logo-link">
                                 <img class="logo-light logo-img logo-img-lg"
-                                    src="{{ asset('images/satusehat_logo.png') }}" srcset="./images/logo2x.png 2x"
-                                    alt="logo">
+                                    src="{{ asset('images/logo-smarthub-technologies.png') }}"
+                                    srcset="./images/logo2x.png 2x" alt="logo">
                                 <img class="logo-dark logo-img logo-img-lg"
-                                    src="{{ asset('images/satusehat_logo.png') }}" srcset="./images/logo-dark2x.png 2x"
-                                    alt="logo-dark">
+                                    src="{{ asset('images/logo-smarthub-technologies.png') }}"
+                                    srcset="./images/logo-dark2x.png 2x" alt="logo-dark">
                             </a>
                         </div>
                         <div class="card card-bordered">
                             <div class="card-inner card-inner-lg">
                                 <div class="nk-block-head">
                                     <div class="nk-block-head-content">
-                                        <h4 class="nk-block-title">Monitoring Data Satu Sehat</h4>
+                                        <h4 class="nk-block-title text-center">Module Satu Sehat</h4>
                                         <div class="nk-block-des">
-                                            <p>Masuk dengan Kombinasi Username dan Password</p>
+                                            <p class="text-center">Masuk dengan Kombinasi Username dan Password</p>
                                         </div>
                                     </div>
                                 </div>

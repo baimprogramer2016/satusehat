@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Kfa extends Model
 {
     use HasFactory;
-    protected $table = 'ss_kfa_dev';
+    protected $table = 'ss_kfa';
 
     protected $guarded = ['id'];
 }

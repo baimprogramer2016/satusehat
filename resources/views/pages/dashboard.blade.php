@@ -45,9 +45,13 @@
 </div><!-- .nk-block-head --> --}}
 <div class="nk-block">
     <div class="row g-gs">
-        <iframe src="https://smarthubtech.co.id/" frameborder="0" width="100%" height="600" allowtransparency></iframe>
+        {{-- <iframe src="https://satusehat.kemkes.go.id/platform/docs/id/playbook/" frameborder="0" width="100%"
+            height="600" allowtransparency></iframe> --}}
         {{-- <iframe src="http://localhost:3000/public/dashboard/5426e0fb-5281-4adc-84f3-bd3be9cdea0e" frameborder="0"
             width="100%" height="600" allowtransparency></iframe> --}}
+        {{-- <iframe width="560" height="315" src="https://www.youtube.com/embed/Fsxf_KsaUX8" frameborder="0"
+            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        --}}
     </div>
 </div>
 @endsection

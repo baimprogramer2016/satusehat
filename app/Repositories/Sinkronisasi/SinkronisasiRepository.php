@@ -27,12 +27,18 @@ class SinkronisasiRepository implements SinkronisasiInterface
         } else {
             $sts = 0;
         }
+        if (array_key_exists('tr_table', $request)) {
+            $tr_table = 1;
+        } else {
+            $tr_table = 0;
+        }
         $input = [
             "kode" => $request['kode'],
             "description" => $request['description'],
             "query" => $request['query'],
             "odbc" => $request['odbc'],
             "status" => $sts,
+            "tr_table" => $tr_table,
             "command" => $request['command'],
             "target" => $request['target'],
             "record" => $request['record'],
@@ -60,6 +66,11 @@ class SinkronisasiRepository implements SinkronisasiInterface
         } else {
             $sts = 0;
         }
+        if (array_key_exists('tr_table', $request)) {
+            $tr_table = 1;
+        } else {
+            $tr_table = 0;
+        }
         $data = $this->getDataSinkronisasiById($id);
 
         $data->kode = $request['kode'];
@@ -67,6 +78,7 @@ class SinkronisasiRepository implements SinkronisasiInterface
         $data->description = $request['description'];
         $data->odbc = $request['odbc'];
         $data->status = $sts;
+        $data->tr_table = $tr_table;
         $data->command = $request['command'];
         $data->target = $request['target'];
         $data->prefix = $request['prefix'];

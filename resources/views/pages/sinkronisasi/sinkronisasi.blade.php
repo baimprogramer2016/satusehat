@@ -42,14 +42,11 @@
                                 <tr>
                                     <th>Kode</th>
                                     <th>Keterangan</th>
-                                    <th>Jumlah</th>
-                                    <th>Part</th>
-                                    <th>Page</th>
-                                    <th>Sukses</th>
                                     <th>Jadwal</th>
+                                    <th>Koneksi</th>
+                                    <th>Kosongkan Target</th>
                                     <th>Terakhir</th>
                                     <th>Aktif</th>
-
                                     <th>Aksi</th>
 
                                 </tr>
@@ -59,11 +56,13 @@
                                 <tr>
                                     <td>{{ $item_sinkronisasi->kode }}</td>
                                     <td>{{ $item_sinkronisasi->description }}</td>
-                                    <td>{{ $item_sinkronisasi->record }}</td>
-                                    <td>{{ $item_sinkronisasi->part }}</td>
-                                    <td>{{ $item_sinkronisasi->page }}</td>
-                                    <td>{{ $item_sinkronisasi->upload }}</td>
                                     <td>{{ $item_sinkronisasi->cron }}</td>
+                                    <td>{{ $item_sinkronisasi->odbc }}</td>
+                                    <td class='{{ ($item_sinkronisasi->tr_table==1) ? ' text-success' : 'text-danger'
+                                        }}'>
+                                        {{
+                                        ($item_sinkronisasi->tr_table == 1) ? 'Ya' : 'Tidak' }}
+                                    </td>
                                     <td>{{ $item_sinkronisasi->last_process }}</td>
                                     <td class='{{ ($item_sinkronisasi->status==1) ? ' text-success' : 'text-danger' }}'>
                                         {{

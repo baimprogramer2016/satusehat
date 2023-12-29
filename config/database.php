@@ -107,7 +107,9 @@ return [
             'dsn' => 'odbc_lng_badak', // odbc: will be prefixed
             'username' => 'readonly',
             'database' => 'db_rslng_simulasi',
-            'password' => '12345678'
+            'password' => '12345678',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
         ]
 
 

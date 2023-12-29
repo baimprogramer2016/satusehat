@@ -1,5 +1,5 @@
 <div class="nk-upload-form">
-    <h5 class="title mb-3">Hapus Organisasi</h5>
+    <h5 class="title mb-3">Hapus Sinkronisasi</h5>
 </div>
 <div class="nk-upload-list">
     <form action="{{ route('sinkronisasi-hapus-data') }}" method="POST" id="form-action">

@@ -89,3 +89,7 @@ updated_at timestamp
 
 alter table ss_generate_token
 add corporate varchar(40)
+
+
+alter table ss_sinkronisasi
+add tr_table int

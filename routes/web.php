@@ -28,15 +28,17 @@ use Illuminate\Support\Facades\Route;
 Route Application
 */
 
-# TES
+# MANUAL - DEBUG
 // Route::get('/queue', [QueueController::class, 'index'])->name('queue');
 // Route::get('/query', [SinkronisasiController::class, 'query'])->name('query');
 
 # KFA
-Route::get('/get-kfa', [KfaController::class, 'getKfa'])->name('get-kfa')->middleware('auth');
+// Route::get('/get-kfa', [KfaController::class, 'getKfa'])->name('get-kfa')->middleware('auth');
+
 # BUNDLE
 // Route::get('/bundle', [BundleController::class, 'runJob'])->name('bundle')->middleware('auth');
-Route::post('/sinkronisasi-run/{param_id_sinkronisasi}', [SinkronisasiController::class, 'runJob'])->name('sinkronisasi-run')->middleware('auth');
+
+#Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');
 
 
@@ -141,6 +143,7 @@ Route::post('/sinkronisasi-update', [SinkronisasiController::class, 'update'])->
 Route::post('/sinkronisasi-query', [SinkronisasiController::class, 'query'])->name('sinkronisasi-query')->middleware('auth');
 Route::get('/sinkronisasi-hapus/{id}', [SinkronisasiController::class, 'hapus'])->name('sinkronisasi-hapus')->middleware('auth');
 Route::post('/sinkronisasi-hapus-data', [SinkronisasiController::class, 'hapusData'])->name('sinkronisasi-hapus-data')->middleware('auth');
+Route::post('/sinkronisasi-run/{param_id_sinkronisasi}', [SinkronisasiController::class, 'runJob'])->name('sinkronisasi-run')->middleware('auth');
 
 Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal')->middleware('auth');
 Route::get('/jadwal-ubah/{id}', [JadwalController::class, 'ubah'])->name('jadwal-ubah')->middleware('auth');

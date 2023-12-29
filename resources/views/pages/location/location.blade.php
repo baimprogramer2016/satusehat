@@ -20,10 +20,7 @@
                                 class="btn btn-white btn-dim btn-outline-primary" data-toggle="modal"><em
                                     class="icon ni ni-plus"></em><span>Tambah</span></a>
                         </li>
-                        <li><a href="#file-upload" onClick="modalLihat()" data-toggle="modal"
-                                class="btn btn-white btn-dim btn-outline-primary"><em
-                                    class="icon ni ni-eye"></em><span>struktur</span></a>
-                        </li>
+
                     </ul>
                 </div><!-- .toggle-expand-content -->
             </div><!-- .toggle-wrap -->

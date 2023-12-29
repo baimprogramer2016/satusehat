@@ -42,15 +42,27 @@ class SinkronisasiJob implements ShouldQueue
         if ($this->sinkronisasi_repo->count() > 0) {
 
             # proses migrasi
-
             # source data
             $odbc = $this->sinkronisasi_repo->odbc;
             $text_query = $this->sinkronisasi_repo->query;
+            $sp = $this->sinkronisasi_repo->sp;
+            $truncate_table = $this->sinkronisasi_repo->tr_table;
+
             $result_query =  DB::connection($odbc)->select($text_query);
+
+            # jika ada truncate dikosong kan dahulu
+            if ($truncate_table == 1) {
+                DB::table($this->sinkronisasi_repo->target)->truncate();
+            }
 
             # insert target
             foreach ($result_query as $item_result) {
                 DB::table($this->sinkronisasi_repo->target)->insert((array) $item_result);
+            }
+
+            # jalan kan SP jika ada dan setelah query di jalankan
+            if (!empty($sp)) {
+                DB::select($sp);
             }
         }
         # membuat Update status Completed end job pada job Log
