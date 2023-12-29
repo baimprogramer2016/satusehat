@@ -26,7 +26,7 @@ class EncounterRepository implements EncounterInterface
             ->whereNull('satusehat_id')
             ->where('satusehat_send', '!=', 1)
             ->whereNull('satusehat_statuscode')
-            // ->where('original_code', 'A052300156a')
+            // ->whereIn('original_code', ['LB2305290001', 'LB2305290002'])
             ->get();
     }
 
