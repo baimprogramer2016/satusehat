@@ -91,6 +91,7 @@ class OrganizationController extends Controller
     public function ubah(Request $request, $id)
     {
         return view('pages.organization.organization-ubah', [
+            "data_parameter" => $this->parameter_repo->getDataParameterFirst(),
             "data_bagian" => $this->organization_repo->getDataOrganizationIdSuccess(),
             "data_organization" => $this->organization_repo->getDataOrganizationFind($this->dec($id)),
             "data_status" => $this->status_repo->getDataStatusNotSend()
