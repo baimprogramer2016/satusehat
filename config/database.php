@@ -102,7 +102,7 @@ return [
             'database' => 'db_demo',
             'password' => 'P@ssw0rd'
         ],
-        'odbc_lng_badak' => [
+        'odbc_lng_badakx' => [
             'driver' => 'odbc',
             'dsn' => 'odbc_lng_badak', // odbc: will be prefixed
             'username' => 'readonly',
