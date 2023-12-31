@@ -10,6 +10,7 @@ return [
             'success_updated' => 'Proses Update Berhasil',
             'success_saved' => 'Proses Simpan Berhasil',
             'success_delete' => 'Proses Hapus Berhasil',
+            'error_type' => 'Tipe File Harus Sesuai',
         ],
     ],
     'txt' => [

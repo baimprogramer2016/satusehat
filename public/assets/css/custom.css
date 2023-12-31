@@ -86,3 +86,20 @@ a.paginate_button.current {
         transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out !important;
     }
 } */
+
+
+.floating-image-container {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    background-color: #ffffff;
+    padding: 3px;
+
+}
+
+.floating-image {
+    width: 300px;
+    /* Sesuaikan lebar gambar sesuai kebutuhan */
+    height: auto;
+    /* Sesuaikan tinggi gambar sesuai kebutuhan */
+}

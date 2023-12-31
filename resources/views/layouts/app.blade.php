@@ -47,6 +47,12 @@
 
             <!-- footer @e -->
         </div>
+        @if (file_exists(public_path('uploads/logo.png')))
+        <div class="floating-image-container">
+            <img src="{{ asset('uploads/logo.png') }}" alt="Floating Image" class="floating-image">
+        </div>
+        @endif
+
         <!-- wrap @e -->
     </div>
     <!-- app-root @e -->

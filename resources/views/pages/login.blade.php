@@ -28,19 +28,20 @@
                     <div class="nk-block nk-block-middle nk-auth-body  wide-xs">
                         <div class="brand-logo pb-4 text-center">
                             <a href="#" class="logo-link">
-                                <img class="logo-light logo-img logo-img-lg"
-                                    src="{{ asset('images/logo-smarthub-technologies.png') }}"
-                                    srcset="./images/logo2x.png 2x" alt="logo">
+                                @if (file_exists(public_path('uploads/logo.png')))
+                                <img class="logo-dark logo-img logo-img-lg" src="{{ asset('uploads/logo.png') }}">
+                                @else
                                 <img class="logo-dark logo-img logo-img-lg"
-                                    src="{{ asset('images/logo-smarthub-technologies.png') }}"
-                                    srcset="./images/logo-dark2x.png 2x" alt="logo-dark">
+                                    src="{{ asset('images/logo-smarthub-technologies.png') }}" alt="logo-dark">
+                                @endif
+
                             </a>
                         </div>
                         <div class="card card-bordered">
                             <div class="card-inner card-inner-lg">
                                 <div class="nk-block-head">
                                     <div class="nk-block-head-content">
-                                        <h4 class="nk-block-title text-center">Module Satu Sehat</h4>
+                                        <h4 class="nk-block-title text-center">Portal Satu Sehat</h4>
                                         <div class="nk-block-des">
                                             <p class="text-center">Masuk dengan Kombinasi Username dan Password</p>
                                         </div>

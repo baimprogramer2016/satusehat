@@ -40,6 +40,10 @@
                         </a>
                         <ul class="nk-menu-sub">
                             <li class="nk-menu-item">
+                                <a href="{{ route('upload') }}" class="nk-menu-link"><span
+                                        class="nk-menu-text">Upload</span></a>
+                            </li>
+                            <li class="nk-menu-item">
                                 <a href="{{ route('parameter') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Parameter</span></a>
                             </li>
@@ -271,7 +275,8 @@
                                         <span class="sub-text">{{ Auth::User()->username }}</span>
                                     </div>
                                     <div class="user-action">
-                                        <a class="btn btn-icon mr-n2" href="html/invest/profile-setting.html"><em
+                                        <a class="btn btn-icon mr-n2"
+                                            href="{{ route('akun', Auth::User()->username) }}"><em
                                                 class="icon ni ni-setting"></em></a>
                                     </div>
                                 </div>

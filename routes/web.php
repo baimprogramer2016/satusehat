@@ -21,6 +21,7 @@ use App\Http\Controllers\PractitionerController;
 use App\Http\Controllers\ProcedureControlller;
 use App\Http\Controllers\QueueController;
 use App\Http\Controllers\SinkronisasiController;
+use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -151,3 +152,10 @@ Route::post('/jadwal-update', [JadwalController::class, 'update'])->name('jadwal
 
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs')->middleware('auth');
 Route::get('/job-logs', [JobLogsController::class, 'index'])->name('job-logs')->middleware('auth');
+
+Route::get('/akun/{username}', [LoginController::class, 'ubahAkun'])->name('akun')->middleware('auth');
+Route::post('/akun-simpan', [LoginController::class, 'simpanAkun'])->name('akun-simpan')->middleware('auth');
+
+Route::get('/upload', [UploadController::class, 'index'])->name('upload')->middleware('auth');
+Route::get('/upload-ubah/{id}', [UploadController::class, 'ubah'])->name('upload-ubah')->middleware('auth');
+Route::post('/upload-update', [UploadController::class, 'update'])->name('upload-update')->middleware('auth');

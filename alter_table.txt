@@ -93,3 +93,37 @@ add corporate varchar(40)
 
 alter table ss_sinkronisasi
 add tr_table int
+
+
+alter table ss_location
+ALTER COLUMN address TYPE text;
+
+
+alter table ss_location
+ALTER COLUMN city TYPE varchar(100);
+
+
+alter table temp_encounter
+add class_code varchar(30)
+
+alter table temp_encounter
+add class_code_display varchar(30)
+
+create table ss_upload(
+id serial primary key,
+name varchar(100),
+path varchar(200),
+type varchar(50)
+)
+
+
+insert into ss_upload(
+name,type
+)
+values('struktur_organization','pdf')
+
+
+insert into ss_upload(
+name
+)
+values('logo','png')

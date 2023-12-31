@@ -3,10 +3,12 @@
 </div>
 <div class="nk-upload-list">
     <div class="row justify-content-center">
-        <iframe src="{{ asset('uploads/doc/struktur.pdf') }}" width="100%" height="450">
+        @if (file_exists(public_path('uploads/struktur_organization.pdf')))
+        <iframe src="{{ asset('uploads/struktur_organization.pdf') }}" width="100%" height="450">
             This browser does not support PDFs. Please download the PDF to view it: <a
-                href="{{ asset('uploads/doc/struktur.pdf') }}">Download PDF</a>
+                href="{{ asset('uploads/struktur_organization.pdf') }}">Download PDF</a>
         </iframe>
+        @endif
     </div>
 
 </div>
