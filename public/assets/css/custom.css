@@ -98,8 +98,8 @@ a.paginate_button.current {
 }
 
 .floating-image {
-    width: 300px;
+    height: 40px;
     /* Sesuaikan lebar gambar sesuai kebutuhan */
-    height: auto;
+    width: auto;
     /* Sesuaikan tinggi gambar sesuai kebutuhan */
 }

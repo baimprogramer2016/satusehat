@@ -14,7 +14,7 @@ return [
         ],
     ],
     'txt' => [
-        "organization_name" => "RSUD Cileungsi",
+        "organization_name" => env('corporate'),
         "search" => 'Search',
         "no_status" => 'Tidak Ada Status',
         "no_data" => 'Tidak Ada Data',
