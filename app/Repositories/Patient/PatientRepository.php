@@ -54,6 +54,7 @@ class PatientRepository implements PatientInterface
             ->whereNull('satusehat_id')
             ->where('satusehat_process', '!=', 1)
             ->whereNull('satusehat_statuscode')
+            // ->whereIn('nik', ['1277032308980006', '1203217010990001'])
             ->get();
     }
 }

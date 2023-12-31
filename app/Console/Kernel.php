@@ -22,6 +22,9 @@ class Kernel extends ConsoleKernel
         // $schedule->command('patient:cron')->cron('* * * * *');;
         // $schedule->call('App\Http\Controllers\MyController@MyAction')->everyMinute();
 
+        //nyalakan queue
+        // $schedule->command('queue:work --tries=3')->cron('*/2 * * * *');
+
         // menjalan scheduler Jadwal
         $data_jadwal = Jadwal::where('status', 1)->where('command', '!=', '')->get();
         foreach ($data_jadwal as $item_jadwal_kernel) {

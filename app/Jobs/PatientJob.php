@@ -47,14 +47,15 @@ class PatientJob implements ShouldQueue
 
         if ($data_patient->count() > 0) {
 
-            # default isi
-            $param['satusehat_id'] = null;
-            $param['satusehat_process'] = 0;
-            $param['satusehat_message'] =  config('constan.error_message.id_ihs_error');
-            $param['satusehat_statuscode'] = 500;
-            $param['satusehat_name'] = null;
+
 
             foreach ($data_patient as $item_patient) {
+                # default isi
+                $param['satusehat_id'] = null;
+                $param['satusehat_process'] = 0;
+                $param['satusehat_message'] =  config('constan.error_message.id_ihs_error');
+                $param['satusehat_statuscode'] = 500;
+                $param['satusehat_name'] = null;
 
                 $param['id'] = $item_patient->id;
 

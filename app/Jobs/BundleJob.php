@@ -54,13 +54,14 @@ class BundleJob implements ShouldQueue
             $param_bundle['parameter'] = $this->parameter_repo->getDataParameterFirst();
 
             #response default
-            $res['satusehat_id'] = null;
-            $res['satusehat_send'] = 0;
-            $res['satusehat_statuscode'] = 500;
-            $res['satusehat_date'] = $this->currentNow();
+
 
             # INTI PERULANGAN PER REGNO
             foreach ($data_bundle as $item_bundle) {
+                $res['satusehat_id'] = null;
+                $res['satusehat_send'] = 0;
+                $res['satusehat_statuscode'] = 500;
+                $res['satusehat_date'] = $this->currentNow();
 
                 #parameter body json per item
                 $param_bundle['bundle'] = $item_bundle;
