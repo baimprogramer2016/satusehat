@@ -3,6 +3,7 @@
 namespace App\Repositories\Condition;
 
 use App\Models\Condition;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class ConditionRepository implements ConditionInterface
@@ -18,6 +19,12 @@ class ConditionRepository implements ConditionInterface
     {
         return $this->model->where('encounter_original_code', $original_code)->get();
     }
+
+    public function getDataConditionFind($id)
+    {
+        return $this->model->find($id);
+    }
+
 
     public function getQuery()
     {
@@ -39,6 +46,21 @@ class ConditionRepository implements ConditionInterface
             $data->satusehat_response = $param['satusehat_response'];
             $data->update();
         }
+        return $data;
+    }
+
+
+    public function updateStatusCondition($id, $satusehat_id, $request, $response)
+    {
+        $data = $this->model->find($id);
+        $data->satusehat_id = $satusehat_id;
+        $data->satusehat_request = $request;
+        $data->satusehat_response = $response;
+        $data->satusehat_send = ($satusehat_id != null) ? 1 : 0;
+        $data->satusehat_statuscode =  ($satusehat_id != null) ? '200' : '500';
+        $data->satusehat_date = Carbon::now()->format('Y-m-d H:i:s');
+        $data->update();
+
         return $data;
     }
 }

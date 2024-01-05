@@ -53,6 +53,7 @@ return [
         "toast_job_running" => "Job dijalankan",
         "toast_job_data_update" => "Data Sudah Update Semua",
         "toast_job_data_no" => "Tidak Ada Jadwal Sinkronisasi",
+        "error_encounter_no" => "Encounter Harus di kirim Terlebih Dahulu",
     ],
     "fhir" => [
         "patient" => "Patient?identifier=https://fhir.kemkes.go.id/id/nik",

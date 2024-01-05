@@ -242,7 +242,7 @@
             {//resourceType = OperationOutcome
 
                 result = JSON.parse(response);
-                console.log(result.resourceType)
+                // console.log(result.resourceType)
                 if(result.resourceType == 'OperationOutcome')
                 {
                     $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");

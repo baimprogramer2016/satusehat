@@ -8,4 +8,6 @@ interface ConditionInterface
     public function getDataConditionByOriginalCode($original_code);
 
     public function updateDataBundleConditionJob($param = [], $rank);
+    public function getDataConditionFind($id);
+    public function updateStatusCondition($id, $satusehat_id, $request, $response);
 }

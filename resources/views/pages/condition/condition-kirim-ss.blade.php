@@ -1,71 +1,32 @@
 <div class="nk-upload-form">
-    <h5 class="title mb-3">Tambah Organisasi</h5>
+    <h5 class="title mb-3">Kirim ke Satu Sehat</h5>
 </div>
 <div class="nk-upload-list">
-    <form action="{{ route('organisasi-simpan') }}" method="POST" id="form-action">
-        @csrf
-        <div class="row g">
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label class="form-label" for="original_code">Kode</label>
-                    <div class="form-control-wrap">
-                        <input name="original_code" type="text" class="form-control form-control-sm" id="original_code"
-                            required>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label class="form-label" for="name">Nama</label>
-                    <div class="form-control-wrap">
-                        <input name="name" type="text" class="form-control form-control-sm" id="name" required>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label class="form-label" for="satusehat_id">Satu Sehat ID</label>
-                    <div class="form-control-wrap">
-                        <input name="satusehat_id" readonly type="text" class="form-control form-control-sm"
-                            id="satusehat_id" required>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label class="form-label" for="default-06">Bagian</label>
-                    <div class="form-control-wrap ">
-                        <div class="form-control-select">
-                            <select class="form-control" id="default-06" name="partof_id" id="partof_id">
-                                @foreach ($data_bagian as $item_bagian)
-                                <option value="{{ $item_bagian->satusehat_id }}">{{ $item_bagian->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="form-group">
-                    <label class="form-label" for="satusehat_send">Status</label>
-                    <div class="form-control-wrap">
-                        <select class="form-control" id="default-06" name="satusehat_send" id="satusehat_send">
-                            @foreach ($data_status as $item_status)
-                            <option value="{{ $item_status->status }}">{{ $item_status->description }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="col-md-12 mt-3">
-                <div class="form-group">
-                    <button type="submit" class="btn btn-lg btn-primary btn-sm btn-action">Simpan</button>
+    <div class="row g">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label class="form-label" for="original_code">ICD</label>
+                <div class="form-control-wrap">
+                    <input name="name" readonly value="{{ $data_condition->code_icd_display }}" type="text"
+                        class="form-control form-control-sm" id="name" required>
                 </div>
             </div>
         </div>
-    </form>
+        <div class="col-md-12 mt-3">
+            <div class="form-group">
+                <button id='kirim-ss' onclick="kirimSatuSehat('{{ Crypt::encrypt($data_condition->id) }}')"
+                    class="btn btn-lg btn-success btn-sm btn-action">Kirim</button>
+                <button class="btn btn-lg btn-danger btn-sm" data-dismiss="modal">Batal</button>
+            </div>
+        </div>
+        <div class="col-md-12 mt-3">
+            <label class="form-label" for="original_code">Hasil : <span class="result-message">...</span></label>
+            <div class="form-control-wrap">
+                <textarea id="response_ss" class="form-control bg-dark text-white" cols="30" rows="10"></textarea>
+            </div>
+
+        </div>
+    </div>
 </div>
 {{-- <div class="nk-modal-action justify-end">
     <ul class="btn-toolbar g-4 align-center">
@@ -77,22 +38,23 @@
 <script>
     $(document).ready(function() {
 
-        $('.btn-action').on("click", function(e) {
 
-            e.preventDefault();
-                Swal.fire({
-                    title: 'Konfirmasi',
-                    text: "Anda akan Menambahkan Data?",
-                    showCancelButton: true,
-                    confirmButtonColor: "#2c3782",
-                    confirmButtonText: 'Lanjut',
-                    cancelButtonText: 'Batal'
-                }).then((result) => {
-                    if (result.value) {
-                        $('form#form-action').submit();
-                    }
-                });
 
-        });
+        // $('.btn-action').on("click", function(e) {
+        //     e.preventDefault();
+        //         Swal.fire({
+        //             title: 'Konfirmasi',
+        //             text: "Anda akan Menghapus Data?",
+        //             showCancelButton: true,
+        //             confirmButtonColor: "#2c3782",
+        //             confirmButtonText: 'Lanjut',
+        //             cancelButtonText: 'Batal'
+        //         }).then((result) => {
+        //             // if (result.value) {
+        //             //     $('form#form-action').submit();
+        //             // }
+        //         });
+
+        // });
     });
 </script>

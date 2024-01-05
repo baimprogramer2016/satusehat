@@ -70,6 +70,7 @@
 
       var table = $('.data-table').DataTable({
           processing: true,
+          stateSave: true,
           serverSide: true,
           language : {
                 sLengthMenu: "Show _MENU_"

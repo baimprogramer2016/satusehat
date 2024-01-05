@@ -395,4 +395,49 @@ trait JsonTrait
         ];
         return $bodyBundleCondition;
     }
+    public function bodyManualCondition($data_condition)
+    {
+        $bodyManualCondition =  [
+            "resourceType" => "Condition",
+            "clinicalStatus" => [
+                "coding" => [
+                    [
+                        "system" => "http://terminology.hl7.org/CodeSystem/condition-clinical",
+                        "code" =>  $data_condition['clinical_code'],
+                        "display" =>  $data_condition['clinical_display']
+                    ]
+                ]
+            ],
+            "category" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => "http://terminology.hl7.org/CodeSystem/condition-category",
+                            "code" =>  $data_condition['category_code'],
+                            "display" =>  $data_condition['category_display']
+                        ]
+                    ]
+                ]
+            ],
+            "code" => [
+                "coding" => [
+                    [
+                        "system" => "http://hl7.org/fhir/sid/icd-10",
+                        "code" =>  $data_condition['code_icd'],
+                        "display" =>  $data_condition['code_icd_display']
+                    ]
+                ]
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_condition['subject_reference'],
+                "display" =>  $data_condition['subject_display']
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_condition['r_encounter']['satusehat_id'],
+                "display" =>  $data_condition['encounter_display']
+            ]
+        ];
+
+        return $bodyManualCondition;
+    }
 }

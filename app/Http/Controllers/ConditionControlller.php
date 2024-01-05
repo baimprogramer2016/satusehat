@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\Datatables;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
+use App\Traits\JsonTrait;
 use Throwable;
 
 
@@ -14,6 +15,7 @@ class ConditionControlller extends Controller
 {
     use GeneralTrait;
     use ApiTrait;
+    use JsonTrait;
     private $condition_repo;
 
     public function __construct(
@@ -46,7 +48,7 @@ class ConditionControlller extends Controller
                         $li_kirim_ss = '';
                         $li_response_ss = "<li><a href='#file-upload' data-toggle='modal' onClick=modalResponseSS('" . $this->enc($item_condition->satusehat_id) . "')><em class='icon ni ni-eye'></em><span>Response Satu Sehat</span></a></li>";
                     } else {
-                        $li_kirim_ss = "<li><a  onClick=modalKirimSS('" . $this->enc($item_condition->id) . "')><em class='icon ni ni-send'></em><span>Kirim ke Satu Sehat</span></a></li>";
+                        $li_kirim_ss = "<li><a href='#file-upload' data-toggle='modal' onClick=modalKirimSS('" . $this->enc($item_condition->id) . "')><em class='icon ni ni-send'></em><span>Kirim ke Satu Sehat</span></a></li>";
                         $li_response_ss = '';
                     }
                     $action_update = ' <div class="drodown">
@@ -82,5 +84,51 @@ class ConditionControlller extends Controller
             ]);
         }
     }
+    public function modalKirimSS(Request $request, $id)
+    {
+        try {
+            return view('pages.condition.condition-kirim-ss', [
+                "data_condition" => $this->condition_repo->getDataConditionFind($this->dec($id)),
+            ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function kirimSS(Request $request)
+    {
+        try {
+            $data_condition = $this->condition_repo->getDataConditionFind($this->dec($request->id));
+
+            if (empty($data_condition['r_encounter']['satusehat_id'])) {
+                $result =  [
+                    "resourceType" => "OperationOutcome",
+                    "message" => config('constan.error_message.error_encounter_no')
+                ];
+                return json_encode($result);
+            } else {
+
+                $payload_condition = $this->bodyManualCondition($data_condition);
+
+                $response = $this->post_general_ss('/Condition', $payload_condition);
+                $body_parse = json_decode($response->body());
+
+                $satusehat_id = null;
+                if ($response->successful()) {
+                    $satusehat_id = $body_parse->id;
+                }
+                # update status ke database
+                $this->condition_repo->updateStatusCondition($this->dec($request->id), $satusehat_id, $payload_condition, $response);
+                return $response;
+            }
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
     //
 }
