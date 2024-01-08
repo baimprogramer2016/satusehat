@@ -122,6 +122,10 @@ Route::get('/medication-request-response-ss/{id}', [MedicationRequestController:
 Route::get('/encounter', [EncounterController::class, 'index'])->name('encounter')->middleware('auth');
 Route::get('/encounter-detail/{original_code}', [EncounterController::class, 'detail'])->name('encounter-detail')->middleware('auth');
 Route::get('/encounter-response-ss/{id}', [EncounterController::class, 'responseSS'])->name('encounter-response-ss')->middleware('auth');
+Route::get('/encounter-modal-kirim-ss/{id}', [EncounterController::class, 'modalKirimSS'])->name('encounter-modal-kirim-ss')->middleware('auth');
+Route::post('/encounter-kirim-ss/{id}', [EncounterController::class, 'kirimSS'])->name('encounter-kirim-ss')->middleware('auth');
+Route::get('/encounter-modal-update-ss/{id}', [EncounterController::class, 'modalUpdateSS'])->name('encounter-modal-update-ss')->middleware('auth');
+Route::post('/encounter-update-ss/{id}', [EncounterController::class, 'updateSS'])->name('encounter-update-ss')->middleware('auth');
 
 Route::get('/condition', [ConditionControlller::class, 'index'])->name('condition')->middleware('auth');
 Route::get('/condition-response-ss/{id}', [ConditionControlller::class, 'responseSS'])->name('condition-response-ss')->middleware('auth');

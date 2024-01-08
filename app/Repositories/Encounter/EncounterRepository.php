@@ -3,6 +3,7 @@
 namespace App\Repositories\Encounter;
 
 use App\Models\Encounter;
+use Carbon\Carbon;
 
 class EncounterRepository implements EncounterInterface
 {
@@ -46,4 +47,23 @@ class EncounterRepository implements EncounterInterface
     }
 
     # END BUNDLE
+
+    public function getDataEncounterFind($id)
+    {
+        return $this->model->find($id);
+    }
+
+    public function updateStatusEncounter($id, $satusehat_id, $request, $response)
+    {
+        $data = $this->model->find($id);
+        $data->satusehat_id = $satusehat_id;
+        $data->satusehat_request = $request;
+        $data->satusehat_response = $response;
+        $data->satusehat_send = ($satusehat_id != null) ? 1 : 0;
+        $data->satusehat_statuscode =  ($satusehat_id != null) ? '200' : '500';
+        $data->satusehat_date = Carbon::now()->format('Y-m-d H:i:s');
+        $data->update();
+
+        return $data;
+    }
 }

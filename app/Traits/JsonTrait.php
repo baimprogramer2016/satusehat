@@ -440,4 +440,203 @@ trait JsonTrait
 
         return $bodyManualCondition;
     }
+
+    public function bodyManualEncounter($data_parameter, $data_encounter)
+    {
+        $bodyManualEncounter = [
+            "resourceType" => "Encounter",
+            "status" => "finished",
+            "class" => [
+                "system" => "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                "code" => $data_encounter['class_code'],
+                "display" => $data_encounter['class_display']
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_encounter['subject_reference'],
+                "display" => $data_encounter['subject_display']
+            ],
+            "participant" => [
+                [
+                    "type" => [
+                        [
+                            "coding" => [
+                                [
+                                    "system" => "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                                    "code" => $data_encounter['participant_coding_code'],
+                                    "display" => $data_encounter['participant_coding_display']
+                                ]
+                            ]
+                        ]
+                    ],
+                    "individual" => [
+                        "reference" => "Practitioner/" . $data_encounter['participant_individual_reference'],
+                        "display" => $data_encounter['participant_individual_display']
+                    ]
+                ]
+            ],
+            "period" => [
+                "start" => $this->convertTimeStamp($data_encounter['period_start']),
+                "end" => $this->convertTimeStamp($data_encounter['period_end'])
+            ],
+            "location" => [
+                [
+                    "location" => [
+                        "reference" => "Location/" . $data_encounter['location_reference'],
+                        "display" => $data_encounter['location_display']
+                    ]
+                ]
+            ],
+            //disini ada diagnosa
+            "statusHistory" => [
+                [
+                    "status" => "arrived",
+                    "period" => [
+                        "start" => $this->convertTimeStamp($data_encounter['status_history_arrived_start']),
+                        "end" => $this->convertTimeStamp($data_encounter['status_history_arrived_end'])
+                    ]
+                ],
+                [
+                    "status" => "in-progress",
+                    "period" => [
+                        "start" => $this->convertTimeStamp($data_encounter['status_history_inprogress_start']),
+                        "end" =>  $this->convertTimeStamp($data_encounter['status_history_inprogress_end'])
+                    ]
+                ],
+                [
+                    "status" => "finished",
+                    "period" => [
+                        "start" => $this->convertTimeStamp($data_encounter['status_history_finished_start']),
+                        "end" =>  $this->convertTimeStamp($data_encounter['status_history_finished_end'])
+                    ]
+                ]
+            ],
+            "serviceProvider" => [
+                "reference" => "Organization/" . $data_parameter['organization_id']
+            ],
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/encounter/" . $data_parameter['organization_id'],
+                    "value" => $data_encounter['identifier_value']
+                ]
+            ]
+        ];
+
+        return $bodyManualEncounter;
+    }
+
+    public function bodyManualEncounterDiagnosis($data_diagnosa)
+    {
+        $bodyManualEncounterDiagnosis =
+            [
+                "condition" => [
+                    "reference" => "Condition/" . $data_diagnosa['satusehat_id'],
+                    "display" => $data_diagnosa['code_icd_display']
+                ],
+                "use" => [
+                    "coding" => [
+                        [
+                            "system" => "http://terminology.hl7.org/CodeSystem/diagnosis-role",
+                            "code" => "DD",
+                            "display" => "Discharge diagnosis"
+                        ]
+                    ]
+                ],
+                "rank" => (int)$data_diagnosa['rank']
+            ];
+        return $bodyManualEncounterDiagnosis;
+    }
+
+    public function bodyManualEncounterUpdate($data_parameter, $data_encounter)
+    {
+        $bodyManualEncounterUpdate = [
+            "resourceType" => "Encounter",
+            "id" => $data_encounter->satusehat_id,
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/encounter/" . $data_parameter['organization_id'],
+                    "value" => $data_encounter['identifier_value']
+                ]
+            ],
+            "status" => "finished",
+            "class" => [
+                "system" => "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+                "code" => $data_encounter['class_code'],
+                "display" => $data_encounter['class_display']
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_encounter['subject_reference'],
+                "display" => $data_encounter['subject_display']
+            ],
+            "participant" => [
+                [
+                    "type" => [
+                        [
+                            "coding" => [
+                                [
+                                    "system" => "http://terminology.hl7.org/CodeSystem/v3-ParticipationType",
+                                    "code" => $data_encounter['participant_coding_code'],
+                                    "display" => $data_encounter['participant_coding_display']
+                                ]
+                            ]
+                        ]
+                    ],
+                    "individual" => [
+                        "reference" => "Practitioner/" . $data_encounter['participant_individual_reference'],
+                        "display" => $data_encounter['participant_individual_display']
+                    ]
+                ]
+            ],
+            "period" => [
+                "start" => $this->convertTimeStamp($data_encounter['period_start']),
+                "end" => $this->convertTimeStamp($data_encounter['period_end'])
+            ],
+            "location" => [
+                [
+                    "location" => [
+                        "reference" => "Location/" . $data_encounter['location_reference'],
+                        "display" => $data_encounter['location_display']
+                    ]
+                ]
+            ],
+            "statusHistory" => [
+                [
+                    "status" => "arrived",
+                    "period" => [
+                        "start" => $this->convertTimeStamp($data_encounter['status_history_arrived_start']),
+                        "end" => $this->convertTimeStamp($data_encounter['status_history_arrived_end'])
+                    ]
+                ],
+                [
+                    "status" => "in-progress",
+                    "period" => [
+                        "start" => $this->convertTimeStamp($data_encounter['status_history_inprogress_start']),
+                        "end" =>  $this->convertTimeStamp($data_encounter['status_history_inprogress_end'])
+                    ]
+                ],
+                [
+                    "status" => "finished",
+                    "period" => [
+                        "start" => $this->convertTimeStamp($data_encounter['status_history_finished_start']),
+                        "end" =>  $this->convertTimeStamp($data_encounter['status_history_finished_end'])
+                    ]
+                ]
+            ],
+            "serviceProvider" => [
+                "reference" => "Organization/" . $data_parameter['organization_id']
+            ]
+        ];
+
+        if (count($data_encounter['r_condition']) > 0) {
+
+            $bodyBundleEncounterDiagnosis = [];
+
+            foreach ($data_encounter['r_condition'] as $data_diagnosa) {
+                array_push($bodyBundleEncounterDiagnosis,  $this->bodyManualEncounterDiagnosis($data_diagnosa));
+            }
+
+            $bodyManualEncounterUpdate['diagnosis'] =  $bodyBundleEncounterDiagnosis;
+        }
+
+        return $bodyManualEncounterUpdate;
+    }
 }

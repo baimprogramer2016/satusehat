@@ -8,6 +8,7 @@ use Illuminate\Support\Carbon;
 
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 trait ApiTrait
 {
@@ -99,6 +100,15 @@ trait ApiTrait
         $url    = $this->env()->base_url  . $endpoint;
 
         $response = Http::withToken($token)->post($url, $payload);
+        return $response;
+    }
+    public function put_general_ss($endpoint, $payload)
+    {
+        # generate token
+        $token = $this->auth_satu_sehat();
+        $url    = $this->env()->base_url  . $endpoint;
+        Log::info("url nya" . $url);
+        $response = Http::withToken($token)->put($url, $payload);
         return $response;
     }
 }

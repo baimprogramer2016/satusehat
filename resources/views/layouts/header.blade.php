@@ -165,8 +165,10 @@
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
 
+
                 </ul><!-- .nk-menu -->
             </div><!-- .nk-header-menu -->
+
             <div class="nk-header-tools">
                 <ul class="nk-quick-nav">
 
@@ -183,6 +185,7 @@
                                 </div>
                             </div>
                         </a>
+
                         <div class="dropdown-menu dropdown-menu-md dropdown-menu-right dropdown-menu-s1 is-light">
                             <div class="dropdown-inner user-card-wrap bg-lighter d-none d-md-block">
                                 <div class="user-card">
@@ -212,5 +215,7 @@
                 </ul><!-- .nk-quick-nav -->
             </div><!-- .nk-header-tools -->
         </div><!-- .nk-header-wrap -->
+
     </div><!-- .container-fliud -->
+
 </div>

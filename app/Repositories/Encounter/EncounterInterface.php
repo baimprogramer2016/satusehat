@@ -9,4 +9,7 @@ interface EncounterInterface
     public function getDataBundleReadyJob();
 
     public function updateDataBundleEncounterJob($param = []);
+
+    public function getDataEncounterFind($id);
+    public function updateStatusEncounter($id, $satusehat_id, $request, $response);
 }

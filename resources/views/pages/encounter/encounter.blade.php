@@ -111,23 +111,6 @@
         })
     }
 
-    function modalKirimSS(id)
-    {
-        // loadingProcess(); //dari custom.js
-        // var url     = '{{ route("pasien-ubah", ":id") }}';
-        // url         = url.replace(':id',id);
-
-        // $.ajax({
-        //     type:"GET",
-        //     url:url,
-        //     success: function(response)
-        //     {
-        //         $("#content-modal").html("");
-        //         $("#content-modal").html(response);
-        //     }
-        // })
-        alert("Belum Tersedia")
-    }
 
     function modalDetail(original_code)
     {
@@ -145,6 +128,122 @@
             }
         })
     }
+
+    function modalKirimSS(id)
+    {
+        loadingProcess(); //dari custom.js
+
+        var url     = '{{ route("encounter-modal-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+
+
+    function kirimSatuSehat(id)
+    {
+        // loadingProcess(); //dari custom.js
+
+        $(".btn-action").html('Proses Kirim....')
+        $(".result-message").html('...');
+        var url     = '{{ route("encounter-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+
+        $.ajax({
+            type:"POST",
+            data: {
+                id: id,
+                _token: "{{ csrf_token() }}",
+
+            },
+            url:url,
+            success: function(response)
+            {//resourceType = OperationOutcome
+
+                result = JSON.parse(response);
+                console.log(result)
+                if(result.resourceType == 'OperationOutcome')
+                {
+                    $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
+                    $(".btn-action").hide();
+                }else
+                {
+                    $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
+                    location.reload();
+                    $(".btn-action").html('Selesai');
+                }
+
+                $("#response_ss").val(response);
+
+            }
+        })
+    }
+
+    function modalUpdateSS(id)
+    {
+        loadingProcess(); //dari custom.js
+
+        var url     = '{{ route("encounter-modal-update-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+
+
+    function updateSatuSehat(id)
+    {
+        // loadingProcess(); //dari custom.js
+
+        $(".btn-action").html('Proses Update....')
+        $(".result-message").html('...');
+        var url     = '{{ route("encounter-update-ss", ":id") }}';
+        url         = url.replace(':id',id);
+
+        $.ajax({
+            type:"POST",
+            data: {
+                id: id,
+                _token: "{{ csrf_token() }}",
+
+            },
+            url:url,
+            success: function(response)
+            {//resourceType = OperationOutcome
+// console.log(response)
+                result = JSON.parse(response);
+                // console.log(result)
+                if(result.resourceType == 'OperationOutcome')
+                {
+                    $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
+                    $(".btn-action").hide();
+                }else
+                {
+                    $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
+                    location.reload();
+                    $(".btn-action").html('Selesai');
+                }
+
+                $("#response_ss").val(response);
+
+            }
+        })
+    }
+
+
 
 </script>
 

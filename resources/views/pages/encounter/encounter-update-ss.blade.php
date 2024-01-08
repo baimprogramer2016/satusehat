@@ -15,8 +15,8 @@
         </div>
         <div class="col-md-12 mt-3">
             <div class="form-group">
-                <button id='kirim-ss' onclick="kirimSatuSehat('{{ Crypt::encrypt($data_encounter->id) }}')"
-                    class="btn btn-lg btn-success btn-sm btn-action">Kirim</button>
+                <button id='kirim-ss' onclick="updateSatuSehat('{{ Crypt::encrypt($data_encounter->id) }}')"
+                    class="btn btn-lg btn-success btn-sm btn-action">Update</button>
                 <button class="btn btn-lg btn-danger btn-sm" data-dismiss="modal">Batal</button>
             </div>
         </div>
