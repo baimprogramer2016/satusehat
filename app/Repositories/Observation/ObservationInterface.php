@@ -8,4 +8,7 @@ interface ObservationInterface
     public function getDataObservationByOriginalCode($original_code);
 
     public function updateDataBundleObservationJob($param = []);
+
+    public function getDataObservationFind($id);
+    public function updateStatusObservation($id, $satusehat_id, $request, $response);
 }

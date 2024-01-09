@@ -70,6 +70,7 @@
 
       var table = $('.data-table').DataTable({
           processing: true,
+          stateSave: true,
           serverSide: true,
           language : {
                 sLengthMenu: "Show _MENU_"
@@ -80,7 +81,7 @@
             //   {data: 'id', name: 'id'},
               {data: 'encounter_original_code', name: 'encounter_original_code'},
               {data: 'subject_reference', name: 'subject_reference'},
-              {data: 'type_observation', name: 'type_observation'},
+              {data: 'code_display', name: 'code_display'},
               {data: 'quantity_value', name: 'quantity_value'},
               {data: 'quantity_unit', name: 'quantity_unit'},
               {data: 'satusehat_id', name: 'satusehat_id'},
@@ -110,22 +111,62 @@
         })
     }
 
+
     function modalKirimSS(id)
     {
-        // loadingProcess(); //dari custom.js
-        // var url     = '{{ route("pasien-ubah", ":id") }}';
-        // url         = url.replace(':id',id);
+        loadingProcess(); //dari custom.js
 
-        // $.ajax({
-        //     type:"GET",
-        //     url:url,
-        //     success: function(response)
-        //     {
-        //         $("#content-modal").html("");
-        //         $("#content-modal").html(response);
-        //     }
-        // })
-        alert("Belum Tersedia")
+        var url     = '{{ route("observation-modal-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+
+
+    function kirimSatuSehat(id)
+    {
+        // loadingProcess(); //dari custom.js
+
+        $(".btn-action").html('Proses Kirim....')
+        $(".result-message").html('...');
+        var url     = '{{ route("observation-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+
+        $.ajax({
+            type:"POST",
+            data: {
+                id: id,
+                _token: "{{ csrf_token() }}",
+
+            },
+            url:url,
+            success: function(response)
+            {//resourceType = OperationOutcome
+
+                result = JSON.parse(response);
+                // console.log(result.resourceType)
+                if(result.resourceType == 'OperationOutcome')
+                {
+                    $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
+                    $(".btn-action").hide();
+                }else
+                {
+                    $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
+                    location.reload();
+                    $(".btn-action").html('Selesai');
+                }
+
+                $("#response_ss").val(response);
+
+            }
+        })
     }
 
 </script>

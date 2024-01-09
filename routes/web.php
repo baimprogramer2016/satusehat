@@ -136,6 +136,8 @@ Route::post('/condition-kirim-ss/{id}', [ConditionControlller::class, 'kirimSS']
 
 Route::get('/observation', [ObservationControlller::class, 'index'])->name('observation')->middleware('auth');
 Route::get('/observation-response-ss/{id}', [ObservationControlller::class, 'responseSS'])->name('observation-response-ss')->middleware('auth');
+Route::get('/observation-modal-kirim-ss/{id}', [ObservationControlller::class, 'modalKirimSS'])->name('observation-modal-kirim-ss')->middleware('auth');
+Route::post('/observation-kirim-ss/{id}', [ObservationControlller::class, 'kirimSS'])->name('observation-kirim-ss')->middleware('auth');
 
 Route::get('/procedure', [ProcedureControlller::class, 'index'])->name('procedure')->middleware('auth');
 Route::get('/procedure-response-ss/{id}', [ProcedureControlller::class, 'responseSS'])->name('procedure-response-ss')->middleware('auth');

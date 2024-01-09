@@ -3,6 +3,7 @@
 namespace App\Repositories\Observation;
 
 use App\Models\Observation;
+use Carbon\Carbon;
 
 class ObservationRepository implements ObservationInterface
 {
@@ -17,6 +18,11 @@ class ObservationRepository implements ObservationInterface
     public function getQuery()
     {
         return $this->model->query();
+    }
+
+    public function getDataObservationFind($id)
+    {
+        return $this->model->find($id);
     }
 
     # untuk mendapatkan keseluruhan data
@@ -42,6 +48,21 @@ class ObservationRepository implements ObservationInterface
             $data->satusehat_response = $param['satusehat_response'];
             $data->update();
         }
+        return $data;
+    }
+
+
+    public function updateStatusObservation($id, $satusehat_id, $request, $response)
+    {
+        $data = $this->model->find($id);
+        $data->satusehat_id = $satusehat_id;
+        $data->satusehat_request = $request;
+        $data->satusehat_response = $response;
+        $data->satusehat_send = ($satusehat_id != null) ? 1 : 0;
+        $data->satusehat_statuscode =  ($satusehat_id != null) ? '200' : '500';
+        $data->satusehat_date = Carbon::now()->format('Y-m-d H:i:s');
+        $data->update();
+
         return $data;
     }
 }

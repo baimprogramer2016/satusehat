@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Traits\JsonTrait;
 use Illuminate\Http\Request;
 
 use App\Traits\GeneralTrait;
@@ -15,6 +16,7 @@ class ObservationControlller extends Controller
 {
     use GeneralTrait;
     use ApiTrait;
+    use JsonTrait;
     private $observation_repo;
 
     public function __construct(
@@ -46,7 +48,7 @@ class ObservationControlller extends Controller
                         $li_kirim_ss = '';
                         $li_response_ss = "<li><a href='#file-upload' data-toggle='modal' onClick=modalResponseSS('" . $this->enc($item_observation->satusehat_id) . "')><em class='icon ni ni-eye'></em><span>Response Satu Sehat</span></a></li>";
                     } else {
-                        $li_kirim_ss = "<li><a  onClick=modalKirimSS('" . $this->enc($item_observation->id) . "')><em class='icon ni ni-send'></em><span>Kirim ke Satu Sehat</span></a></li>";
+                        $li_kirim_ss = "<li><a href='#file-upload' data-toggle='modal'  onClick=modalKirimSS('" . $this->enc($item_observation->id) . "')><em class='icon ni ni-send'></em><span>Kirim ke Satu Sehat</span></a></li>";
                         $li_response_ss = '';
                     }
                     $action_update = ' <div class="drodown">
@@ -76,6 +78,53 @@ class ObservationControlller extends Controller
             return view('pages.observation.observation-response-ss', [
                 "data_response" => $response_satusehat
             ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function modalKirimSS(Request $request, $id)
+    {
+        try {
+            return view('pages.observation.observation-kirim-ss', [
+                "data_observation" => $this->observation_repo->getDataObservationFind($this->dec($id)),
+            ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+
+    public function kirimSS(Request $request)
+    {
+        try {
+            $data_observation = $this->observation_repo->getDataObservationFind($this->dec($request->id));
+
+            if (empty($data_observation['r_encounter']['satusehat_id'])) {
+                $result =  [
+                    "resourceType" => "OperationOutcome",
+                    "message" => config('constan.error_message.error_encounter_no')
+                ];
+                return json_encode($result);
+            } else {
+
+                $payload_observation = $this->bodyManualObservation($data_observation);
+
+                $response = $this->post_general_ss('/Observation', $payload_observation);
+                $body_parse = json_decode($response->body());
+
+                $satusehat_id = null;
+                if ($response->successful()) {
+                    $satusehat_id = $body_parse->id;
+                }
+                # update status ke database
+                $this->observation_repo->updateStatusObservation($this->dec($request->id), $satusehat_id, $payload_observation, $response);
+                return $response;
+            }
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

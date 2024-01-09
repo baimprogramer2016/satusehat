@@ -476,6 +476,56 @@ trait JsonTrait
 
 
     #############################  MANUAL ###################################
+    public function bodyManualObservation($data_observation)
+    {
+        $bodyManualObservation = [
+            "resourceType" => "Observation",
+            "status" => $data_observation['status'],
+            "category" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => "http://terminology.hl7.org/CodeSystem/observation-category",
+                            "code" => $data_observation['category_code'],
+                            "display" => $data_observation['category_display']
+                        ]
+                    ]
+                ]
+            ],
+            "code" => [
+                "coding" => [
+                    [
+                        "system" => "http://loinc.org",
+                        "code" => $data_observation['code_observation'],
+                        "display" => $data_observation['code_display']
+                    ]
+                ]
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_observation['subject_reference']
+            ],
+            "performer" => [
+                [
+                    "reference" => "Practitioner/" . $data_observation['performer_reference']
+                ]
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_observation['r_encounter']['satusehat_id'],
+                "display" => "-"
+            ],
+            "effectiveDateTime" => $this->convertTimeStamp($data_observation['effective_datetime']),
+            "issued" => $this->convertTimeStamp($data_observation['issued']),
+            "valueQuantity" => [
+                "value" => (int)$data_observation['quantity_value'],
+                "unit" => $data_observation['quantity_unit'],
+                "system" => "http://unitsofmeasure.org",
+                "code" => $data_observation['quantity_code']
+            ]
+        ];
+
+        return $bodyManualObservation;
+    }
+
     public function bodyManualCondition($data_condition)
     {
         $bodyManualCondition =  [
