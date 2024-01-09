@@ -16,7 +16,7 @@ use Carbon\Carbon;
 use Exception;
 use Throwable;
 
-class BundleController extends Controller
+class BundleDevController extends Controller
 {
     use GeneralTrait;
     use ApiTrait;
@@ -54,19 +54,53 @@ class BundleController extends Controller
             # membuat Log status start job, job_report variable untuk mengambil last Id
             # jika tidak ada data,tidak usah insert job log
             if ($this->bundle_repo->getDataBundleReadyJob()->count() > 0) {
+
                 # jika sudah ada data yang lagi antri gk ush dijlankan di job log
                 if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
                 } else {
-                    $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
-                    $this->job_id = $job_report->id;
-                    BundleJob::dispatch(
-                        $this->bundle_repo,
-                        $this->condition_repo,
-                        $this->parameter_repo,
-                        $this->job_logs_repo,
-                        $this->job_id,
-                        $this->observation_repo
-                    );
+                    // $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
+                    // $this->job_id = $job_report->id;
+                    // BundleJob::dispatch(
+                    //     $this->bundle_repo,
+                    //     $this->condition_repo,
+                    //     $this->parameter_repo,
+                    //     $this->job_logs_repo,
+                    //     $this->job_id
+                    // );
+
+                    # ambil data 100 Record sekali eksekusi
+                    $data_bundle = $this->bundle_repo->getDataBundleReadyJob();
+
+                    if ($data_bundle->count() > 0) {
+                        # parameter body json
+                        $param_bundle['parameter'] = $this->parameter_repo->getDataParameterFirst();
+
+                        #response default
+
+
+                        # INTI PERULANGAN PER REGNO
+                        foreach ($data_bundle as $item_bundle) {
+                            $res['satusehat_id'] = null;
+                            $res['satusehat_send'] = 0;
+                            $res['satusehat_statuscode'] = 500;
+                            $res['satusehat_date'] = $this->currentNow();
+
+
+                            # response default
+                            $res['id'] = $item_bundle->id; # id encounter
+                            $res['encounter_original_code'] = $item_bundle->original_code; # regno encounter
+                            #parameter body json per item
+                            $param_bundle['bundle'] = $item_bundle;
+                            $param_bundle['observation'] = $this->observation_repo->getDataObservationByOriginalCode($item_bundle->original_code);
+
+                            # API POST Bundle
+                            $payload_bundle = $this->bodyBundle($param_bundle); // ada dua parameter
+
+
+                            return $payload_bundle;
+                        }
+                        # membuat Update status Completed end job pada job Log
+                    }
                 }
             }
         } catch (Throwable $e) {

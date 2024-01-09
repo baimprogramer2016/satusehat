@@ -204,17 +204,27 @@ trait JsonTrait
         $data_parameter = $param['parameter'];
 
         $data_encounter = $param['bundle'];
+        $data_observation = $param['observation'];
 
 
         # push ke entry
         $bodyEncounter = $this->bodyBundleEncounter($data_parameter, $data_encounter);
         array_push($bodyBundle['entry'], $bodyEncounter);
 
+        #condition
         # ambiJika ada ,Ambil dari relasion dari model encounter r_condition dengan parameter encounter
         if (count($data_encounter['r_condition']) > 0) {
             foreach ($data_encounter['r_condition'] as $data_diagnosa) {
                 $bodyCondition = $this->bodyBundleCondition($data_diagnosa, $data_encounter['uuid']);
                 array_push($bodyBundle['entry'], $bodyCondition);
+            }
+        }
+
+        # observation
+        if (count($data_observation) > 0) {
+            foreach ($data_observation as $item_observation) {
+                $bodyObservation = $this->bodyBundleObservation($item_observation, $data_encounter['uuid']);
+                array_push($bodyBundle['entry'], $bodyObservation);
             }
         }
         #end push entry
@@ -395,6 +405,77 @@ trait JsonTrait
         ];
         return $bodyBundleCondition;
     }
+
+    public function bodyBundleObservation($data_observation, $encounter_uuid)
+    {
+        $bodyBundleObservation =  [
+            "fullUrl" => "urn:uuid:" . $data_observation['uuid'],
+            "resource" => [
+                "resourceType" => "Observation",
+                "status" => $data_observation['status'],
+                "category" => [
+                    [
+                        "coding" => [
+                            [
+                                "system" => "http://terminology.hl7.org/CodeSystem/observation-category",
+                                "code" => $data_observation['category_code'],
+                                "display" => $data_observation['category_display']
+                            ]
+                        ]
+                    ]
+                ],
+                "code" => [
+                    "coding" => [
+                        [
+                            "system" => "http://loinc.org",
+                            "code" => $data_observation['code_observation'],
+                            "display" => $data_observation['code_display']
+                        ]
+                    ]
+                ],
+                "subject" => [
+                    "reference" => "Patient/" . $data_observation['subject_reference'],
+                    "display" => $data_observation['subject_display']
+                ],
+                "performer" => [
+                    [
+                        "reference" => "Practitioner/" . $data_observation['performer_reference']
+                    ]
+                ],
+                "encounter" => [
+                    "reference" => "urn:uuid:" . $encounter_uuid,
+                    "display" => "-"
+                ],
+                "effectiveDateTime" => $this->convertTimeStamp($data_observation['effective_datetime']),
+                "issued" => $this->convertTimeStamp($data_observation['issued']),
+                // "bodySite" => [
+                //     "coding" => [
+                //         [
+                //             "system" => "http://snomed.info/sct",
+                //             "code" => "368209003",
+                //             "display" => "Right arm"
+                //         ]
+                //     ]
+                // ],
+                "valueQuantity" => [
+                    "value" => (int)$data_observation['quantity_value'],
+                    "unit" => $data_observation['quantity_unit'],
+                    "system" => "http://unitsofmeasure.org",
+                    "code" => $data_observation['quantity_code']
+                ],
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "Observation"
+            ]
+        ];
+        return $bodyBundleObservation;
+    }
+
+
+
+
+    #############################  MANUAL ###################################
     public function bodyManualCondition($data_condition)
     {
         $bodyManualCondition =  [

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\BundleController;
+use App\Http\Controllers\BundleDevController;
 use App\Http\Controllers\CompositionControlller;
 use App\Http\Controllers\ConditionControlller;
 use App\Http\Controllers\DashboardController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 
 
+
 /*
 Route Application
 */
@@ -37,7 +39,7 @@ Route Application
 // Route::get('/get-kfa', [KfaController::class, 'getKfa'])->name('get-kfa')->middleware('auth');
 
 # BUNDLE
-// Route::get('/bundle', [BundleController::class, 'runJob'])->name('bundle')->middleware('auth');
+Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
 
 #Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');

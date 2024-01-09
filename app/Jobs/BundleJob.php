@@ -22,7 +22,7 @@ class BundleJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    protected $bundle_repo, $condition_repo;
+    protected $bundle_repo, $condition_repo, $observation_repo;
     protected $parameter_repo;
     protected $job_id;
     protected $job_logs_repo;
@@ -32,13 +32,15 @@ class BundleJob implements ShouldQueue
         $condition_repo,
         $parameter_repo,
         $job_logs_repo,
-        $job_id #job_id untuk id unik job logs
+        $job_id, #job_id untuk id unik job logs
+        $observation_repo
     ) {
         $this->bundle_repo = $bundle_repo; #data yang akan dieksekusi
         $this->condition_repo = $condition_repo;
         $this->parameter_repo = $parameter_repo;
         $this->job_logs_repo = $job_logs_repo;
         $this->job_id = $job_id;
+        $this->observation_repo = $observation_repo;
     }
 
     /**
@@ -63,12 +65,13 @@ class BundleJob implements ShouldQueue
                 $res['satusehat_statuscode'] = 500;
                 $res['satusehat_date'] = $this->currentNow();
 
-                #parameter body json per item
-                $param_bundle['bundle'] = $item_bundle;
-
                 # response default
                 $res['id'] = $item_bundle->id; # id encounter
                 $res['encounter_original_code'] = $item_bundle->original_code; # regno encounter
+
+                #parameter body json per item
+                $param_bundle['bundle'] = $item_bundle;
+                $param_bundle['observation'] = $this->observation_repo->getDataObservationByOriginalCode($item_bundle->original_code);
 
                 # API POST Bundle
                 $payload_bundle = $this->bodyBundle($param_bundle); // ada dua parameter
@@ -106,6 +109,14 @@ class BundleJob implements ShouldQueue
 
                                 $this->condition_repo->updateDataBundleConditionJob($res, $rank);
                                 $rank++;
+                            }
+
+                            # update status observation
+                            if ($item_response->response->resourceType == 'Observation') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->observation_repo->updateDataBundleObservationJob($res);
                             }
                             # update status dari response
                         }
