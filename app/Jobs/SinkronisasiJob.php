@@ -39,7 +39,7 @@ class SinkronisasiJob implements ShouldQueue
     public function handle(): void
     {
         # cek lagi jika ada
-        if ($this->sinkronisasi_repo->count() > 0) {
+        if (!empty($this->sinkronisasi_repo)) {
 
             # proses migrasi
             # source data

@@ -39,7 +39,7 @@ class ObservationRepository implements ObservationInterface
             ->whereNull('satusehat_id')
             ->orderBy('id', 'asc')
             ->first();
-        if ($data->count() > 1) {
+        if (!empty($data)) {
             $data->satusehat_id = $param['satusehat_id'];
             $data->satusehat_send = $param['satusehat_send'];
             $data->satusehat_date = $param['satusehat_date'];

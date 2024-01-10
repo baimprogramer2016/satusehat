@@ -10,6 +10,7 @@
                     <tr>
                         <th>ICD</th>
                         <th>Deskripsi</th>
+                        <th>Rank</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -18,6 +19,7 @@
                     <tr>
                         <td>{{ $item_condition->code_icd }}</td>
                         <td>{{ $item_condition->code_icd_display }}</td>
+                        <td>{{ $item_condition->rank }}</td>
                         @if($item_condition !=null)
                         <td>{!! ($item_condition->satusehat_send ==1) ? config('constan.status.terkirim') :
                             config('constan.status.menunggu') !!}

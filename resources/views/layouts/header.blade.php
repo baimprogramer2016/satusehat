@@ -8,9 +8,9 @@
             <div class="nk-header-brand">
                 <a href="#" class="logo-link">
                     <img class="logo-light logo-img" src="{{ asset('images/logo_sht.png') }}"
-                        srcset="./images/logo2x.png 2x" alt="logo">
+                        srcset="{{ asset('images/logo_sht.png') }}" alt="logo">
                     <img class="logo-dark logo-img" src="{{ asset('images/logo_sht_dark.png') }}"
-                        srcset="./images/logo-dark2x.png 2x" alt="logo-dark">
+                        srcset="{{ asset('images/logo_sht_dark.png') }} 2x" alt="logo-dark">
                 </a>
             </div><!-- .nk-header-brand -->
             <div class="nk-header-menu" data-content="headerNav">
@@ -18,9 +18,9 @@
                     <div class="nk-header-brand">
                         <a href="#" class="logo-link">
                             <img class="logo-light logo-img" src="{{ asset('images/logo_sht.png') }}"
-                                srcset="./images/logo2x.png 2x" alt="logo">
+                                srcset="{{ asset('images/logo_sht.png') }} 2x" alt="logo">
                             <img class="logo-dark logo-img" src="{{ asset('images/logo_sht_dark.png') }}"
-                                srcset="./images/logo-dark2x.png 2x" alt="logo-dark">
+                                srcset="{{ asset('images/logo_sht_dark.png') }} 2x" alt="logo-dark">
                         </a>
                     </div>
                     <div class="nk-menu-trigger mr-n2">

@@ -6,4 +6,5 @@ interface ProcedureInterface
 {
     public function getQuery();
     public function getDataProcedureByOriginalCode($original_code);
+    public function updateDataBundleProcedureJob($param = []);
 }

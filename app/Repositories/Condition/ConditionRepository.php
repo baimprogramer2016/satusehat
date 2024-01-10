@@ -37,7 +37,7 @@ class ConditionRepository implements ConditionInterface
         $data = $this->model
             ->where('encounter_original_code', $param['encounter_original_code'])
             ->where('rank', $rank)->first();
-        if ($data->count() > 1) {
+        if (!empty($data)) {
             $data->satusehat_id = $param['satusehat_id'];
             $data->satusehat_send = $param['satusehat_send'];
             $data->satusehat_date = $param['satusehat_date'];

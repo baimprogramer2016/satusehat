@@ -205,6 +205,7 @@ trait JsonTrait
 
         $data_encounter = $param['bundle'];
         $data_observation = $param['observation'];
+        $data_procedure = $param['procedure'];
 
 
         # push ke entry
@@ -227,6 +228,12 @@ trait JsonTrait
                 array_push($bodyBundle['entry'], $bodyObservation);
             }
         }
+        # procedure
+        if (count($data_procedure) > 0) {
+            $bodyProcedure = $this->bodyBundleProcedure($data_encounter, $data_encounter['r_condition'], $data_procedure);
+            array_push($bodyBundle['entry'], $bodyProcedure);
+        }
+
         #end push entry
         return $bodyBundle;
     }
@@ -472,7 +479,132 @@ trait JsonTrait
         return $bodyBundleObservation;
     }
 
+    public function bodyBundleProcedure($data_encounter, $data_condition, $data_procedure)
+    {
+        $bodyBundleProcedure = [
+            "fullUrl" => "urn:uuid:" . $data_encounter['uuid_procedure'],
+            "resource" => [
+                "resourceType" => "Procedure",
+                "status" => "completed",
+                "category" => [
+                    "coding" => [
+                        [
+                            "system" => "http://snomed.info/sct",
+                            "code" => "103693007",
+                            "display" => "Diagnostic procedure"
+                        ]
+                    ],
+                    "text" => "Diagnostic procedure"
+                ],
+                "subject" => [
+                    "reference" => "Patient/" . $data_encounter['subject_reference'],
+                    "display" => $data_encounter['subject_display']
+                ],
+                "encounter" => [
+                    "reference" => "urn:uuid:" . $data_encounter['uuid'],
+                    "display" => "-"
+                ],
+                "performedPeriod" => [
+                    "start" => $this->convertTimeStamp($data_encounter['status_history_inprogress_start']),
+                    "end" => $this->convertTimeStamp($data_encounter['status_history_inprogress_end'])
+                ],
+                "performer" => [
+                    [
+                        "actor" => [
+                            "reference" => "Practitioner/" . $data_encounter['participant_individual_reference'],
+                            "display" => $data_encounter['participant_individual_display']
+                        ]
+                    ]
+                ],
+                // "code"=> [
+                //     "coding"=> [
+                //         [
+                //             "system"=> "http://hl7.org/fhir/sid/icd-9-cm",
+                //             "code"=> "87.44",
+                //             "display"=> "Routine chest x-ray, so described"
+                //         ]
+                //     ]
+                // ],
+                // "reasonCode" => [
+                //     [
+                //         "coding" => [
+                //             [
+                //                 "system" => "http://hl7.org/fhir/sid/icd-10",
+                //                 "code" => "A15.0",
+                //                 "display" => "Tuberculosis of lung, confirmed by sputum microscopy with or without culture"
+                //             ]
+                //         ]
+                //     ]
+                // ],
+                // "bodySite" => [
+                //     [
+                //         "coding" => [
+                //             [
+                //                 "system" => "http://snomed.info/sct",
+                //                 "code" => "302551006",
+                //                 "display" => "Entire Thorax"
+                //             ]
+                //         ]
+                //     ]
+                // ],
+                "note" => [
+                    [
+                        "text" => "Rontgen thorax melihat perluasan infiltrat dan kavitas."
+                    ]
+                ]
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "Procedure"
+            ]
+        ];
 
+        # Jika procedure ada , menambahkan tindakan pada encounter
+        if (count($data_procedure) > 0) {
+
+            $bodyBundleItemProcedure = [];
+
+            foreach ($data_procedure as $item_procedure) {
+                array_push($bodyBundleItemProcedure,  $this->bodyBundleProcedureIcd9($item_procedure));
+            }
+
+            $bodyBundleProcedure['resource']['code']['coding'] = $bodyBundleItemProcedure;
+        }
+        # Jika condition ada , menambahkan diagnosa pada encounter
+        if (count($data_encounter['r_condition']) > 0) {
+
+            $bodyBundleConditionCoding = [];
+            foreach ($data_encounter['r_condition'] as $item_diagnosa) {
+                array_push($bodyBundleConditionCoding,  $this->bodyBundleProcedureIcd10($item_diagnosa));
+            }
+
+            $varProcedure = ["coding" => $bodyBundleConditionCoding];
+
+            $bodyBundleProcedureFinal = [];
+            array_push($bodyBundleProcedureFinal,  $varProcedure);
+
+            $bodyBundleProcedure['resource']['reasonCode'] = $bodyBundleProcedureFinal;
+        }
+        return $bodyBundleProcedure;
+    }
+    public function bodyBundleProcedureIcd9($data_procedure)
+    {
+        $bodyBundleProcedureIcd9 =  [
+            "system" => "http://hl7.org/fhir/sid/icd-9-cm",
+            "code" => $data_procedure['code_icd'],
+            "display" => $data_procedure['code_icd_display']
+        ];
+        return $bodyBundleProcedureIcd9;
+    }
+    public function bodyBundleProcedureIcd10($data_condition)
+    {
+        $bodyBundleProcedureIcd10 =   [
+            "system" => "http://hl7.org/fhir/sid/icd-10",
+            "code" => $data_condition['code_icd'],
+            "display" => $data_condition['code_icd_display']
+        ];
+        return $bodyBundleProcedureIcd10;
+    }
 
 
     #############################  MANUAL ###################################

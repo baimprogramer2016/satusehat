@@ -23,6 +23,7 @@ use App\Http\Controllers\ProcedureControlller;
 use App\Http\Controllers\QueueController;
 use App\Http\Controllers\SinkronisasiController;
 use App\Http\Controllers\UploadController;
+use App\Models\Condition;
 use Illuminate\Support\Facades\Route;
 
 
@@ -39,7 +40,16 @@ Route Application
 // Route::get('/get-kfa', [KfaController::class, 'getKfa'])->name('get-kfa')->middleware('auth');
 
 # BUNDLE
-Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
+// Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
+// Route::get('/kosong', function () {
+//     $data = Condition::find(8889);
+
+//     if (!empty($data)) {
+//         return 'ada';
+//     } else {
+//         return 'kosong';
+//     }
+// });
 
 #Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');

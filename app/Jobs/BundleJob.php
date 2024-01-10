@@ -22,7 +22,10 @@ class BundleJob implements ShouldQueue
     /**
      * Create a new job instance.
      */
-    protected $bundle_repo, $condition_repo, $observation_repo;
+    protected $bundle_repo,
+        $condition_repo,
+        $observation_repo,
+        $procedure_repo;
     protected $parameter_repo;
     protected $job_id;
     protected $job_logs_repo;
@@ -33,7 +36,8 @@ class BundleJob implements ShouldQueue
         $parameter_repo,
         $job_logs_repo,
         $job_id, #job_id untuk id unik job logs
-        $observation_repo
+        $observation_repo,
+        $procedure_repo
     ) {
         $this->bundle_repo = $bundle_repo; #data yang akan dieksekusi
         $this->condition_repo = $condition_repo;
@@ -41,6 +45,7 @@ class BundleJob implements ShouldQueue
         $this->job_logs_repo = $job_logs_repo;
         $this->job_id = $job_id;
         $this->observation_repo = $observation_repo;
+        $this->procedure_repo = $procedure_repo;
     }
 
     /**
@@ -56,8 +61,6 @@ class BundleJob implements ShouldQueue
             $param_bundle['parameter'] = $this->parameter_repo->getDataParameterFirst();
 
             #response default
-
-
             # INTI PERULANGAN PER REGNO
             foreach ($data_bundle as $item_bundle) {
                 $res['satusehat_id'] = null;
@@ -72,10 +75,10 @@ class BundleJob implements ShouldQueue
                 #parameter body json per item
                 $param_bundle['bundle'] = $item_bundle;
                 $param_bundle['observation'] = $this->observation_repo->getDataObservationByOriginalCode($item_bundle->original_code);
+                $param_bundle['procedure'] = $this->procedure_repo->getDataProcedureByOriginalCode($item_bundle->original_code);
 
                 # API POST Bundle
                 $payload_bundle = $this->bodyBundle($param_bundle); // ada dua parameter
-
 
                 $response = $this->post_general_ss('', $payload_bundle);
                 $body_parse = json_decode($response->body());
@@ -117,6 +120,13 @@ class BundleJob implements ShouldQueue
                                 $res['satusehat_id'] = $item_response->response->resourceID;
 
                                 $this->observation_repo->updateDataBundleObservationJob($res);
+                            }
+                            # update status procedure
+                            if ($item_response->response->resourceType == 'Procedure') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->procedure_repo->updateDataBundleProcedureJob($res);
                             }
                             # update status dari response
                         }

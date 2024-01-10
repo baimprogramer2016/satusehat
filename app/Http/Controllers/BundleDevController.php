@@ -8,6 +8,7 @@ use App\Repositories\Encounter\EncounterInterface;
 use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\Observation\ObservationInterface;
 use App\Repositories\Parameter\ParameterInterface;
+use App\Repositories\Procedure\ProcedureInterface;
 use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
@@ -24,7 +25,7 @@ class BundleDevController extends Controller
 
 
     public $job_logs_repo;
-    public $bundle_repo, $condition_repo, $observation_repo;
+    public $bundle_repo, $condition_repo, $observation_repo, $procedure_repo;
     public $parameter_repo;
     protected $job_id = 0;
     public function __construct(
@@ -32,13 +33,15 @@ class BundleDevController extends Controller
         EncounterInterface $encounterInterface,
         ConditionInterface $conditionInterface,
         ParameterInterface $parameterInterface,
-        ObservationInterface $observationInterface
+        ObservationInterface $observationInterface,
+        ProcedureInterface $procedureInterface
     ) {
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;
         $this->condition_repo = $conditionInterface;
         $this->parameter_repo = $parameterInterface;
         $this->observation_repo = $observationInterface;
+        $this->procedure_repo = $procedureInterface;
     }
     public function runJob(Request $request)
     {
@@ -92,6 +95,7 @@ class BundleDevController extends Controller
                             #parameter body json per item
                             $param_bundle['bundle'] = $item_bundle;
                             $param_bundle['observation'] = $this->observation_repo->getDataObservationByOriginalCode($item_bundle->original_code);
+                            $param_bundle['procedure'] = $this->procedure_repo->getDataProcedureByOriginalCode($item_bundle->original_code);
 
                             # API POST Bundle
                             $payload_bundle = $this->bodyBundle($param_bundle); // ada dua parameter

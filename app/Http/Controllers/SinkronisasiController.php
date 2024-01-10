@@ -133,7 +133,7 @@ class SinkronisasiController extends Controller
 
             # membuat Log status start job, job_report variable untuk mengambil last Id
             # jika tidak ada data,tidak usah insert job log
-            if ($data_sinkronisasi->count() > 0) {
+            if (!empty($data_sinkronisasi)) {
                 # Jalankan Job
                 $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
                 $param_start['start'] = $this->currentNow(); //dari APITrait
