@@ -64,4 +64,9 @@ class EncounterRepository implements EncounterInterface
 
         return $data;
     }
+
+    public function getDataEncounterByOriginalCode($original_code)
+    {
+        return $this->model->where('original_code', $original_code)->first();
+    }
 }

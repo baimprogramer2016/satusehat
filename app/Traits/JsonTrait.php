@@ -3,6 +3,7 @@
 namespace App\Traits;
 
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 trait JsonTrait
 {
@@ -608,6 +609,74 @@ trait JsonTrait
 
 
     #############################  MANUAL ###################################
+    public function bodyManualProcedure($data_procedure, $data_encounter)
+    {
+        $bodyManualProcedure = [
+            "resourceType" => "Procedure",
+            "status" => "completed",
+            "category" => [
+                "coding" => [
+                    [
+                        "system" => "http://snomed.info/sct",
+                        "code" => "103693007",
+                        "display" => "Diagnostic procedure"
+                    ]
+                ],
+                "text" => "Diagnostic procedure"
+            ],
+
+            "subject" => [
+                "reference" => "Patient/" . $data_encounter['subject_reference'],
+                "display" => $data_encounter['subject_display'],
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_encounter['satusehat_id'],
+                "display" => "-"
+            ],
+            "performedPeriod" => [
+                "start" => $this->convertTimeStamp($data_encounter['status_history_inprogress_start']),
+                "end" => $this->convertTimeStamp($data_encounter['status_history_inprogress_end'])
+            ],
+            "performer" => [
+                [
+                    "actor" => [
+                        "reference" => "Practitioner/" . $data_encounter['participant_individual_reference'],
+                        "display" => $data_encounter['participant_individual_display']
+                    ]
+                ]
+            ]
+        ];
+
+        # Jika procedure ada , menambahkan tindakan pada encounter
+        if (count($data_procedure) > 0) {
+
+            $bodyBundleItemProcedure = [];
+
+            foreach ($data_procedure as $item_procedure) {
+                array_push($bodyBundleItemProcedure,  $this->bodyBundleProcedureIcd9($item_procedure));
+            }
+
+            $bodyManualProcedure['code']['coding'] = $bodyBundleItemProcedure;
+        }
+        # Jika condition ada , menambahkan diagnosa pada encounter
+        if (count($data_encounter['r_condition']) > 0) {
+
+            $bodyBundleConditionCoding = [];
+            foreach ($data_encounter['r_condition'] as $item_diagnosa) {
+                array_push($bodyBundleConditionCoding,  $this->bodyBundleProcedureIcd10($item_diagnosa));
+            }
+
+            $varProcedure = ["coding" => $bodyBundleConditionCoding];
+
+            $bodyBundleProcedureFinal = [];
+            array_push($bodyBundleProcedureFinal,  $varProcedure);
+
+            $bodyManualProcedure['reasonCode'] = $bodyBundleProcedureFinal;
+        }
+
+        return $bodyManualProcedure;
+    }
+
     public function bodyManualObservation($data_observation)
     {
         $bodyManualObservation = [

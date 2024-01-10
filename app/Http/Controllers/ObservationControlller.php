@@ -119,10 +119,16 @@ class ObservationControlller extends Controller
 
                 $satusehat_id = null;
                 if ($response->successful()) {
-                    $satusehat_id = $body_parse->id;
+                    # jika sukses tetapi hasil gagal
+                    if ($body_parse->resourceType == 'OperationOutcome') {
+                        $satusehat_id = null;
+                    } else {
+                        $satusehat_id = $body_parse->id;
+                        # hanya jika sukses baru update status
+                        $this->observation_repo->updateStatusObservation($this->dec($request->id), $satusehat_id, $payload_observation, $response);
+                    }
                 }
                 # update status ke database
-                $this->observation_repo->updateStatusObservation($this->dec($request->id), $satusehat_id, $payload_observation, $response);
                 return $response;
             }
         } catch (Throwable $e) {

@@ -40,16 +40,11 @@ Route Application
 // Route::get('/get-kfa', [KfaController::class, 'getKfa'])->name('get-kfa')->middleware('auth');
 
 # BUNDLE
-// Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
-// Route::get('/kosong', function () {
-//     $data = Condition::find(8889);
-
-//     if (!empty($data)) {
-//         return 'ada';
-//     } else {
-//         return 'kosong';
-//     }
-// });
+Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
+Route::get('/kosong', function () {
+    $data = Condition::get();
+    return count($data);
+});
 
 #Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');
@@ -126,7 +121,6 @@ Route::get('/medication-kfa/{id}', [MedicationController::class, 'modalKfa'])->n
 Route::get('/medication-kfa-data/{id}', [MedicationController::class, 'getDataKFa'])->name('medication-kfa-data')->middleware('auth');
 Route::post('/medication-kfa-update', [MedicationController::class, 'updateKfa'])->name('medication-kfa-update')->middleware('auth');
 
-
 Route::get('/medication-request', [MedicationRequestController::class, 'index'])->name('medication-request')->middleware('auth');
 Route::get('/medication-request-response-ss/{id}', [MedicationRequestController::class, 'responseSS'])->name('medication-request-response-ss')->middleware('auth');
 
@@ -151,6 +145,8 @@ Route::post('/observation-kirim-ss/{id}', [ObservationControlller::class, 'kirim
 
 Route::get('/procedure', [ProcedureControlller::class, 'index'])->name('procedure')->middleware('auth');
 Route::get('/procedure-response-ss/{id}', [ProcedureControlller::class, 'responseSS'])->name('procedure-response-ss')->middleware('auth');
+Route::get('/procedure-modal-kirim-ss/{id}', [ProcedureControlller::class, 'modalKirimSS'])->name('procedure-modal-kirim-ss')->middleware('auth');
+Route::post('/procedure-kirim-ss/{id}', [ProcedureControlller::class, 'kirimSS'])->name('procedure-kirim-ss')->middleware('auth');
 
 Route::get('/composition', [CompositionControlller::class, 'index'])->name('composition')->middleware('auth');
 Route::get('/composition-response-ss/{id}', [CompositionControlller::class, 'responseSS'])->name('composition-response-ss')->middleware('auth');

@@ -159,7 +159,7 @@
                 }else
                 {
                     $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
-                    location.reload();
+                    // location.reload();
                     $(".btn-action").html('Selesai');
                 }
 

@@ -3,6 +3,7 @@
 namespace App\Repositories\Procedure;
 
 use App\Models\Procedure;
+use Carbon\Carbon;
 
 class ProcedureRepository implements ProcedureInterface
 {
@@ -23,6 +24,11 @@ class ProcedureRepository implements ProcedureInterface
         return $this->model->query();
     }
 
+    public function getDataProcedureFind($id)
+    {
+        return $this->model->find($id);
+    }
+
 
     public function updateDataBundleProcedureJob($param = [])
     {
@@ -40,6 +46,23 @@ class ProcedureRepository implements ProcedureInterface
             $data->satusehat_response = $param['satusehat_response'];
             $data->update();
         }
+        return $data;
+    }
+
+
+    public function updateStatusProcedure($id, $satusehat_id, $request, $response)
+    {
+        $data = $this->model->where('encounter_original_code', $id)
+            ->update([
+                'satusehat_id' => $satusehat_id,
+                'satusehat_request' => $request,
+                'satusehat_response' => $response,
+                'satusehat_send' => ($satusehat_id != null) ? 1 : 0,
+                'satusehat_statuscode' => ($satusehat_id != null) ? '200' : '500',
+                'satusehat_date' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+
         return $data;
     }
 }

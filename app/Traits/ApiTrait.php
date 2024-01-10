@@ -107,7 +107,7 @@ trait ApiTrait
         # generate token
         $token = $this->auth_satu_sehat();
         $url    = $this->env()->base_url  . $endpoint;
-        Log::info("url nya" . $url);
+
         $response = Http::withToken($token)->put($url, $payload);
         return $response;
     }

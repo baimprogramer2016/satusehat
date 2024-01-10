@@ -143,10 +143,15 @@ class EncounterController extends Controller
 
             $satusehat_id = null;
             if ($response->successful()) {
-                $satusehat_id = $body_parse->id;
+                # jika sukses tetapi hasil gagal
+                if ($body_parse->resourceType == 'OperationOutcome') {
+                    $satusehat_id = null;
+                } else {
+                    $satusehat_id = $body_parse->id;
+                    $this->encounter_repo->updateStatusEncounter($this->dec($request->id), $satusehat_id, $payload_encounter, $response);
+                }
             }
             # update status ke database
-            $this->encounter_repo->updateStatusEncounter($this->dec($request->id), $satusehat_id, $payload_encounter, $response);
             return $response;
         } catch (Throwable $e) {
             return view("layouts.error", [
@@ -181,9 +186,14 @@ class EncounterController extends Controller
 
             $satusehat_id = null;
             if ($response->successful()) {
-                $satusehat_id = $body_parse->id;
-                # update status ke database
-                $this->encounter_repo->updateStatusEncounter($this->dec($request->id), $satusehat_id, $payload_encounter, $response);
+                # jika sukses tetapi hasil gagal
+                if ($body_parse->resourceType == 'OperationOutcome') {
+                    $satusehat_id = null;
+                } else {
+                    $satusehat_id = $body_parse->id;
+                    # hanya jika sukses baru update status
+                    $this->encounter_repo->updateStatusEncounter($this->dec($request->id), $satusehat_id, $payload_encounter, $response);
+                }
             }
             return  $response;
         } catch (Throwable $e) {
