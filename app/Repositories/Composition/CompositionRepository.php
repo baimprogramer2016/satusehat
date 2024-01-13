@@ -22,4 +22,9 @@ class CompositionRepository implements CompositionInterface
     {
         return $this->model->query();
     }
+
+    public function getDataCompositionByOriginalCode($original_code)
+    {
+        return $this->model->where('encounter_original_code', $original_code)->get();
+    }
 }

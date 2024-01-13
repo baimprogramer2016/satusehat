@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\BundleJob;
+use App\Repositories\Composition\CompositionInterface;
 use App\Repositories\Condition\ConditionInterface;
 use App\Repositories\Encounter\EncounterInterface;
 use App\Repositories\JobLogs\JobLogsInterface;
@@ -25,7 +26,7 @@ class BundleDevController extends Controller
 
 
     public $job_logs_repo;
-    public $bundle_repo, $condition_repo, $observation_repo, $procedure_repo;
+    public $bundle_repo, $condition_repo, $observation_repo, $procedure_repo, $composition_repo;
     public $parameter_repo;
     protected $job_id = 0;
     public function __construct(
@@ -34,7 +35,8 @@ class BundleDevController extends Controller
         ConditionInterface $conditionInterface,
         ParameterInterface $parameterInterface,
         ObservationInterface $observationInterface,
-        ProcedureInterface $procedureInterface
+        ProcedureInterface $procedureInterface,
+        CompositionInterface $compositionInterface
     ) {
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;
@@ -42,6 +44,7 @@ class BundleDevController extends Controller
         $this->parameter_repo = $parameterInterface;
         $this->observation_repo = $observationInterface;
         $this->procedure_repo = $procedureInterface;
+        $this->composition_repo = $compositionInterface;
     }
     public function runJob(Request $request)
     {
@@ -96,6 +99,7 @@ class BundleDevController extends Controller
                             $param_bundle['bundle'] = $item_bundle;
                             $param_bundle['observation'] = $this->observation_repo->getDataObservationByOriginalCode($item_bundle->original_code);
                             $param_bundle['procedure'] = $this->procedure_repo->getDataProcedureByOriginalCode($item_bundle->original_code);
+                            $param_bundle['composition'] = $this->composition_repo->getDataCompositionByOriginalCode($item_bundle->original_code);
 
                             # API POST Bundle
                             $payload_bundle = $this->bodyBundle($param_bundle); // ada dua parameter

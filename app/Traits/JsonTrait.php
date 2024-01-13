@@ -207,6 +207,7 @@ trait JsonTrait
         $data_encounter = $param['bundle'];
         $data_observation = $param['observation'];
         $data_procedure = $param['procedure'];
+        $data_composition = $param['composition'];
 
 
         # push ke entry
@@ -229,10 +230,19 @@ trait JsonTrait
                 array_push($bodyBundle['entry'], $bodyObservation);
             }
         }
+
         # procedure
         if (count($data_procedure) > 0) {
             $bodyProcedure = $this->bodyBundleProcedure($data_encounter, $data_encounter['r_condition'], $data_procedure);
             array_push($bodyBundle['entry'], $bodyProcedure);
+        }
+
+        # composition
+        if (count($data_composition) > 0) {
+            foreach ($data_composition as $item_composition) {
+                $bodyComposition = $this->bodyBundlecomposition($item_composition, $data_parameter, $data_encounter['uuid']);
+                array_push($bodyBundle['entry'], $bodyComposition);
+            }
         }
 
         #end push entry
@@ -607,6 +617,81 @@ trait JsonTrait
         return $bodyBundleProcedureIcd10;
     }
 
+    public function bodyBundlecomposition($data_composition, $data_parameter, $encounter_uuid)
+    {
+        $bodyBundlecomposition =  [
+            "fullUrl" => "urn:uuid:" . $data_composition['uuid'],
+            "resource" => [
+                "resourceType" => "Composition",
+                "identifier" => [
+                    "system" => "http://sys-ids.kemkes.go.id/composition/" . $data_parameter['organization_id'],
+                    "value" => $data_composition['encounter_original_code']
+                ],
+                "status" => "final",
+                "type" => [
+                    "coding" => [
+                        [
+                            "system" => "http://loinc.org",
+                            "code" => "18842-5",
+                            "display" => "Discharge summary"
+                        ]
+                    ]
+                ],
+                "category" => [
+                    [
+                        "coding" => [
+                            [
+                                "system" => "http://loinc.org",
+                                "code" => "LP173421-1",
+                                "display" => "Report"
+                            ]
+                        ]
+                    ]
+                ],
+                "subject" => [
+                    "reference" => "Patient/" . $data_composition['subject_reference'],
+                    "display" => $data_composition['subject_display']
+                ],
+                "encounter" => [
+                    "reference" => "urn:uuid:" . $encounter_uuid,
+                    "display" => "-"
+                ],
+                "date" =>  $this->convertTimeStamp($data_composition['date']),
+                "author" => [
+                    [
+                        "reference" => "Practitioner/" . $data_composition['author_reference'],
+                        "display" => $data_composition['author_display']
+                    ]
+                ],
+                "title" => $data_composition['title'],
+                "custodian" => [
+                    "reference" => "Organization/" . $data_parameter['organization_id']
+                ],
+                "section" => [
+                    [
+                        "code" => [
+                            "coding" => [
+                                [
+                                    "system" => "http://loinc.org",
+                                    "code" => $data_composition['section_code'],
+                                    "display" => $data_composition['section_code_display']
+                                ]
+                            ]
+                        ],
+                        "text" => [
+                            "status" => $data_composition['text_status'],
+                            "div" => $data_composition['text_div']
+                        ]
+                    ]
+                ]
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "Composition"
+            ]
+        ];
+        return $bodyBundlecomposition;
+    }
 
     #############################  MANUAL ###################################
     public function bodyManualProcedure($data_procedure, $data_encounter)

@@ -40,17 +40,10 @@ Route Application
 // Route::get('/get-kfa', [KfaController::class, 'getKfa'])->name('get-kfa')->middleware('auth');
 
 # BUNDLE
-Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
-Route::get('/kosong', function () {
-    $data = Condition::get();
-    return count($data);
-});
+// Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
 
 #Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');
-
-
-
 
 
 /*

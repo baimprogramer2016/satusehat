@@ -127,3 +127,8 @@ insert into ss_upload(
 name
 )
 values('logo','png')
+
+alter table ss_composition
+add section_code varchar(100)
+alter table ss_composition
+add section_code_display varchar(100)
