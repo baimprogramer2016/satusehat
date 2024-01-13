@@ -40,7 +40,7 @@ Route Application
 // Route::get('/get-kfa', [KfaController::class, 'getKfa'])->name('get-kfa')->middleware('auth');
 
 # BUNDLE
-// Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
+Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
 
 #Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');
@@ -144,6 +144,9 @@ Route::post('/procedure-kirim-ss/{id}', [ProcedureControlller::class, 'kirimSS']
 Route::get('/composition', [CompositionControlller::class, 'index'])->name('composition')->middleware('auth');
 Route::get('/composition-response-ss/{id}', [CompositionControlller::class, 'responseSS'])->name('composition-response-ss')->middleware('auth');
 Route::get('/composition-detail/{id}', [CompositionControlller::class, 'detail'])->name('composition-detail')->middleware('auth');
+Route::get('/composition-modal-kirim-ss/{id}', [CompositionControlller::class, 'modalKirimSS'])->name('composition-modal-kirim-ss')->middleware('auth');
+Route::post('/composition-kirim-ss/{id}', [CompositionControlller::class, 'kirimSS'])->name('composition-kirim-ss')->middleware('auth');
+
 
 Route::get('/sinkronisasi', [SinkronisasiController::class, 'index'])->name('sinkronisasi')->middleware('auth');
 Route::get('/sinkronisasi-tambah', [SinkronisasiController::class, 'tambah'])->name('sinkronisasi-tambah')->middleware('auth');

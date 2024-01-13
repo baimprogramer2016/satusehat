@@ -61,6 +61,7 @@ class BundleDevController extends Controller
             # jika tidak ada data,tidak usah insert job log
             if ($this->bundle_repo->getDataBundleReadyJob()->count() > 0) {
 
+
                 # jika sudah ada data yang lagi antri gk ush dijlankan di job log
                 if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
                 } else {
@@ -78,6 +79,7 @@ class BundleDevController extends Controller
                     $data_bundle = $this->bundle_repo->getDataBundleReadyJob();
 
                     if ($data_bundle->count() > 0) {
+
                         # parameter body json
                         $param_bundle['parameter'] = $this->parameter_repo->getDataParameterFirst();
 

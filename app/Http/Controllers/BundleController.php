@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\BundleJob;
+use App\Repositories\Composition\CompositionInterface;
 use App\Repositories\Condition\ConditionInterface;
 use App\Repositories\Encounter\EncounterInterface;
 use App\Repositories\Procedure\ProcedureInterface;
@@ -25,7 +26,7 @@ class BundleController extends Controller
 
 
     public $job_logs_repo;
-    public $bundle_repo, $condition_repo, $observation_repo, $procedure_repo;
+    public $bundle_repo, $condition_repo, $observation_repo, $procedure_repo, $composition_repo;
     public $parameter_repo;
     protected $job_id = 0;
     public function __construct(
@@ -34,7 +35,8 @@ class BundleController extends Controller
         ConditionInterface $conditionInterface,
         ParameterInterface $parameterInterface,
         ObservationInterface $observationInterface,
-        ProcedureInterface $procedureInterface
+        ProcedureInterface $procedureInterface,
+        CompositionInterface $compositionInterface
     ) {
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;
@@ -42,6 +44,7 @@ class BundleController extends Controller
         $this->parameter_repo = $parameterInterface;
         $this->observation_repo = $observationInterface;
         $this->procedure_repo = $procedureInterface;
+        $this->composition_repo = $compositionInterface;
     }
     public function runJob(Request $request)
     {
@@ -69,7 +72,8 @@ class BundleController extends Controller
                         $this->job_logs_repo,
                         $this->job_id,
                         $this->observation_repo,
-                        $this->procedure_repo
+                        $this->procedure_repo,
+                        $this->composition_repo
                     );
                 }
             }

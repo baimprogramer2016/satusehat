@@ -25,7 +25,8 @@ class BundleJob implements ShouldQueue
     protected $bundle_repo,
         $condition_repo,
         $observation_repo,
-        $procedure_repo;
+        $procedure_repo,
+        $composition_repo;
     protected $parameter_repo;
     protected $job_id;
     protected $job_logs_repo;
@@ -37,7 +38,8 @@ class BundleJob implements ShouldQueue
         $job_logs_repo,
         $job_id, #job_id untuk id unik job logs
         $observation_repo,
-        $procedure_repo
+        $procedure_repo,
+        $composition_repo
     ) {
         $this->bundle_repo = $bundle_repo; #data yang akan dieksekusi
         $this->condition_repo = $condition_repo;
@@ -46,6 +48,7 @@ class BundleJob implements ShouldQueue
         $this->job_id = $job_id;
         $this->observation_repo = $observation_repo;
         $this->procedure_repo = $procedure_repo;
+        $this->composition_repo = $composition_repo;
     }
 
     /**
@@ -76,6 +79,7 @@ class BundleJob implements ShouldQueue
                 $param_bundle['bundle'] = $item_bundle;
                 $param_bundle['observation'] = $this->observation_repo->getDataObservationByOriginalCode($item_bundle->original_code);
                 $param_bundle['procedure'] = $this->procedure_repo->getDataProcedureByOriginalCode($item_bundle->original_code);
+                $param_bundle['composition'] = $this->composition_repo->getDataCompositionByOriginalCode($item_bundle->original_code);
 
                 # API POST Bundle
                 $payload_bundle = $this->bodyBundle($param_bundle); // ada dua parameter
@@ -121,12 +125,21 @@ class BundleJob implements ShouldQueue
 
                                 $this->observation_repo->updateDataBundleObservationJob($res);
                             }
+
                             # update status procedure
                             if ($item_response->response->resourceType == 'Procedure') {
                                 # response default - replace
                                 $res['satusehat_id'] = $item_response->response->resourceID;
 
                                 $this->procedure_repo->updateDataBundleProcedureJob($res);
+                            }
+
+                            # update status compositoin
+                            if ($item_response->response->resourceType == 'Composition') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->composition_repo->updateDataBundleCompositionJob($res);
                             }
                             # update status dari response
                         }

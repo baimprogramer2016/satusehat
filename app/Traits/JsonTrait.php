@@ -694,6 +694,75 @@ trait JsonTrait
     }
 
     #############################  MANUAL ###################################
+    public function bodyManualComposition($data_composition, $data_parameter)
+    {
+        $bodyManualComposition = [
+            "resourceType" => "Composition",
+            "identifier" => [
+                "system" => "http://sys-ids.kemkes.go.id/composition/" . $data_parameter['organization_id'],
+                "value" => $data_composition['encounter_original_code']
+            ],
+            "status" => "final",
+            "type" => [
+                "coding" => [
+                    [
+                        "system" => "http://loinc.org",
+                        "code" => "18842-5",
+                        "display" => "Discharge summary"
+                    ]
+                ]
+            ],
+            "category" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => "http://loinc.org",
+                            "code" => "LP173421-1",
+                            "display" => "Report"
+                        ]
+                    ]
+                ]
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_composition['subject_reference'],
+                "display" => $data_composition['subject_display']
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_composition['r_encounter']['satusehat_id'],
+                "display" => "-"
+            ],
+            "date" => $this->convertTimeStamp($data_composition['date']),
+            "author" => [
+                [
+                    "reference" => "Practitioner/" . $data_composition['author_reference'],
+                    "display" => $data_composition['author_display']
+                ]
+            ],
+            "title" => $data_composition['title'],
+            "custodian" => [
+                "reference" => "Organization/" . $data_parameter['organization_id']
+            ],
+            "section" => [
+                [
+                    "code" => [
+                        "coding" => [
+                            [
+                                "system" => "http://loinc.org",
+                                "code" => $data_composition['section_code'],
+                                "display" => $data_composition['section_code_display']
+                            ]
+                        ]
+                    ],
+                    "text" => [
+                        "status" => $data_composition['text_status'],
+                        "div" => $data_composition['text_div']
+                    ]
+                ]
+            ]
+        ];
+        return $bodyManualComposition;
+    }
+
     public function bodyManualProcedure($data_procedure, $data_encounter)
     {
         $bodyManualProcedure = [
