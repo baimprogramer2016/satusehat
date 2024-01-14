@@ -16,4 +16,8 @@ class Medication extends Model
     {
         return $this->hasOne(Status::class, 'status', 'satusehat_send');
     }
+    public function r_kfa()
+    {
+        return $this->hasMany(Kfa::class, 'kode_kfa', 'kfa_code');
+    }
 }

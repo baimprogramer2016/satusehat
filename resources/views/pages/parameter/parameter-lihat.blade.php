@@ -120,10 +120,20 @@
         </div>
         <div class="col-md-4">
             <div class="form-group">
-                <label class="form-label" for="farmasi_id">Farmasi ID</label>
+                <label class="form-label" for="farmasi_id">Org Farmasi ID</label>
                 <div class="form-control-wrap">
                     <input name="farmasi_id" readonly type="text" value="{{ $data_parameter->farmasi_id }}"
                         class="form-control form-control-sm" id="farmasi_id" required>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="form-label" for="location_farmasi_id">Lokasi Farmasi ID</label>
+                <div class="form-control-wrap">
+                    <input name="location_farmasi_id" readonly type="text"
+                        value="{{ $data_parameter->location_farmasi_id }}" class="form-control form-control-sm"
+                        id="location_farmasi_id" required>
                 </div>
             </div>
         </div>

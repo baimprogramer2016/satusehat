@@ -7,6 +7,9 @@ use App\Repositories\Composition\CompositionInterface;
 use App\Repositories\Condition\ConditionInterface;
 use App\Repositories\Encounter\EncounterInterface;
 use App\Repositories\JobLogs\JobLogsInterface;
+use App\Repositories\Medication\MedicationInterface;
+use App\Repositories\MedicationDispense\MedicationDispenseInterface;
+use App\Repositories\MedicationRequest\MedicationRequestInterface;
 use App\Repositories\Observation\ObservationInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\Procedure\ProcedureInterface;
@@ -26,7 +29,13 @@ class BundleDevController extends Controller
 
 
     public $job_logs_repo;
-    public $bundle_repo, $condition_repo, $observation_repo, $procedure_repo, $composition_repo;
+    public $bundle_repo,
+        $condition_repo,
+        $observation_repo,
+        $procedure_repo,
+        $composition_repo,
+        $medication_request_repo,
+        $medication_dispense_repo;
     public $parameter_repo;
     protected $job_id = 0;
     public function __construct(
@@ -36,7 +45,9 @@ class BundleDevController extends Controller
         ParameterInterface $parameterInterface,
         ObservationInterface $observationInterface,
         ProcedureInterface $procedureInterface,
-        CompositionInterface $compositionInterface
+        CompositionInterface $compositionInterface,
+        MedicationRequestInterface $medicationRequestInterface,
+        MedicationDispenseInterface $medicationDispenseInterface,
     ) {
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;
@@ -45,6 +56,8 @@ class BundleDevController extends Controller
         $this->observation_repo = $observationInterface;
         $this->procedure_repo = $procedureInterface;
         $this->composition_repo = $compositionInterface;
+        $this->medication_request_repo = $medicationRequestInterface;
+        $this->medication_dispense_repo = $medicationDispenseInterface;
     }
     public function runJob(Request $request)
     {
@@ -102,6 +115,8 @@ class BundleDevController extends Controller
                             $param_bundle['observation'] = $this->observation_repo->getDataObservationByOriginalCode($item_bundle->original_code);
                             $param_bundle['procedure'] = $this->procedure_repo->getDataProcedureByOriginalCode($item_bundle->original_code);
                             $param_bundle['composition'] = $this->composition_repo->getDataCompositionByOriginalCode($item_bundle->original_code);
+                            $param_bundle['medication_request'] = $this->medication_request_repo->getDataMedicationRequestByOriginalCodeReady($item_bundle->original_code);
+                            $param_bundle['medication_dispense'] = $this->medication_dispense_repo->getDataMedicationDispenseByOriginalCode($item_bundle->original_code);
 
                             # API POST Bundle
                             $payload_bundle = $this->bodyBundle($param_bundle); // ada dua parameter

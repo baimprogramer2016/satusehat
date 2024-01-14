@@ -26,7 +26,9 @@ class BundleJob implements ShouldQueue
         $condition_repo,
         $observation_repo,
         $procedure_repo,
-        $composition_repo;
+        $composition_repo,
+        $medication_request_repo,
+        $medication_dispense_repo;
     protected $parameter_repo;
     protected $job_id;
     protected $job_logs_repo;
@@ -39,7 +41,9 @@ class BundleJob implements ShouldQueue
         $job_id, #job_id untuk id unik job logs
         $observation_repo,
         $procedure_repo,
-        $composition_repo
+        $composition_repo,
+        $medication_request_repo,
+        $medication_dispense_repo,
     ) {
         $this->bundle_repo = $bundle_repo; #data yang akan dieksekusi
         $this->condition_repo = $condition_repo;
@@ -49,6 +53,8 @@ class BundleJob implements ShouldQueue
         $this->observation_repo = $observation_repo;
         $this->procedure_repo = $procedure_repo;
         $this->composition_repo = $composition_repo;
+        $this->medication_request_repo = $medication_request_repo;
+        $this->medication_dispense_repo = $medication_dispense_repo;
     }
 
     /**
@@ -80,9 +86,11 @@ class BundleJob implements ShouldQueue
                 $param_bundle['observation'] = $this->observation_repo->getDataObservationByOriginalCode($item_bundle->original_code);
                 $param_bundle['procedure'] = $this->procedure_repo->getDataProcedureByOriginalCode($item_bundle->original_code);
                 $param_bundle['composition'] = $this->composition_repo->getDataCompositionByOriginalCode($item_bundle->original_code);
+                $param_bundle['medication_request'] = $this->medication_request_repo->getDataMedicationRequestByOriginalCodeReady($item_bundle->original_code);
+                $param_bundle['medication_dispense'] = $this->medication_dispense_repo->getDataMedicationDispenseByOriginalCode($item_bundle->original_code);
 
                 # API POST Bundle
-                $payload_bundle = $this->bodyBundle($param_bundle); // ada dua parameter
+                $payload_bundle = $this->bodyBundle($param_bundle); // data bundle
 
                 $response = $this->post_general_ss('', $payload_bundle);
                 $body_parse = json_decode($response->body());
@@ -140,6 +148,29 @@ class BundleJob implements ShouldQueue
                                 $res['satusehat_id'] = $item_response->response->resourceID;
 
                                 $this->composition_repo->updateDataBundleCompositionJob($res);
+                            }
+
+                            # update status medication
+                            if ($item_response->response->resourceType == 'Medication') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->medication_request_repo->updateDataBundleMedicationJob($res);
+                            }
+                            # update status medication request
+                            if ($item_response->response->resourceType == 'MedicationRequest') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->medication_request_repo->updateDataBundleMedicationRequestJob($res);
+                            }
+
+                            # update status medication dispense
+                            if ($item_response->response->resourceType == 'MedicationDispense') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->medication_dispense_repo->updateDataBundleMedicationDispenseJob($res);
                             }
                             # update status dari response
                         }

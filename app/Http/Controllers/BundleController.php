@@ -8,6 +8,8 @@ use App\Repositories\Condition\ConditionInterface;
 use App\Repositories\Encounter\EncounterInterface;
 use App\Repositories\Procedure\ProcedureInterface;
 use App\Repositories\JobLogs\JobLogsInterface;
+use App\Repositories\MedicationDispense\MedicationDispenseInterface;
+use App\Repositories\MedicationRequest\MedicationRequestInterface;
 use App\Repositories\Observation\ObservationInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use Illuminate\Http\Request;
@@ -26,7 +28,13 @@ class BundleController extends Controller
 
 
     public $job_logs_repo;
-    public $bundle_repo, $condition_repo, $observation_repo, $procedure_repo, $composition_repo;
+    public $bundle_repo,
+        $condition_repo,
+        $observation_repo,
+        $procedure_repo,
+        $composition_repo,
+        $medication_request_repo,
+        $medication_dispense_repo;
     public $parameter_repo;
     protected $job_id = 0;
     public function __construct(
@@ -36,7 +44,9 @@ class BundleController extends Controller
         ParameterInterface $parameterInterface,
         ObservationInterface $observationInterface,
         ProcedureInterface $procedureInterface,
-        CompositionInterface $compositionInterface
+        CompositionInterface $compositionInterface,
+        MedicationRequestInterface $medicationRequestInterface,
+        MedicationDispenseInterface $medicationDispenseInterface,
     ) {
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;
@@ -45,6 +55,8 @@ class BundleController extends Controller
         $this->observation_repo = $observationInterface;
         $this->procedure_repo = $procedureInterface;
         $this->composition_repo = $compositionInterface;
+        $this->medication_request_repo = $medicationRequestInterface;
+        $this->medication_dispense_repo = $medicationDispenseInterface;
     }
     public function runJob(Request $request)
     {
@@ -73,7 +85,9 @@ class BundleController extends Controller
                         $this->job_id,
                         $this->observation_repo,
                         $this->procedure_repo,
-                        $this->composition_repo
+                        $this->composition_repo,
+                        $this->medication_request_repo,
+                        $this->medication_dispense_repo,
                     );
                 }
             }
