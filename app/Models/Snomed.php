@@ -10,5 +10,5 @@ class Snomed extends Model
     use HasFactory;
     protected $table = 'ss_snomed';
 
-    protected $fillable = ['snomed_code', 'snomed_display', 'original_code', 'original_display', 'category'];
+    protected $fillable = ['snomed_code', 'snomed_display'];
 }

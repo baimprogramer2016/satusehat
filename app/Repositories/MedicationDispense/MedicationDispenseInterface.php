@@ -8,4 +8,6 @@ interface MedicationDispenseInterface
     public function getDataMedicationDispenseByOriginalCode($original_code);
 
     public function updateDataBundleMedicationDispenseJob($param = []);
+    public function getDataMedicationDispenseFind($id);
+    public function updateStatusMedicationDispense($id, $satusehat_id, $request, $response);
 }

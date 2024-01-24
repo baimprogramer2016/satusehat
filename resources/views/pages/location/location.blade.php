@@ -213,6 +213,7 @@
         // loadingProcess(); //dari custom.js
 
         $(".btn-action").html('Proses Kirim....')
+        $(".btn-action").prop("disabled", true);
         $(".result-message").html('...');
         var url     = '{{ route("lokasi-kirim-ss", ":id") }}';
         url         = url.replace(':id',id);

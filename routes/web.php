@@ -12,7 +12,10 @@ use App\Http\Controllers\JobsController;
 use App\Http\Controllers\KfaController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\LoincController;
+use App\Http\Controllers\MasterProcedureController;
 use App\Http\Controllers\MedicationController;
+use App\Http\Controllers\MedicationDispenseController;
 use App\Http\Controllers\MedicationRequestController;
 use App\Http\Controllers\ObservationControlller;
 use App\Http\Controllers\OrganizationController;
@@ -21,7 +24,9 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PractitionerController;
 use App\Http\Controllers\ProcedureControlller;
 use App\Http\Controllers\QueueController;
+use App\Http\Controllers\ServiceRequestController;
 use App\Http\Controllers\SinkronisasiController;
+use App\Http\Controllers\SnomedController;
 use App\Http\Controllers\UploadController;
 use App\Models\Condition;
 use Illuminate\Support\Facades\Route;
@@ -78,6 +83,21 @@ Route::get('/organisasi-response-ss/{id}', [OrganizationController::class, 'resp
 Route::get('/organisasi-modal-kirim-ss/{id}', [OrganizationController::class, 'modalKirimSS'])->name('organisasi-modal-kirim-ss')->middleware('auth');
 Route::post('/organisasi-kirim-ss/{id}', [OrganizationController::class, 'kirimSS'])->name('organisasi-kirim-ss')->middleware('auth');
 
+Route::get('/snomed', [SnomedController::class, 'index'])->name('snomed')->middleware('auth');
+Route::get('/snomed-tambah', [SnomedController::class, 'tambah'])->name('snomed-tambah')->middleware('auth');
+Route::post('/snomed-simpan', [SnomedController::class, 'simpan'])->name('snomed-simpan')->middleware('auth');
+Route::get('/snomed-hapus/{id}', [SnomedController::class, 'hapus'])->name('snomed-hapus')->middleware('auth');
+Route::post('/snomed-hapus-data', [SnomedController::class, 'hapusData'])->name('snomed-hapus-data')->middleware('auth');
+Route::get('/snomed-ubah/{id}', [SnomedController::class, 'ubah'])->name('snomed-ubah')->middleware('auth');
+Route::post('/snomed-update', [SnomedController::class, 'update'])->name('snomed-update')->middleware('auth');
+
+Route::get('/loinc', [LoincController::class, 'index'])->name('loinc')->middleware('auth');
+Route::get('/loinc-tambah', [LoincController::class, 'tambah'])->name('loinc-tambah')->middleware('auth');
+Route::post('/loinc-simpan', [LoincController::class, 'simpan'])->name('loinc-simpan')->middleware('auth');
+Route::get('/loinc-hapus/{id}', [LoincController::class, 'hapus'])->name('loinc-hapus')->middleware('auth');
+Route::post('/loinc-hapus-data', [LoincController::class, 'hapusData'])->name('loinc-hapus-data')->middleware('auth');
+Route::get('/loinc-ubah/{id}', [LoincController::class, 'ubah'])->name('loinc-ubah')->middleware('auth');
+Route::post('/loinc-update', [LoincController::class, 'update'])->name('loinc-update')->middleware('auth');
 
 Route::get('/lokasi', [LocationController::class, 'index'])->name('lokasi')->middleware('auth');
 Route::get('/lokasi-tambah', [LocationController::class, 'tambah'])->name('lokasi-tambah')->middleware('auth');
@@ -116,6 +136,14 @@ Route::post('/medication-kfa-update', [MedicationController::class, 'updateKfa']
 
 Route::get('/medication-request', [MedicationRequestController::class, 'index'])->name('medication-request')->middleware('auth');
 Route::get('/medication-request-response-ss/{id}', [MedicationRequestController::class, 'responseSS'])->name('medication-request-response-ss')->middleware('auth');
+Route::get('/medication-request-modal-kirim-ss/{id}', [MedicationRequestController::class, 'modalKirimSS'])->name('medication-request-modal-kirim-ss')->middleware('auth');
+Route::post('/medication-request-kirim-ss/{id}', [MedicationRequestController::class, 'kirimSS'])->name('medication-request-kirim-ss')->middleware('auth');
+
+
+Route::get('/medication-dispense', [MedicationDispenseController::class, 'index'])->name('medication-dispense')->middleware('auth');
+Route::get('/medication-dispense-response-ss/{id}', [MedicationDispenseController::class, 'responseSS'])->name('medication-dispense-response-ss')->middleware('auth');
+Route::get('/medication-dispense-modal-kirim-ss/{id}', [MedicationDispenseController::class, 'modalKirimSS'])->name('medication-dispense-modal-kirim-ss')->middleware('auth');
+Route::post('/medication-dispense-kirim-ss/{id}', [MedicationDispenseController::class, 'kirimSS'])->name('medication-dispense-kirim-ss')->middleware('auth');
 
 
 Route::get('/encounter', [EncounterController::class, 'index'])->name('encounter')->middleware('auth');
@@ -171,3 +199,14 @@ Route::post('/akun-simpan', [LoginController::class, 'simpanAkun'])->name('akun-
 Route::get('/upload', [UploadController::class, 'index'])->name('upload')->middleware('auth');
 Route::get('/upload-ubah/{id}', [UploadController::class, 'ubah'])->name('upload-ubah')->middleware('auth');
 Route::post('/upload-update', [UploadController::class, 'update'])->name('upload-update')->middleware('auth');
+
+
+Route::get('/master-procedure', [MasterProcedureController::class, 'index'])->name('master-procedure')->middleware('auth');
+Route::get('/master-procedure-snomed/{id}', [MasterProcedureController::class, 'modalSnomed'])->name('master-procedure-snomed')->middleware('auth');
+Route::get('/master-procedure-snomed-data/{id}', [MasterProcedureController::class, 'getDataSnomed'])->name('master-procedure-snomed-data')->middleware('auth');
+Route::post('/master-procedure-snomed-update', [MasterProcedureController::class, 'updateSnomed'])->name('master-procedure-snomed-update')->middleware('auth');
+Route::get('/master-procedure-loinc/{id}', [MasterProcedureController::class, 'modalLoinc'])->name('master-procedure-loinc')->middleware('auth');
+Route::get('/master-procedure-loinc-data/{id}', [MasterProcedureController::class, 'getDataLoinc'])->name('master-procedure-loinc-data')->middleware('auth');
+Route::post('/master-procedure-loinc-update', [MasterProcedureController::class, 'updateLoinc'])->name('master-procedure-loinc-update')->middleware('auth');
+
+Route::get('/service-request', [ServiceRequestController::class, 'index'])->name('service-request')->middleware('auth');

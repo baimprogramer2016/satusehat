@@ -3,6 +3,7 @@
 namespace App\Repositories\Medication;
 
 use App\Models\Medication;
+use Carbon\Carbon;
 
 class MedicationRepository implements MedicationInterface
 {

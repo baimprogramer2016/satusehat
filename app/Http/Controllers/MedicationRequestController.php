@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Medication\MedicationInterface;
 use App\Repositories\MedicationRequest\MedicationRequestInterface;
+use App\Repositories\Parameter\ParameterInterface;
+use App\Traits\JsonTrait;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\Datatables;
 use App\Traits\GeneralTrait;
@@ -13,13 +16,19 @@ class MedicationRequestController extends Controller
 {
     use GeneralTrait;
     use ApiTrait;
-    private $medication_request_repo;
+    use JsonTrait;
+    private $medication_request_repo, $parameter_repo, $medication_repo;
 
     public function __construct(
         MedicationRequestInterface $medicationRequestInterface,
+        ParameterInterface $parameterInterface,
+        MedicationInterface $medicationInterface
 
     ) {
         $this->medication_request_repo = $medicationRequestInterface;
+        $this->medication_request_repo = $medicationRequestInterface;
+        $this->parameter_repo = $parameterInterface;
+        $this->medication_repo = $medicationInterface;
     }
 
 
@@ -46,7 +55,7 @@ class MedicationRequestController extends Controller
                         $li_kirim_ss = '';
                         $li_response_ss = "<li><a href='#file-upload' data-toggle='modal' onClick=modalResponseSS('" . $this->enc($item_medication_request->satusehat_id) . "')><em class='icon ni ni-eye'></em><span>Response Satu Sehat</span></a></li>";
                     } else {
-                        $li_kirim_ss = "<li><a  onClick=modalKirimSS('" . $this->enc($item_medication_request->id) . "')><em class='icon ni ni-send'></em><span>Kirim ke Satu Sehat</span></a></li>";
+                        $li_kirim_ss = "<li><a href='#file-upload' data-toggle='modal' onClick=modalKirimSS('" . $this->enc($item_medication_request->id) . "')><em class='icon ni ni-send'></em><span>Kirim ke Satu Sehat</span></a></li>";
                         $li_response_ss = '';
                     }
                     $action_update = ' <div class="drodown">
@@ -76,6 +85,82 @@ class MedicationRequestController extends Controller
             return view('pages.medication-request.medication-request-response-ss', [
                 "data_response" => $response_satusehat
             ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+
+    public function modalKirimSS(Request $request, $id)
+    {
+        try {
+            return view('pages.medication-request.medication-request-kirim-ss', [
+                "data_medication_request" => $this->medication_request_repo->getDataMedicationRequestFind($this->dec($id)),
+            ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+
+    public function kirimSS(Request $request)
+    {
+        try {
+            # untuk procedure bukan ID tapi encounter_original_code
+            $data_medication_request = $this->medication_request_repo->getDataMedicationRequestFind($this->dec($request->id));
+            $data_parameter = $this->parameter_repo->getDataParameterFirst();
+
+            if (empty($data_medication_request['r_encounter']['satusehat_id'])) {
+                $result =  [
+                    "resourceType" => "OperationOutcome",
+                    "message" => config('constan.error_message.error_encounter_no')
+                ];
+                return json_encode($result);
+            } else {
+
+                # sekali kirim 2 , medication & Mediaction Request
+                # 1 tembak medication
+                $payload_medication = $this->bodyManualMedication($data_medication_request, $data_parameter);
+
+                $response = $this->post_general_ss('/Medication', $payload_medication);
+                $body_parse = json_decode($response->body());
+
+                $satusehat_id_medication = null;
+                if ($response->successful()) {
+                    # jika sukses tetapi hasil gagal
+                    if ($body_parse->resourceType == 'OperationOutcome') {
+                        $satusehat_id_medication = null;
+                    } else {
+                        $satusehat_id_medication = $body_parse->id;
+                        # hanya jika sukses baru update status
+                        $this->medication_request_repo->updateStatusMedication($this->dec($request->id), $satusehat_id_medication, $payload_medication, $response);
+                    }
+                }
+
+                # 2 tembak medication request
+                $payload_medication_request = $this->bodyManualMedicationRequest($data_medication_request, $data_parameter, $satusehat_id_medication);
+
+                $response = $this->post_general_ss('/MedicationRequest', $payload_medication_request);
+                $body_parse = json_decode($response->body());
+
+                $satusehat_id = null;
+                if ($response->successful()) {
+                    # jika sukses tetapi hasil gagal
+                    if ($body_parse->resourceType == 'OperationOutcome') {
+                        $satusehat_id = null;
+                    } else {
+                        $satusehat_id = $body_parse->id;
+                        # hanya jika sukses baru update status
+                        $this->medication_request_repo->updateStatusMedicationRequest($this->dec($request->id), $satusehat_id, $payload_medication_request, $response);
+                    }
+                }
+                # update status ke database
+                return $response;
+            }
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

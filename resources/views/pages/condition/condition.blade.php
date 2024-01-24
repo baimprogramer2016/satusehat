@@ -133,6 +133,7 @@
         // loadingProcess(); //dari custom.js
 
         $(".btn-action").html('Proses Kirim....')
+        $(".btn-action").prop("disabled", true);
         $(".result-message").html('...');
         var url     = '{{ route("condition-kirim-ss", ":id") }}';
         url         = url.replace(':id',id);

@@ -3,6 +3,7 @@
 namespace App\Repositories\MedicationDispense;
 
 use App\Models\MedicationDispense;
+use Carbon\Carbon;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -19,6 +20,10 @@ class MedicationDispenseRepository implements MedicationDispenseInterface
     public function getQuery()
     {
         return $this->model->query();
+    }
+    public function getDataMedicationDispenseFind($id)
+    {
+        return $this->model->find($id);
     }
 
     # untuk mendapatkan keseluruhan data
@@ -42,6 +47,21 @@ class MedicationDispenseRepository implements MedicationDispenseInterface
             $data->satusehat_response = $param['satusehat_response'];
             $data->update();
         }
+        return $data;
+    }
+    public function updateStatusMedicationDispense($id, $satusehat_id, $request, $response)
+    {
+        $data = $this->model->where('id', $id)
+            ->update([
+                'satusehat_id' => $satusehat_id,
+                'satusehat_request' => $request,
+                'satusehat_response' => $response,
+                'satusehat_send' => ($satusehat_id != null) ? 1 : 0,
+                'satusehat_statuscode' => ($satusehat_id != null) ? '200' : '500',
+                'satusehat_date' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+
         return $data;
     }
 }

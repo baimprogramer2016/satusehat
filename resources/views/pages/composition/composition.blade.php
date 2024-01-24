@@ -70,6 +70,7 @@
       var table = $('.data-table').DataTable({
           processing: true,
           serverSide: true,
+          stateSave: true,
           language : {
                 sLengthMenu: "Show _MENU_"
             },
@@ -131,6 +132,7 @@
         // loadingProcess(); //dari custom.js
 
         $(".btn-action").html('Proses Kirim....')
+        $(".btn-action").prop("disabled", true);
         $(".result-message").html('...');
         var url     = '{{ route("composition-kirim-ss", ":id") }}';
         url         = url.replace(':id',id);

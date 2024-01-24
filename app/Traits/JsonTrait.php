@@ -964,7 +964,7 @@ trait JsonTrait
                         "start" => $this->convertTimeStamp($data_medication_request['validity_period_start']),
                         "end" => $this->convertTimeStamp($data_medication_request['validity_period_end']),
                     ],
-                    "numberOfRepeatsAllowed" => (int)$data_medication_request['dispense_interval_code'],
+                    // "numberOfRepeatsAllowed" => (int)$data_medication_request['number_of_repeats'],
                     "quantity" => [
                         "value" => (int)$data_medication_request['quantity_value'],
                         "unit" => $data_medication_request['quantity_unit'],
@@ -1101,6 +1101,320 @@ trait JsonTrait
 
 
     #############################  MANUAL ###################################
+
+    public function bodyManualMedication($data_medication_request, $data_parameter)
+    {
+        $bodyManualMedication = [
+            "resourceType" => "Medication",
+            "meta" => [
+                "profile" => [
+                    "https://fhir.kemkes.go.id/r4/StructureDefinition/Medication"
+                ]
+            ],
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/medication/" . $data_parameter['organization_id'],
+                    "use" => "official",
+                    "value" =>  $data_medication_request['identifier_2'] . '-' . $data_medication_request['identifier_1']
+                ]
+            ],
+            "code" => [
+                "coding" => [
+                    [
+                        "system" => "http://sys-ids.kemkes.go.id/kfa",
+                        "code" => $data_medication_request['r_medication']['r_kfa'][0]['kode_kfa'],
+                        "display" => $data_medication_request['r_medication']['r_kfa'][0]['nama_kfa']
+                    ]
+                ]
+            ],
+            "status" => "active",
+            "manufacturer" => [
+                "reference" => "Organization/" . $data_parameter['farmasi_id']
+            ],
+            "form" => [
+                "coding" => [
+                    [
+                        "system" => "http://terminology.kemkes.go.id/CodeSystem/medication-form",
+                        "code" => $data_medication_request['r_medication']['r_kfa'][0]['kode_sediaan'],
+                        "display" => $data_medication_request['r_medication']['r_kfa'][0]['nama_sediaan']
+                    ]
+                ]
+            ],
+            "extension" => [
+                [
+                    "url" => "https://fhir.kemkes.go.id/r4/StructureDefinition/MedicationType",
+                    "valueCodeableConcept" => [
+                        "coding" => [
+                            [
+                                "system" => "http://terminology.kemkes.go.id/CodeSystem/medication-type",
+                                "code" => "NC",
+                                "display" => "Non-compound"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        # Jika ada KFA masukan ke ingredient
+        if (!empty($data_medication_request['r_medication']['r_kfa'])) {
+
+            $bodyManualIngredient = [];
+            foreach ($data_medication_request['r_medication']['r_kfa'] as $item_kfa) {
+                array_push($bodyManualIngredient,  $this->bodyBundleMedicationIngredient($item_kfa));
+            }
+
+            $bodyManualMedication['ingredient'] =  $bodyManualIngredient;
+        }
+        return $bodyManualMedication;
+    }
+    public function bodyManualMedicationRequest($data_medication_request, $data_parameter, $satusehat_id_medication)
+    {
+        $bodyManualMedicationRequest = [
+            "resourceType" => "MedicationRequest",
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/prescription/" . $data_parameter['organization_id'],
+                    "use" => "official",
+                    "value" => $data_medication_request['identifier_1']
+                ],
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/prescription-item/" . $data_parameter['organization_id'],
+                    "use" => "official",
+                    "value" => $data_medication_request['identifier_1'] . '-' . $data_medication_request['identifier_2']
+                ]
+            ],
+            "status" => "completed",
+            "intent" => "order",
+            "category" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => "http://terminology.hl7.org/CodeSystem/medicationrequest-category",
+                            "code" => "outpatient",
+                            "display" => "Outpatient"
+                        ]
+                    ]
+                ]
+            ],
+            "priority" => "routine",
+            "medicationReference" => [
+                "reference" => "Medication/" . $satusehat_id_medication,
+                "display" => $data_medication_request['r_medication']['r_kfa'][0]['nama_kfa']
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_medication_request['subject_reference'],
+                "display" => $data_medication_request['subject_display']
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_medication_request['r_encounter']['satusehat_id'],
+            ],
+            "authoredOn" =>  $this->convertTimeStamp($data_medication_request['authored_on']),
+            "requester" => [
+                "reference" => "Practitioner/" . $data_medication_request['requester_reference'],
+                "display" => $data_medication_request['requester_display']
+            ],
+            // "reasonCode" => [
+            //     [
+            //         "coding" => [
+            //             [
+            //                 "system" => "http://hl7.org/fhir/sid/icd-10",
+            //                 "code" => "A15.0",
+            //                 "display" => "Tuberculosis of lung, confirmed by sputum microscopy with or without culture"
+            //             ]
+            //         ]
+            //     ]
+            // ],
+            // "courseOfTherapyType" => [
+            //     "coding" => [
+            //         [
+            //             "system" => "http://terminology.hl7.org/CodeSystem/medicationrequest-course-of-therapy",
+            //             "code" => "continuous",
+            //             "display" => "Continuing long term therapy"
+            //         ]
+            //     ]
+            // ],
+            "dosageInstruction" => [
+                [
+                    "sequence" => 1,
+                    "text" => $data_medication_request['dose_quantity_value'],
+                    "additionalInstruction" => [
+                        [
+                            "text" => $data_medication_request['ins_additional']
+                        ]
+                    ],
+                    "patientInstruction" => $data_medication_request['ins_patient'],
+                    "timing" => [
+                        "repeat" => [
+                            "frequency" => (int)$data_medication_request['int_timing_frequency'],
+                            "period" => (int)$data_medication_request['int_timing_period'],
+                            "periodUnit" => $data_medication_request['int_timing_period_unit']
+                        ]
+                    ],
+                    "route" => [
+                        "coding" => [
+                            [
+                                "system" => "http://www.whocc.no/atc",
+                                "code" => $data_medication_request['route_code'],
+                                "display" => $data_medication_request['route_display']
+                            ]
+                        ]
+                    ],
+                    "doseAndRate" => [
+                        [
+                            "type" => [
+                                "coding" => [
+                                    [
+                                        "system" => "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                                        "code" => "ordered",
+                                        "display" => "Ordered"
+                                    ]
+                                ]
+                            ],
+                            "doseQuantity" => [
+                                "value" => (int)$data_medication_request['dose_quantity_value'],
+                                "unit" => $data_medication_request['dose_quantity_unit'],
+                                "system" => "http://terminology.hl7.org/CodeSystem/v3-orderableDrugForm",
+                                "code" => $data_medication_request['dose_quantity_code'],
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            "dispenseRequest" => [
+                "dispenseInterval" => [
+                    "value" => 1,
+                    "unit" => $data_medication_request['dispense_interval_unit'],
+                    "system" => "http://unitsofmeasure.org",
+                    "code" => $data_medication_request['dispense_interval_code'],
+                ],
+                "validityPeriod" => [
+                    "start" => $this->convertTimeStamp($data_medication_request['validity_period_start']),
+                    "end" => $this->convertTimeStamp($data_medication_request['validity_period_end']),
+                ],
+                // "numberOfRepeatsAllowed" =>  (int)$data_medication_request['number_of_repeats'],
+                "quantity" => [
+                    "value" => (int)$data_medication_request['quantity_value'],
+                    "unit" => $data_medication_request['quantity_unit'],
+                    "system" => "http://terminology.hl7.org/CodeSystem/v3-orderableDrugForm",
+                    "code" => $data_medication_request['quantity_code'],
+                ],
+                "expectedSupplyDuration" => [
+                    "value" => (int)$data_medication_request['expected_value'],
+                    "unit" => $data_medication_request['expected_unit'],
+                    "system" => "http://unitsofmeasure.org",
+                    "code" => $data_medication_request['expected_code'],
+                ],
+                "performer" => [
+                    "reference" => "Organization/" . $data_parameter['organization_id']
+                ]
+            ]
+        ];
+        return $bodyManualMedicationRequest;
+    }
+
+    public function bodyManualMedicationDispense($data_medication_dispense, $data_medication_request, $data_parameter)
+    {
+        $bodyManualMedicationDispense = [
+            "resourceType" => "MedicationDispense",
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/prescription/" . $data_parameter['organization_id'],
+                    "use" => "official",
+                    "value" =>  $data_medication_request['identifier_1']
+                ],
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/prescription-item/" . $data_parameter['organization_id'],
+                    "use" => "official",
+                    "value" => $data_medication_request['identifier_1'] . '-' . $data_medication_request['identifier_2']
+                ]
+            ],
+            "status" => "completed",
+            "category" => [
+                "coding" => [
+                    [
+                        "system" => "http://terminology.hl7.org/fhir/CodeSystem/medicationdispense-category",
+                        "code" => "outpatient",
+                        "display" => "Outpatient"
+                    ]
+                ]
+            ],
+            "medicationReference" => [
+                "reference" => "Medication/" . $data_medication_request['satusehat_id_medication'],
+                "display" =>  $data_medication_request['r_medication']['r_kfa'][0]['nama_kfa']
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_medication_request['subject_reference'],
+                "display" =>  $data_medication_request['subject_display']
+            ],
+            "context" => [
+                "reference" => "Encounter/" . $data_medication_request['r_encounter']['satusehat_id'],
+            ],
+            "performer" => [
+                [
+                    "actor" => [
+                        "reference" => "Practitioner/" . $data_medication_request['requester_reference'],
+                        "display" => $data_medication_request['requester_display']
+                    ]
+                ]
+            ],
+            "location" => [
+                "reference" => "Location/" . $data_medication_dispense['farmasi_id'],
+                "display" => $data_medication_dispense['farmasi_name'],
+            ],
+            "authorizingPrescription" => [
+                [
+                    "reference" => "MedicationRequest/" . $data_medication_request['satusehat_id']
+                ]
+            ],
+            "quantity" => [
+                "system" => "http://terminology.hl7.org/CodeSystem/v3-orderableDrugForm",
+                "code" => $data_medication_request['quantity_code'],
+                "value" => (int)$data_medication_request['quantity_value'],
+            ],
+            "daysSupply" => [
+                "value" => (int)$data_medication_request['expected_value'],
+                "unit" => $data_medication_request['expected_unit'],
+                "system" => "http://unitsofmeasure.org",
+                "code" => $data_medication_request['expected_code'],
+            ],
+            "whenPrepared" => $this->convertTimeStamp($data_medication_request['validity_period_start']),
+            "whenHandedOver" => $this->convertTimeStamp($data_medication_request['validity_period_end']),
+            "dosageInstruction" => [
+                [
+                    "sequence" => 1,
+                    "text" => $data_medication_request['dose_quantity_value'],
+                    "timing" => [
+                        "repeat" => [
+                            "frequency" => (int)$data_medication_request['int_timing_frequency'],
+                            "period" =>  (int)$data_medication_request['int_timing_period'],
+                            "periodUnit" => $data_medication_request['int_timing_period_unit']
+                        ]
+                    ],
+                    "doseAndRate" => [
+                        [
+                            "type" => [
+                                "coding" => [
+                                    [
+                                        "system" => "http://terminology.hl7.org/CodeSystem/dose-rate-type",
+                                        "code" => "ordered",
+                                        "display" => "Ordered"
+                                    ]
+                                ]
+                            ],
+                            "doseQuantity" => [
+                                "value" => (int)$data_medication_request['dose_quantity_value'],
+                                "unit" =>  $data_medication_request['dose_quantity_unit'],
+                                "system" => "http://terminology.hl7.org/CodeSystem/v3-orderableDrugForm",
+                                "code" => $data_medication_request['dose_quantity_code'],
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        return $bodyManualMedicationDispense;
+    }
     public function bodyManualComposition($data_composition, $data_parameter)
     {
         $bodyManualComposition = [

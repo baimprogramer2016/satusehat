@@ -26,4 +26,9 @@ class MedicationDispense extends Model
     {
         return $this->hasMany(MedicationRequest::class,  'encounter_original_code', 'encounter_original_code');
     }
+
+    public function r_encounter()
+    {
+        return $this->hasOne(Encounter::class,  'original_code', 'encounter_original_code');
+    }
 }

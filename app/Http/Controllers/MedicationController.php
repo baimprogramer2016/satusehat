@@ -75,7 +75,7 @@ class MedicationController extends Controller
                     })
                     ->addColumn('pilih_kfa', function ($item_kfa) {
                         // $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">' . $item_patient . '</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
-                        $pilih_kfa = '<button data-dismiss="modal" onClick="updateKfa(' . $this->id_medication . ',' . $item_kfa->kode_kfa . ')" class="btn btn-warning">Pilih</button>';
+                        $pilih_kfa = "<button data-dismiss='modal' onClick=updateKfa('" . $this->id_medication . "','" . $item_kfa->kode_kfa . "') class='btn btn-warning'>Pilih</button>";
                         return $pilih_kfa;
                     })
                     ->rawColumns(['kolom_numerator', 'pilih_kfa'])

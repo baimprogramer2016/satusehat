@@ -13,4 +13,8 @@ interface MedicationRequestInterface
 
     public function updateDataBundleMedicationJob($param = []);
     public function updateDataBundleMedicationRequestJob($param = []);
+    public function getDataMedicationRequestFind($id);
+    public function updateStatusMedicationRequest($id, $satusehat_id, $request, $response);
+    public function updateStatusMedication($id, $satusehat_id, $request, $response);
+    public function getDataMedicationRequestIdentifier($identifier_1, $identifier_2);
 }

@@ -14,7 +14,6 @@
 </div><!-- .nk-block-head -->
 <div class="nk-block">
     <div class="row g-gs">
-
         <div class="col-xl-12 col-xxl-12">
 
             <div class="card card-bordered card-full">
@@ -29,7 +28,6 @@
                                     <th>Kode</th>
                                     <th>Kode Resep</th>
                                     <th>Kode Item</th>
-                                    <th>Nama Obat</th>
                                     <th>Nama Pasien</th>
                                     <th>Instruksi</th>
                                     <th>Satu Sehat ID</th>
@@ -72,6 +70,7 @@
       var table = $('.data-table').DataTable({
           processing: true,
           serverSide: true,
+          stateSave: true,
           language : {
                 sLengthMenu: "Show _MENU_"
             },
@@ -81,7 +80,6 @@
             //   {data: 'id', name: 'id'},
               {data: 'encounter_original_code', name: 'encounter_original_code'},
               {data: 'identifier_1', name: 'identifier_1'},
-              {data: 'identifier_2', name: 'identifier_2'},
               {data: 'identifier_2', name: 'identifier_2'},
               {data: 'subject_display', name: 'subject_display'},
               {data: 'ins_patient', name: 'ins_patient'},
@@ -112,22 +110,63 @@
         })
     }
 
+
     function modalKirimSS(id)
     {
-        // loadingProcess(); //dari custom.js
-        // var url     = '{{ route("pasien-ubah", ":id") }}';
-        // url         = url.replace(':id',id);
+        loadingProcess(); //dari custom.js
 
-        // $.ajax({
-        //     type:"GET",
-        //     url:url,
-        //     success: function(response)
-        //     {
-        //         $("#content-modal").html("");
-        //         $("#content-modal").html(response);
-        //     }
-        // })
-        alert("Belum Tersedia")
+        var url     = '{{ route("medication-request-modal-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+
+
+    function kirimSatuSehat(id)
+    {
+        // loadingProcess(); //dari custom.js
+
+        $(".btn-action").html('Proses Kirim....')
+        $(".btn-action").prop("disabled", true);
+        $(".result-message").html('...');
+        var url     = '{{ route("medication-request-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+
+        $.ajax({
+            type:"POST",
+            data: {
+                id: id,
+                _token: "{{ csrf_token() }}",
+
+            },
+            url:url,
+            success: function(response)
+            {//resourceType = OperationOutcome
+
+                result = JSON.parse(response);
+                // console.log(result.resourceType)
+                if(result.resourceType == 'OperationOutcome')
+                {
+                    $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
+                    $(".btn-action").hide();
+                }else
+                {
+                    $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
+                    location.reload();
+                    $(".btn-action").html('Selesai');
+                }
+
+                $("#response_ss").val(response);
+
+            }
+        })
     }
 
 </script>

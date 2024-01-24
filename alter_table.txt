@@ -123,8 +123,9 @@ name,type
 values('struktur_organization','pdf')
 
 
+
 insert into ss_upload(
-name
+name,type
 )
 values('logo','png')
 
@@ -132,3 +133,253 @@ alter table ss_composition
 add section_code varchar(100)
 alter table ss_composition
 add section_code_display varchar(100)
+
+alter table ss_generate_token
+add location_farmasi_id varchar(200)
+alter table ss_generate_token
+add location_farmasi_name varchar(200)
+
+
+alter table ss_snomed
+rename to ss_master_procedure
+
+alter table temp_radiology
+rename to temp_master_procedure
+
+----------------------------------------------------------------
+
+DROP FUNCTION IF EXISTS public.validasi_radiology();
+
+
+CREATE OR REPLACE FUNCTION public.validasi_master_procedure(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+	--2. Insert ke patient jika belum ada di table pasien
+	INSERT INTO ss_master_procedure(original_code,original_display,category,created_at)
+	select a.original_code,a.original_display,a.category,now() from
+	temp_master_procedure a
+	left join
+	ss_master_procedure b
+	ON a.original_code = b.original_code
+	WHERE b.id is null;
+
+	return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_master_procedure()
+    OWNER TO postgres;
+
+--------------------------------------------------
+
+create table ss_snomed (
+id serial primary key,
+snomed_code varchar(100),
+snomed_display varchar(200)
+created_at timestamp,
+updated_at timestamp
+)
+
+
+alter table ss_master_procedure
+add loinc_code varchar(100)
+
+
+alter table ss_master_procedure
+add loinc_display varchar(100)
+
+alter table ss_loinc
+drop column original_code
+alter table ss_loinc
+drop column original_display
+
+-------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION public.validasi_composition(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+
+AS $BODY$
+
+BEGIN
+INSERT INTO ss_composition(original_code,encounter_original_code,type_code,type_display,category_code,category_display,subject_reference,subject_display,date,author_reference,author_display,title,text_status,text_div,satusehat_send,uuid, section_code, section_code_display)
+
+SELECT composition.original_code,composition.encounter_original_code,'18842-5' as type_code,'Discharge summary' as type_display,'LP173421-1' as category_code,'Report' as category_display,
+composition.subject_reference,composition.subject_display,composition.date,composition.participant_individual_reference,composition.participant_individual_display,composition.title,
+composition.text_status,composition.text_div,4 as satusehat_send,uuid_generate_v4() as uuid, section_code, section_code_display
+FROM
+(
+
+    SELECT tbl_composition.*, ss_master_procedure.loinc_code as section_code, ss_master_procedure.loinc_display as section_code_display
+    FROM
+    (
+
+        select temp_composition.*,ss_encounter.subject_reference,ss_encounter.subject_display,ss_encounter.participant_individual_reference,ss_encounter.participant_individual_display
+        FROM temp_composition
+        LEFT JOIN
+        ss_encounter
+        ON temp_composition.encounter_original_code = ss_encounter.original_code
+	    WHERE ss_encounter.original_code is not null
+	) as tbl_composition
+	LEFT join
+	ss_master_procedure
+	ON tbl_composition.original_code = ss_master_procedure.original_code
+	WHERE ss_master_procedure.id is not null
+) as composition
+LEFT JOIN
+ss_composition
+ON composition.encounter_original_code = ss_composition.encounter_original_code
+WHERE ss_composition.encounter_original_code is null;
+
+return 'success';
+END;
+
+$BODY$;
+
+ALTER FUNCTION public.validasi_composition()
+    OWNER TO postgres;
+----------------------------------------------------------------
+
+---service request
+
+create table temp_service_request(
+id serial primary key,
+identifier_1 varchar(50),
+identifier_2 varchar(50),
+identifier_2_system varchar(50),
+identifier_2_code varchar(50),
+encounter_original_code varchar(100),
+encounter_display varchar(100),
+category_code varchar(50),
+category_display varchar(50),
+coding_code varchar(50),
+coding_display varchar(200),
+coding_text varchar(200),
+occurrence_datetime date,
+authored_on date,
+body_site_code varchar(50),
+body_site_display varchar(50),
+reason_text varchar(200)
+)
+
+
+create table ss_service_request(
+id serial primary key,
+satusehat_id varchar(100),
+identifier_1 varchar(50),
+identifier_2 varchar(50),
+identifier_2_system varchar(50),
+identifier_2_code varchar(50),
+encounter_original_code varchar(100),
+encounter_display varchar(100),
+subject_reference varchar(50),
+subject_display varchar(200),
+participant_individual_reference varchar(50),
+participant_individual_display varchar(200),
+category_code varchar(50),
+category_display varchar(50),
+coding_code varchar(50),
+coding_display varchar(200),
+coding_text varchar(200),
+occurrence_datetime date,
+authored_on date,
+body_site_code varchar(50),
+body_site_display varchar(50),
+reason_text varchar(200),
+satusehat_send int,
+satusehat_date date,
+satusehat_request text,
+satusehat_response text,
+satusehat_statuscode varchar(10),
+created_at date,
+updated_at date,
+uuid varchar(200)
+)
+
+
+-------------------------
+
+CREATE OR REPLACE FUNCTION public.validasi_service_request(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+INSERT INTO ss_service_request(
+identifier_1,
+identifier_2,
+identifier_2_system,
+identifier_2_code,
+encounter_original_code,
+encounter_display,
+subject_reference,
+subject_display,
+participant_individual_reference,
+participant_individual_display,
+category_code,
+category_display,
+coding_code,
+coding_display,
+coding_text,
+occurrence_datetime,
+authored_on,
+body_site_code,
+body_site_display,
+reason_text,
+satusehat_send,
+uuid
+)
+SELECT
+service.*,
+4 as satusehat_send,
+uuid_generate_v4() as uuid
+FROM
+(
+    SELECT DISTINCT
+    service.identifier_1,
+    service.identifier_2,
+    service.identifier_2_system,
+    service.identifier_2_code,
+    service.encounter_original_code,
+    service.encounter_display,
+    encounter.subject_reference,
+    encounter.subject_display,
+    encounter.participant_individual_reference,
+    encounter.participant_individual_display,
+    service.category_code,
+    service.category_display,
+    service.coding_code,
+    service.coding_display,
+    service.coding_text,
+    service.occurrence_datetime,
+    service.authored_on,
+    service.body_site_code,
+    service.body_site_display,
+    service.reason_text
+    FROM
+    temp_service_request service,
+    ss_encounter encounter
+    WHERE service.encounter_original_code = encounter.original_code
+) as service
+LEFT JOIN
+ss_service_request
+ON service.encounter_original_code = ss_service_request.encounter_original_code
+WHERE ss_service_request.id is null;
+
+return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_service_request()
+OWNER TO postgres;

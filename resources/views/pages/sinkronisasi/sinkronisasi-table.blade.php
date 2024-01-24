@@ -11,6 +11,7 @@
         <tr>
             @foreach ($row as $value)
             <td>{{ $value }}</td>
+            {{-- <td>{{ iconv('UTF-8', 'UTF-8//IGNORE', $value) }}</td> --}}
             @endforeach
         </tr>
         @endforeach

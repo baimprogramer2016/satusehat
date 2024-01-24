@@ -35,6 +35,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\MedicationDispense\MedicationDispenseInterface::class, \App\Repositories\MedicationDispense\MedicationDispenseRepository::class);
         $this->app->bind(\App\Repositories\Account\AccountInterface::class, \App\Repositories\Account\AccountRepository::class);
         $this->app->bind(\App\Repositories\Upload\UploadInterface::class, \App\Repositories\Upload\UploadRepository::class);
+        $this->app->bind(\App\Repositories\Snomed\SnomedInterface::class, \App\Repositories\Snomed\SnomedRepository::class);
+        $this->app->bind(\App\Repositories\Loinc\LoincInterface::class, \App\Repositories\Loinc\LoincRepository::class);
+        $this->app->bind(\App\Repositories\MasterProcedure\MasterProcedureInterface::class, \App\Repositories\MasterProcedure\MasterProcedureRepository::class);
+        $this->app->bind(\App\Repositories\ServiceRequest\ServiceRequestInterface::class, \App\Repositories\ServiceRequest\ServiceRequestRepository::class);
     }
 
     /**

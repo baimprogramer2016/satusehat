@@ -17,6 +17,11 @@ class MedicationRequest extends Model
     {
         return $this->hasOne(Status::class, 'status', 'satusehat_send');
     }
+
+    public function r_encounter()
+    {
+        return $this->hasOne(Encounter::class,  'original_code', 'encounter_original_code');
+    }
     public function r_medication()
     {
         return $this->hasOne(Medication::class,  'original_code', 'identifier_2');
