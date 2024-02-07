@@ -27,6 +27,7 @@
                             <thead>
                                 <tr>
                                     <th>Kode</th>
+                                    <th>Kode Service</th>
                                     <th>Satu Sehat ID</th>
                                     <th>Nama Pasien</th>
                                     <th>Nama Dokter</th>
@@ -80,6 +81,7 @@
 
             //   {data: 'id', name: 'id'},
               {data: 'encounter_original_code', name: 'encounter_original_code'},
+              {data: 'identifier', name: 'identifier', orderable: false, searchable: true},
               {data: 'satusehat_id', name: 'satusehat_id'},
               {data: 'subject_display', name: 'subject_display'},
               {data: 'participant_individual_display', name: 'participant_individual_display'},
@@ -95,21 +97,21 @@
 
 
 
-    // function modalResponseSS(id)
-    // {
-    //     loadingProcess(); //dari custom.js
-    //     var url     = '{{ route("composition-response-ss", ":id") }}';
-    //     url         = url.replace(':id',id);
-    //     $.ajax({
-    //         type:"GET",
-    //         url:url,
-    //         success: function(response)
-    //         {
-    //             $("#content-modal").html("");
-    //             $("#content-modal").html(response);
-    //         }
-    //     })
-    // }
+    function modalResponseSS(id)
+    {
+        loadingProcess(); //dari custom.js
+        var url     = '{{ route("service-request-response-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
 
     // function modalKirimSS(id)
     // {

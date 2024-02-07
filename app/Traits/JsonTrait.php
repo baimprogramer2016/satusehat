@@ -210,6 +210,10 @@ trait JsonTrait
         $data_composition = $param['composition'];
         $data_medication_request = $param['medication_request'];
         $data_medication_dispense = $param['medication_dispense'];
+        $data_service_request = $param['service_request'];
+        $data_specimen = $param['specimen'];
+        $data_observation_lab = $param['observation_lab'];
+        $data_diagnostic_report = $param['diagnostic_report'];
 
 
         # push ke entry
@@ -282,6 +286,35 @@ trait JsonTrait
                         }
                     }
                 }
+            }
+        }
+        # service
+        if (count($data_service_request) > 0) {
+            foreach ($data_service_request as $item_service_request) {
+                $bodyServiceRequest = $this->bodyBundleServiceRequest($data_encounter['uuid'],  $item_service_request, $data_parameter);
+                array_push($bodyBundle['entry'], $bodyServiceRequest);
+            }
+        }
+
+        # specimen
+        if (count($data_specimen) > 0) {
+            foreach ($data_specimen as $item_specimen) {
+                $bodySpecimen = $this->bodyBundleSpecimen($data_encounter['uuid'],  $item_specimen, $data_parameter);
+                array_push($bodyBundle['entry'], $bodySpecimen);
+            }
+        }
+        # observation lab
+        if (count($data_observation_lab) > 0) {
+            foreach ($data_observation_lab as $item_observation_lab) {
+                $bodyObservationLab = $this->bodyBundleObservationLab($data_encounter['uuid'],  $item_observation_lab, $data_parameter);
+                array_push($bodyBundle['entry'], $bodyObservationLab);
+            }
+        }
+        # diagnostic report
+        if (count($data_diagnostic_report) > 0) {
+            foreach ($data_diagnostic_report as $item_diagnostic_report) {
+                $bodyDiagnosticReport = $this->bodyBundleDiagnosticReport($data_encounter['uuid'],  $item_diagnostic_report, $data_parameter);
+                array_push($bodyBundle['entry'], $bodyDiagnosticReport);
             }
         }
 
@@ -600,7 +633,7 @@ trait JsonTrait
                 // ],
                 "note" => [
                     [
-                        "text" => "Rontgen thorax melihat perluasan infiltrat dan kavitas."
+                        "text" => "-"
                     ]
                 ]
             ],
@@ -1098,6 +1131,328 @@ trait JsonTrait
         ];
         return $bodyBundleMedicationDispense;
     }
+
+    public function bodyBundleServiceRequest($encounter_uuid, $data_service_request, $data_parameter)
+    {
+        $bodyBundleServiceRequest = [
+            "fullUrl" => "urn:uuid:" . $data_service_request['uuid'],
+            "resource" => [
+                "resourceType" => "ServiceRequest",
+                "identifier" => [
+                    [
+                        "system" => "http://sys-ids.kemkes.go.id/servicerequest/" . $data_parameter['organization_id'],
+                        "value" => $data_service_request['identifier_1'] . '|' . $data_service_request['procedure_code_original']
+                    ]
+                ],
+                "status" => "active",
+                "intent" => "original-order",
+                "priority" => "routine",
+                "category" => [
+                    [
+                        "coding" => [
+                            [
+                                "system" => "http://snomed.info/sct",
+                                "code" => $data_service_request['category_code'],
+                                "display" => $data_service_request['category_display']
+                            ]
+                        ]
+                    ]
+                ],
+                "code" => [
+                    "coding" => [
+                        [
+                            "system" => "http://loinc.org",
+                            "code" => $data_service_request['coding_code'],
+                            "display" => $data_service_request['coding_display']
+                        ]
+                    ],
+                    "text" => $data_service_request['reason_text']
+                ],
+                "subject" => [
+                    "reference" => "Patient/" . $data_service_request['subject_reference']
+                ],
+                "encounter" => [
+                    "reference" => "urn:uuid:" . $encounter_uuid,
+                    "display" => "-"
+                ],
+                "occurrenceDateTime" => $this->convertTimeStamp($data_service_request['occurrence_datetime']),
+                "authoredOn" => $this->convertTimeStamp($data_service_request['authored_on']),
+                "requester" => [
+                    "reference" => "Practitioner/" . $data_service_request['participant_individual_reference'],
+                    "display" =>  $data_service_request['participant_individual_display']
+                ],
+                // "performer" => [
+                //     [
+                //         "reference" => "Practitioner/N10000005",
+                //         "display" => "Fatma"
+                //     ]
+                // ],
+                "performer" => [
+                    [
+                        "reference" => "Organization/" . $data_parameter['laboratory_id'],
+                        "display" => "Laboratorium"
+                    ]
+                ],
+                "reasonCode" => [
+                    [
+                        "text" => $data_service_request['reason_text']
+                    ]
+                ]
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "ServiceRequest"
+            ]
+        ];
+        return $bodyBundleServiceRequest;
+    }
+    public function bodyBundleSpecimen($encounter_uuid, $data_specimen, $data_parameter)
+    {
+        $bodyBundleSpecimen =  [
+            "fullUrl" => "urn:uuid:" . $data_specimen['uuid_specimen'],
+            "resource" => [
+                "resourceType" => "Specimen",
+                "identifier" => [
+                    [
+                        "system" => "http://sys-ids.kemkes.go.id/specimen/" . $data_parameter['organization_id'],
+                        "value" =>  $data_specimen['identifier_1'] . '|' . $data_specimen['procedure_code_original'],
+                        "assigner" => [
+                            "reference" => "Organization/" . $data_parameter['organization_id'],
+                        ]
+                    ]
+                ],
+                "status" => "available",
+                "type" => [
+                    "coding" => [
+                        [
+                            "system" => "http://snomed.info/sct",
+                            "code" => $data_specimen['snomed_code'],
+                            "display" =>  $data_specimen['snomed_display'],
+                        ]
+                    ]
+                ],
+                // "collection" => [
+                //     "method" => [
+                //         "coding" => [
+                //             [
+                //                 "system" => "http://snomed.info/sct",
+                //                 "code" => "386089008",
+                //                 "display" => "Collection of coughed sputum"
+                //             ]
+                //         ]
+                //     ],
+                //     "collectedDateTime" => "2022-06-14T08=>15=>00+07=>00"
+                // ],
+                "subject" => [
+                    "reference" => "Patient/" . $data_specimen['subject_reference'],
+                    "display" =>  $data_specimen['subject_display'],
+                ],
+                "request" => [
+                    [
+                        "reference" => "urn:uuid:" . $data_specimen['uuid']
+                    ]
+                ],
+                "receivedTime" => $this->convertTimeStamp($data_specimen['authored_on']),
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "Specimen"
+            ]
+        ];
+        return $bodyBundleSpecimen;
+    }
+
+    public function bodyBundleObservationLab($encounter_uuid, $data_observation_lab, $data_parameter)
+    {
+        $bodyBundleObservationLab =  [
+            "fullUrl" => "urn:uuid:" . $data_observation_lab['uuid_observation'],
+            "resource" => [
+                "resourceType" => "Observation",
+                "identifier" => [
+                    [
+                        "system" => "http://sys-ids.kemkes.go.id/observation/" . $data_parameter['organization_id'],
+                        "value" => $data_observation_lab['identifier_1'] . '|' . $data_observation_lab['procedure_code_original'],
+                    ]
+                ],
+                "status" => "final",
+                "category" => [
+                    [
+                        "coding" => [
+                            [
+                                "system" => "http://terminology.hl7.org/CodeSystem/observation-category",
+                                "code" => $data_observation_lab['obs_category_code'],
+                                "display" => $data_observation_lab['obs_category_display']
+                            ]
+                        ]
+                    ]
+                ],
+                "code" => [
+                    "coding" => [
+                        [
+                            "system" => "http://loinc.org",
+                            "code" => $data_observation_lab['loinc_code'],
+                            "display" => $data_observation_lab['loinc_display']
+                        ]
+                    ]
+                ],
+                "subject" => [
+                    "reference" => "Patient/" . $data_observation_lab['subject_reference']
+                ],
+                "encounter" => [
+                    "reference" => "urn:uuid:" . $encounter_uuid
+                ],
+                "effectiveDateTime" =>  $this->convertTimeStamp($data_observation_lab['occurrence_datetime']),
+                "issued" =>  $this->convertTimeStamp($data_observation_lab['authored_on']),
+                "performer" => [
+                    [
+                        "reference" => "Organization/" . $data_parameter['laboratory_id'],
+                        "display" => "Laboratorium"
+                    ]
+                ],
+                "specimen" => [
+                    "reference" => "urn:uuid:" . $data_observation_lab['uuid_specimen']
+                ],
+                "basedOn" => [
+                    [
+                        "reference" => "urn:uuid:" . $data_observation_lab['uuid']
+                    ]
+                ],
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "Observation"
+            ]
+        ];
+
+        # tambahan json untuk lab
+        if (!empty($data_observation_lab['r_master_procedure']['r_category_request']['payload'])) {
+            $additionalFunction = $data_observation_lab['r_master_procedure']['r_category_request']['payload'];
+            $param = $data_observation_lab; #$param itu ada di payload tabel ss_category_request->payload
+            $functionAdditional = str_replace("'", '"', $additionalFunction);
+            $field = $data_observation_lab['r_master_procedure']['r_category_request']['field'];
+            $result_addtional = eval("return {$functionAdditional};");
+            $bodyBundleObservationLab['resource'][$field] = $result_addtional;
+        }
+        return $bodyBundleObservationLab;
+    }
+
+    public function bodyBundleObservationLabGolongan($param)
+    {
+        return  [
+            "coding" => [
+                [
+                    "system" => "http://loinc.org",
+                    "code" => $param['procedure_code'],
+                    "display" => $param['procedure_code_display']
+                ]
+            ]
+        ];
+    }
+    public function bodyBundleObservationLabBta($param)
+    {
+        return  [
+            [
+                "system" => "http://snomed.info/sct",
+                "code" => "260347006",
+                "display" => "+"
+            ]
+        ];
+    }
+    public function bodyBundleObservationLabKolesterol($param)
+    {
+        return [
+            "value" =>  (int)$param['procedure_result'],
+            "unit" =>  $param['procedure_unit'],
+            "system" => "http://unitsofmeasure.org",
+            "code" =>  $param['procedure_unit'],
+        ];
+    }
+
+    public function bodyBundleDiagnosticReport($encounter_uuid, $data_diagnostic_report, $data_parameter)
+    {
+        $bodyBundleDiagnosticReport =  [
+            "fullUrl" => "urn:uuid:" . $data_diagnostic_report['uuid_diagnostic_report'],
+            "resource" => [
+                "resourceType" => "DiagnosticReport",
+                "identifier" => [
+                    [
+                        "system" => "http://sys-ids.kemkes.go.id/diagnostic/" . $data_parameter['organization_id'] . "/lab",
+                        "use" => "official",
+                        "value" =>  $data_diagnostic_report['identifier_1'] . '|' . $data_diagnostic_report['procedure_code_original'],
+                    ]
+                ],
+                "status" => "final",
+                "category" => [
+                    [
+                        "coding" => [
+                            [
+                                "system" => "http://terminology.hl7.org/CodeSystem/v2-0074",
+                                "code" => $data_diagnostic_report['r_master_procedure']['r_category_request']['diagnostic_report_code'],
+                                "display" => $data_diagnostic_report['r_master_procedure']['r_category_request']['diagnostic_report_display']
+                            ]
+                        ]
+                    ]
+                ],
+                "code" => [
+                    "coding" => [
+                        [
+                            "system" => "http://loinc.org",
+                            "code" => $data_diagnostic_report['loinc_code'],
+                            "display" => $data_diagnostic_report['loinc_display']
+                        ]
+                    ]
+                ],
+                "subject" => [
+                    "reference" => "Patient/" . $data_diagnostic_report['subject_reference']
+                ],
+                "encounter" => [
+                    "reference" => "urn:uuid:" . $encounter_uuid
+                ],
+                "effectiveDateTime" =>  $this->convertTimeStamp($data_diagnostic_report['occurrence_datetime']),
+                "issued" =>  $this->convertTimeStamp($data_diagnostic_report['authored_on']),
+                "performer" => [
+                    // [
+                    //     "reference" => "Practitioner/N10000001"
+                    // ],
+                    [
+                        "reference" => "Organization/" . $data_parameter['laboratory_id'],
+                    ]
+                ],
+                "result" => [
+                    [
+                        "reference" => "urn:uuid:" . $data_diagnostic_report['uuid_observation']
+                    ]
+                ],
+                "specimen" => [
+                    [
+                        "reference" => "urn:uuid:" . $data_diagnostic_report['uuid_specimen']
+                    ]
+                ],
+                "basedOn" => [
+                    [
+                        "reference" => "urn:uuid:" . $data_diagnostic_report['uuid']
+                    ]
+                ],
+                // "conclusionCode" => [
+                //     [
+                //         "coding" => [
+                //             [
+                //                 "system" => "http://snomed.info/sct",
+                //                 "code" => "260347006",
+                //                 "display" => "+"
+                //             ]
+                //         ]
+                //     ]
+                // ]
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "DiagnosticReport"
+            ]
+        ];
+        return $bodyBundleDiagnosticReport;
+    }
+
 
 
     #############################  MANUAL ###################################

@@ -11,4 +11,9 @@ class MasterProcedure extends Model
 
     protected $table = 'ss_master_procedure';
     protected $guarded = ['id'];
+
+    public function r_category_request()
+    {
+        return $this->hasOne(CategoryRequest::class,  'display', 'category_request');
+    }
 }

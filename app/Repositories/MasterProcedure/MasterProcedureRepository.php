@@ -38,4 +38,11 @@ class MasterProcedureRepository implements MasterProcedureInterface
         $data->update();
         return $data;
     }
+    public function updateMasterProcedureCategory($param)
+    {
+        $data = $this->model->find($param['id_master_procedure']);
+        $data->category_request = $param['category_request'];
+        $data->update();
+        return $data;
+    }
 }

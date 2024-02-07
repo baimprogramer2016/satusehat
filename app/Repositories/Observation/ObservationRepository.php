@@ -17,7 +17,7 @@ class ObservationRepository implements ObservationInterface
 
     public function getQuery()
     {
-        return $this->model->query();
+        return $this->model->query()->whereIn('type_observation', ['suhu', 'sistol', 'nadi', 'pernapasan', 'diastole']);
     }
 
     public function getDataObservationFind($id)
@@ -28,9 +28,8 @@ class ObservationRepository implements ObservationInterface
     # untuk mendapatkan keseluruhan data
     public function getDataObservationByOriginalCode($original_code)
     {
-        return $this->model->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
+        return $this->model->whereIn('type_observation', ['suhu', 'sistol', 'nadi', 'pernapasan', 'diastole'])->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
     }
-
 
     public function updateDataBundleObservationJob($param = [])
     {

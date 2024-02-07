@@ -111,7 +111,7 @@
             </div>
             <div class="col-md-3">
                 <div class="form-group">
-                    <label class="form-label" for="sp">SP</label>
+                    <label class="form-label" for="sp">SP (tambahkan #)</label>
                     <div class="form-control-wrap">
                         <input name="sp" type="text" value='{{ $data_sinkronisasi->sp }}'
                             class="form-control form-control-sm" id="sp" required>

@@ -39,6 +39,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Loinc\LoincInterface::class, \App\Repositories\Loinc\LoincRepository::class);
         $this->app->bind(\App\Repositories\MasterProcedure\MasterProcedureInterface::class, \App\Repositories\MasterProcedure\MasterProcedureRepository::class);
         $this->app->bind(\App\Repositories\ServiceRequest\ServiceRequestInterface::class, \App\Repositories\ServiceRequest\ServiceRequestRepository::class);
+        $this->app->bind(\App\Repositories\Specimen\SpecimenInterface::class, \App\Repositories\Specimen\SpecimenRepository::class);
+        $this->app->bind(\App\Repositories\ObservationLab\ObservationLabInterface::class, \App\Repositories\ObservationLab\ObservationLabRepository::class);
+        $this->app->bind(\App\Repositories\CategoryRequest\CategoryRequestInterface::class, \App\Repositories\CategoryRequest\CategoryRequestRepository::class);
+        $this->app->bind(\App\Repositories\DiagnosticReport\DiagnosticReportInterface::class, \App\Repositories\DiagnosticReport\DiagnosticReportRepository::class);
     }
 
     /**

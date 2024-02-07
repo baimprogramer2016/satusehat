@@ -7,6 +7,7 @@ use App\Traits\ApiTrait;
 use App\Traits\GeneralTrait;
 use App\Traits\JsonTrait;
 use Illuminate\Http\Request;
+use Throwable;
 use Yajra\DataTables\Facades\DataTables;
 
 class ServiceRequestController extends Controller
@@ -39,6 +40,11 @@ class ServiceRequestController extends Controller
 
                     return $status;
                 })
+                ->addColumn('identifier', function ($item_service_request) {
+                    $status = '<td>' . $item_service_request->identifier_1 . '|' . $item_service_request->procedure_code . '</td>';
+
+                    return $status;
+                })
                 ->addColumn('action', function ($item_service_request) {
 
 
@@ -62,10 +68,23 @@ class ServiceRequestController extends Controller
 
                     return $action_update;
                 })
-                ->rawColumns(['status', 'action'])
+                ->rawColumns(['identifier', 'status', 'action'])
                 ->make(true);
         }
 
         return view("pages.service-request.service-request");
+    }
+    public function responseSS(Request $request, $id)
+    {
+        try {
+            $response_satusehat  = $this->api_response_ss('/ServiceRequest', $id);
+            return view('pages.service-request.service-request-response-ss', [
+                "data_response" => $response_satusehat
+            ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
     }
 }

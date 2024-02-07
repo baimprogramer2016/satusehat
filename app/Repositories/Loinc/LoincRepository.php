@@ -31,6 +31,7 @@ class LoincRepository implements LoincInterface
         $this->model->create([
             "loinc_code" => $request['loinc_code'],
             "loinc_display"  => $request['loinc_display'],
+            "payload"  => $request['payload']
         ]);
 
         return $this->model;

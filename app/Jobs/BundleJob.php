@@ -28,7 +28,11 @@ class BundleJob implements ShouldQueue
         $procedure_repo,
         $composition_repo,
         $medication_request_repo,
-        $medication_dispense_repo;
+        $medication_dispense_repo,
+        $service_request_repo,
+        $specimen_repo,
+        $observation_lab_repo,
+        $diagnostic_report_repo;
     protected $parameter_repo;
     protected $job_id;
     protected $job_logs_repo;
@@ -44,6 +48,10 @@ class BundleJob implements ShouldQueue
         $composition_repo,
         $medication_request_repo,
         $medication_dispense_repo,
+        $service_request_repo,
+        $specimen_repo,
+        $observation_lab_repo,
+        $diagnostic_report_repo
     ) {
         $this->bundle_repo = $bundle_repo; #data yang akan dieksekusi
         $this->condition_repo = $condition_repo;
@@ -55,6 +63,10 @@ class BundleJob implements ShouldQueue
         $this->composition_repo = $composition_repo;
         $this->medication_request_repo = $medication_request_repo;
         $this->medication_dispense_repo = $medication_dispense_repo;
+        $this->service_request_repo = $service_request_repo;
+        $this->specimen_repo = $specimen_repo;
+        $this->observation_lab_repo = $observation_lab_repo;
+        $this->diagnostic_report_repo = $diagnostic_report_repo;
     }
 
     /**
@@ -88,6 +100,10 @@ class BundleJob implements ShouldQueue
                 $param_bundle['composition'] = $this->composition_repo->getDataCompositionByOriginalCode($item_bundle->original_code);
                 $param_bundle['medication_request'] = $this->medication_request_repo->getDataMedicationRequestByOriginalCodeReady($item_bundle->original_code);
                 $param_bundle['medication_dispense'] = $this->medication_dispense_repo->getDataMedicationDispenseByOriginalCode($item_bundle->original_code);
+                $param_bundle['service_request'] = $this->service_request_repo->getDataServiceRequestByOriginalCode($item_bundle->original_code);
+                $param_bundle['specimen'] = $this->specimen_repo->getDataSpecimenByOriginalCode($item_bundle->original_code);
+                $param_bundle['observation_lab'] = $this->observation_lab_repo->getDataObservationLabByOriginalCode($item_bundle->original_code);
+                $param_bundle['diagnostic_report'] = $this->diagnostic_report_repo->getDataDiagnosticReportByOriginalCode($item_bundle->original_code);
 
                 # API POST Bundle
                 $payload_bundle = $this->bodyBundle($param_bundle); // data bundle
@@ -172,6 +188,27 @@ class BundleJob implements ShouldQueue
 
                                 $this->medication_dispense_repo->updateDataBundleMedicationDispenseJob($res);
                             }
+                            # update status service Request
+                            if ($item_response->response->resourceType == 'ServiceRequest') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->service_request_repo->updateDataBundleServiceRequestJob($res);
+                            }
+                            # update status specimen
+                            if ($item_response->response->resourceType == 'Specimen') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->specimen_repo->updateDataBundleSpecimenJob($res);
+                            }
+                            # update status Diagnostic Report
+                            if ($item_response->response->resourceType == 'DiagnosticReport') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->diagnostic_report_repo->updateDataBundleDiagnosticReportJob($res);
+                            }
                             # update status dari response
                         }
                     }
@@ -188,7 +225,6 @@ class BundleJob implements ShouldQueue
             $this->job_logs_repo->updateJobLogsEnd($param_end);
         }
     }
-
 
     public function failed(Throwable $e)
     {

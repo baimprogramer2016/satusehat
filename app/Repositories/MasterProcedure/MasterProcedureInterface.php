@@ -10,4 +10,5 @@ interface MasterProcedureInterface
 
     public function updateMasterProcedureSnomed($param);
     public function updateMasterProcedureLoinc($param);
+    public function updateMasterProcedureCategory($param);
 }

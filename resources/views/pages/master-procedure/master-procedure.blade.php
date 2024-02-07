@@ -30,7 +30,7 @@
                                     <th>Nama</th>
                                     <th>Snomed</th>
                                     <th>Loinc</th>
-                                    {{-- <th>Loinc</th> --}}
+                                    <th>Category</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,6 +77,7 @@
               {data: 'original_display', name: 'original_display'},
               {data: 'daftar_snomed', name: 'daftar_snomed', orderable: false, searchable: false},
               {data: 'daftar_loinc', name: 'daftar_loinc', orderable: false, searchable: false},
+              {data: 'daftar_category', name: 'daftar_category', orderable: false, searchable: false},
           ]
       });
     });
@@ -183,6 +184,62 @@
                 {
                     inputElement.value = loinc_code;
                     toastMessage("Loinc Berhasil di Update","success");
+                }
+                else{
+                    toastMessage("Tidak ada Perubahan","warning");
+                }
+            }
+        })
+    }
+
+    function modalViewCategory(event)
+    {
+        var id_input_element = event.target.name.replace('id_master_procedure_category_', '');
+
+
+        // console.log(display_name)
+        loadingProcess(); //dari custom.js
+        var url     ='{{ route("master-procedure-category",":id") }}';
+        url         = url.replace(':id',id_input_element);
+
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+
+
+    function updateCategory(id_master_procedure,category_request)
+    {
+
+        var inputElement = document.querySelector('input[name="id_master_procedure_category_'+id_master_procedure+'"]');
+
+        if(category_request !=''){
+            category_request = category_request.replace('|',' ')
+        }
+
+        var param = {
+            id_master_procedure : id_master_procedure,
+            category_request : category_request,
+            _token : "{{csrf_token()}}"
+        }
+        console.log(param)
+        $.ajax({
+            type:"POST",
+            url: "{{ route('master-procedure-category-update') }}",
+            data: param,
+            success: function(response)
+            {
+                // console.log(response.kfa_code+ '-'+ inputElement.value)
+                if(response.category_request != inputElement.value)
+                {
+                    inputElement.value = category_request;
+                    toastMessage("Kategori Berhasil di Update","success");
                 }
                 else{
                     toastMessage("Tidak ada Perubahan","warning");

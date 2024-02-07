@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\BundleController;
 use App\Http\Controllers\BundleDevController;
+use App\Http\Controllers\CategoryRequestController;
 use App\Http\Controllers\CompositionControlller;
 use App\Http\Controllers\ConditionControlller;
 use App\Http\Controllers\DashboardController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\MedicationDispenseController;
 use App\Http\Controllers\MedicationRequestController;
 use App\Http\Controllers\ObservationControlller;
+use App\Http\Controllers\ObservationLabController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PatientController;
@@ -27,6 +29,7 @@ use App\Http\Controllers\QueueController;
 use App\Http\Controllers\ServiceRequestController;
 use App\Http\Controllers\SinkronisasiController;
 use App\Http\Controllers\SnomedController;
+use App\Http\Controllers\SpecimenController;
 use App\Http\Controllers\UploadController;
 use App\Models\Condition;
 use Illuminate\Support\Facades\Route;
@@ -208,5 +211,19 @@ Route::post('/master-procedure-snomed-update', [MasterProcedureController::class
 Route::get('/master-procedure-loinc/{id}', [MasterProcedureController::class, 'modalLoinc'])->name('master-procedure-loinc')->middleware('auth');
 Route::get('/master-procedure-loinc-data/{id}', [MasterProcedureController::class, 'getDataLoinc'])->name('master-procedure-loinc-data')->middleware('auth');
 Route::post('/master-procedure-loinc-update', [MasterProcedureController::class, 'updateLoinc'])->name('master-procedure-loinc-update')->middleware('auth');
+Route::get('/master-procedure-category/{id}', [MasterProcedureController::class, 'modalCategory'])->name('master-procedure-category')->middleware('auth');
+Route::get('/master-procedure-category-data/{id}', [MasterProcedureController::class, 'getDataCategory'])->name('master-procedure-category-data')->middleware('auth');
+Route::post('/master-procedure-category-update', [MasterProcedureController::class, 'updateCategory'])->name('master-procedure-category-update')->middleware('auth');
+
+Route::get('/category-request', [CategoryRequestController::class, 'index'])->name('category-request')->middleware('auth');
+Route::get('/category-request-ubah/{display}', [CategoryRequestController::class, 'ubah'])->name('category-request-ubah')->middleware('auth');
+Route::post('/category-request-update', [CategoryRequestController::class, 'update'])->name('category-request-update')->middleware('auth');
 
 Route::get('/service-request', [ServiceRequestController::class, 'index'])->name('service-request')->middleware('auth');
+Route::get('/service-request-response-ss/{id}', [ServiceRequestController::class, 'responseSS'])->name('service-request-response-ss')->middleware('auth');
+
+Route::get('/specimen', [SpecimenController::class, 'index'])->name('specimen')->middleware('auth');
+Route::get('/specimen-response-ss/{id}', [SpecimenController::class, 'responseSS'])->name('specimen-response-ss')->middleware('auth');
+
+Route::get('/observation-lab', [ObservationLabController::class, 'index'])->name('observation-lab')->middleware('auth');
+Route::get('/observation-lab-response-ss/{id}', [ObservationLabController::class, 'responseSS'])->name('observation-lab-response-ss')->middleware('auth');

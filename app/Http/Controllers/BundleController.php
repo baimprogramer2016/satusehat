@@ -5,13 +5,17 @@ namespace App\Http\Controllers;
 use App\Jobs\BundleJob;
 use App\Repositories\Composition\CompositionInterface;
 use App\Repositories\Condition\ConditionInterface;
+use App\Repositories\DiagnosticReport\DiagnosticReportInterface;
 use App\Repositories\Encounter\EncounterInterface;
 use App\Repositories\Procedure\ProcedureInterface;
 use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\MedicationDispense\MedicationDispenseInterface;
 use App\Repositories\MedicationRequest\MedicationRequestInterface;
 use App\Repositories\Observation\ObservationInterface;
+use App\Repositories\ObservationLab\ObservationLabInterface;
 use App\Repositories\Parameter\ParameterInterface;
+use App\Repositories\ServiceRequest\ServiceRequestInterface;
+use App\Repositories\Specimen\SpecimenInterface;
 use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
@@ -34,7 +38,11 @@ class BundleController extends Controller
         $procedure_repo,
         $composition_repo,
         $medication_request_repo,
-        $medication_dispense_repo;
+        $medication_dispense_repo,
+        $service_request_repo,
+        $specimen_repo,
+        $observation_lab_repo,
+        $diagnostic_report_repo;
     public $parameter_repo;
     protected $job_id = 0;
     public function __construct(
@@ -47,6 +55,10 @@ class BundleController extends Controller
         CompositionInterface $compositionInterface,
         MedicationRequestInterface $medicationRequestInterface,
         MedicationDispenseInterface $medicationDispenseInterface,
+        ServiceRequestInterface $serviceRequestInterface,
+        SpecimenInterface $specimenInterface,
+        ObservationLabInterface $observationLabInterface,
+        DiagnosticReportInterface $diagnosticReportInterface
     ) {
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;
@@ -57,6 +69,10 @@ class BundleController extends Controller
         $this->composition_repo = $compositionInterface;
         $this->medication_request_repo = $medicationRequestInterface;
         $this->medication_dispense_repo = $medicationDispenseInterface;
+        $this->service_request_repo = $serviceRequestInterface;
+        $this->specimen_repo = $specimenInterface;
+        $this->observation_lab_repo = $observationLabInterface;
+        $this->diagnostic_report_repo = $diagnosticReportInterface;
     }
     public function runJob(Request $request)
     {
@@ -88,6 +104,10 @@ class BundleController extends Controller
                         $this->composition_repo,
                         $this->medication_request_repo,
                         $this->medication_dispense_repo,
+                        $this->service_request_repo,
+                        $this->specimen_repo,
+                        $this->observation_lab_repo,
+                        $this->diagnostic_report_repo,
                     );
                 }
             }

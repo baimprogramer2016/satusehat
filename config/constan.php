@@ -74,5 +74,5 @@ return [
         "sync" => "sync_job",
         "job_manual" => "manual",
         "job_scheduler" => "scheduler",
-    ]
+    ],
 ];

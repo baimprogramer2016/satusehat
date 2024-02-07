@@ -13,7 +13,7 @@ class SnomedController extends Controller
     protected $snomed_repo;
 
     public function __construct(
-        SnomedInterface $snomedInterface
+        SnomedInterface $snomedInterface,
     ) {
         $this->snomed_repo = $snomedInterface;
     }
@@ -26,7 +26,9 @@ class SnomedController extends Controller
     }
     public function tambah()
     {
-        return view("pages.snomed.snomed-tambah");
+        return view("pages.snomed.snomed-tambah", [
+            "data_desc_resource" => $this->snomed_repo->getDescResource()
+        ]);
     }
     public function simpan(Request $request)
     {
@@ -53,6 +55,7 @@ class SnomedController extends Controller
     {
         return view('pages.snomed.snomed-ubah', [
             "data_snomed" => $this->snomed_repo->getDataSnomedFind($this->dec($id)),
+            "data_desc_resource" => $this->snomed_repo->getDescResource()
         ]);
     }
 

@@ -137,6 +137,15 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="form-group">
+                <label class="form-label" for="laboratory_id">Org Laboratory ID</label>
+                <div class="form-control-wrap">
+                    <input name="laboratory_id" readonly type="text" value="{{ $data_parameter->laboratory_id }}"
+                        class="form-control form-control-sm" id="laboratory_id" required>
+                </div>
+            </div>
+        </div>
 
         <div class="col-md-12 mt-3">
             <div class="form-group">

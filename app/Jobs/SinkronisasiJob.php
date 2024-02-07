@@ -62,7 +62,17 @@ class SinkronisasiJob implements ShouldQueue
 
             # jalan kan SP jika ada dan setelah query di jalankan
             if (!empty($sp)) {
-                DB::select($sp);
+                # jika ada sp lebih dari 1
+                if (strpos($sp, "#")) {
+                    $sp_result = explode("#", $sp);
+                    foreach ($sp_result as $index => $item_result) {
+                        echo $item_result[$index];
+                        DB::select($item_result[$index]);
+                    }
+                } else {
+
+                    DB::select($sp);
+                }
             }
         }
         # membuat Update status Completed end job pada job Log

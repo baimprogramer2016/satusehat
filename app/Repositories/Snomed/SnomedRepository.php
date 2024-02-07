@@ -2,15 +2,18 @@
 
 namespace App\Repositories\Snomed;
 
+use App\Models\DescResource;
 use App\Models\Snomed;
 use Carbon\Carbon;
 
 class SnomedRepository implements SnomedInterface
 {
     private $model;
+    private $desc_resource_model;
     public function __construct()
     {
         $this->model = new Snomed();
+        $this->desc_resource_model = new DescResource();
     }
 
     public function getQuery()
@@ -31,6 +34,7 @@ class SnomedRepository implements SnomedInterface
         $this->model->create([
             "snomed_code" => $request['snomed_code'],
             "snomed_display"  => $request['snomed_display'],
+            "description"  => $request['description'],
         ]);
 
         return $this->model;
@@ -45,6 +49,7 @@ class SnomedRepository implements SnomedInterface
         $data = $this->getDataSnomedFind($id);
         $data->snomed_code = $request['snomed_code'];
         $data->snomed_display = $request['snomed_display'];
+        $data->description = $request['description'];
         $data->update();
 
         return $data;
@@ -58,5 +63,10 @@ class SnomedRepository implements SnomedInterface
         $delete->delete();
 
         return $delete;
+    }
+
+    public function getDescResource()
+    {
+        return $this->desc_resource_model->get();
     }
 }

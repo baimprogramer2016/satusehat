@@ -10,4 +10,6 @@ interface SnomedInterface
     public function getDataSnomedFind($id);
     public function updateSnomed($request = [], $id);
     public function deleteSnomed($id);
+
+    public function getDescResource();
 }

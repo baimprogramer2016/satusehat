@@ -23,6 +23,23 @@
                     </div>
                 </div>
             </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="form-label" for="default-06">Resource</label>
+                    <div class="form-control-wrap ">
+                        <div class="form-control-select">
+                            <select class="form-control" id="default-06" name="description" id="description"
+                                data-search="on">
+                                <option value="">Pilih</option>
+                                @foreach ($data_desc_resource as $item_desc_resource)
+                                <option value="{{ $item_desc_resource->description }}">{{
+                                    $item_desc_resource->description }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="col-md-12 mt-3">
                 <div class="form-group">
                     <button type="submit" class="btn btn-lg btn-primary btn-sm btn-action">Simpan</button>

@@ -43,6 +43,7 @@
                                 <tr>
                                     <th>Kode</th>
                                     <th>Keterangan</th>
+                                    <th>Resoruce</th>
                                     <th>Aksi</th>
 
                                 </tr>
@@ -52,6 +53,7 @@
                                 <tr>
                                     <td>{{ $item_snomed->snomed_code }}</td>
                                     <td>{{ $item_snomed->snomed_display }}</td>
+                                    <td>{{ $item_snomed->description }}</td>
                                     <td>
                                         <div class="drodown">
                                             <a href="#" class="dropdown-toggle btn btn-icon btn-trigger"
