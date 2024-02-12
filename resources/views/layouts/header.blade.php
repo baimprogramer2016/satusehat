@@ -208,7 +208,7 @@
                                                 class="nk-menu-text">Observation</span></a>
                                     </li>
                                     <li class="nk-menu-item">
-                                        <a href="{{ route('medication-dispense') }}" class="nk-menu-link"><span
+                                        <a href="{{ route('diagnostic-report') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Diagnostic Report</span></a>
                                     </li>
 

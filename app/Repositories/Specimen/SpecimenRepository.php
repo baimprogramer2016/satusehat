@@ -9,9 +9,9 @@ class SpecimenRepository implements SpecimenInterface
 {
     private $model;
     public function __construct(
-        Specimen $specimenInterface
+        Specimen $specimenModel
     ) {
-        $this->model = $specimenInterface;
+        $this->model = $specimenModel;
     }
     public function getQuery()
     {
@@ -40,6 +40,26 @@ class SpecimenRepository implements SpecimenInterface
             $data->satusehat_response_specimen = $param['satusehat_response'];
             $data->update();
         }
+        return $data;
+    }
+
+    public function getDataSpecimenFind($id)
+    {
+        return $this->model->find($id);
+    }
+    public function updateStatusSpecimen($id, $satusehat_id, $request, $response)
+    {
+        $data = $this->model->where('id', $id)
+            ->update([
+                'satusehat_id_specimen' => $satusehat_id,
+                'satusehat_request_specimen' => $request,
+                'satusehat_response_specimen' => $response,
+                'satusehat_send_specimen' => ($satusehat_id != null) ? 1 : 0,
+                'satusehat_statuscode_specimen' => ($satusehat_id != null) ? '200' : '500',
+                'satusehat_date_specimen' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+
         return $data;
     }
 }

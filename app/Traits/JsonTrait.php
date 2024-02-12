@@ -1456,7 +1456,261 @@ trait JsonTrait
 
 
     #############################  MANUAL ###################################
+    public function bodyManualDiagnosticReport($data_diagnostic_report, $data_parameter)
+    {
+        $bodyManualDiagnosticReport = [
+            "resourceType" => "DiagnosticReport",
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/diagnostic/" . $data_parameter['organization_id'] . "/lab",
+                    "use" => "official",
+                    "value" =>  $data_diagnostic_report['identifier_1'] . '|' . $data_diagnostic_report['procedure_code_original'],
+                ]
+            ],
+            "status" => "final",
+            "category" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => "http://terminology.hl7.org/CodeSystem/v2-0074",
+                            "code" => $data_diagnostic_report['r_master_procedure']['r_category_request']['diagnostic_report_code'],
+                            "display" => $data_diagnostic_report['r_master_procedure']['r_category_request']['diagnostic_report_display']
+                        ]
+                    ]
+                ]
+            ],
+            "code" => [
+                "coding" => [
+                    [
+                        "system" => "http://loinc.org",
+                        "code" => $data_diagnostic_report['loinc_code'],
+                        "display" => $data_diagnostic_report['loinc_display']
+                    ]
+                ]
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_diagnostic_report['subject_reference']
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_diagnostic_report['r_encounter']['satusehat_id']
+            ],
+            "effectiveDateTime" =>  $this->convertTimeStamp($data_diagnostic_report['occurrence_datetime']),
+            "issued" =>  $this->convertTimeStamp($data_diagnostic_report['authored_on']),
+            "performer" => [
+                // [
+                //     "reference" => "Practitioner/N10000001"
+                // ],
+                [
+                    "reference" => "Organization/" . $data_parameter['laboratory_id'],
+                ]
+            ],
+            "result" => [
+                [
+                    "reference" => "Observation/" . $data_diagnostic_report['r_observation']['satusehat_id']
+                ]
+            ],
+            "specimen" => [
+                [
+                    "reference" => "Specimen/" . $data_diagnostic_report['satusehat_id_specimen']
+                ]
+            ],
+            "basedOn" => [
+                [
+                    "reference" => "ServiceRequest/" . $data_diagnostic_report['satusehat_id']
+                ]
+            ],
+            // "conclusionCode" => [
+            //     [
+            //         "coding" => [
+            //             [
+            //                 "system" => "http://loinc.org",
+            //                 "code" => "LA19710-5",
+            //                 "display" => "Group A"
+            //             ]
+            //         ]
+            //     ]
+            // ]
+        ];
+        return $bodyManualDiagnosticReport;
+    }
+    public function bodyManualObservationLab($data_observation_lab, $data_parameter)
+    {
+        $bodyManualObservationLab = [
+            "resourceType" => "Observation",
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/observation/" . $data_parameter['organization_id'],
+                    "value" =>  $data_observation_lab['identifier_1'] . '|' . $data_observation_lab['procedure_code_original'],
+                ]
+            ],
+            "status" => "final",
+            "category" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => "http://terminology.hl7.org/CodeSystem/observation-category",
+                            "code" => $data_observation_lab['obs_category_code'],
+                            "display" => $data_observation_lab['obs_category_display']
+                        ]
+                    ]
+                ]
+            ],
+            "code" => [
+                "coding" => [
+                    [
+                        "system" => "http://loinc.org",
+                        "code" => $data_observation_lab['loinc_code'],
+                        "display" => $data_observation_lab['loinc_display']
+                    ]
+                ]
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_observation_lab['subject_reference']
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_observation_lab['r_encounter']['satusehat_id']
+            ],
+            "effectiveDateTime" =>  $this->convertTimeStamp($data_observation_lab['occurrence_datetime']),
+            "issued" =>  $this->convertTimeStamp($data_observation_lab['authored_on']),
+            "performer" => [
+                // [
+                //     "reference" => "Practitioner/N10000001"
+                // ],
+                [
+                    "reference" => "Organization/" . $data_parameter['laboratory_id'],
+                    "display" => "Laboratorium"
+                ]
+            ],
+            "specimen" => [
+                "reference" => "Specimen/" . $data_observation_lab['satusehat_id_specimen']
+            ],
+            "basedOn" => [
+                [
+                    "reference" => "ServiceRequest/" . $data_observation_lab['satusehat_id']
+                ]
+            ]
+        ];
+        if (!empty($data_observation_lab['r_master_procedure']['r_category_request']['payload'])) {
+            $additionalFunction = $data_observation_lab['r_master_procedure']['r_category_request']['payload'];
+            $param = $data_observation_lab; #$param itu ada di payload tabel ss_category_request->payload
+            $functionAdditional = str_replace("'", '"', $additionalFunction);
+            $field = $data_observation_lab['r_master_procedure']['r_category_request']['field'];
+            $result_addtional = eval("return {$functionAdditional};");
+            $bodyManualObservationLab[$field] = $result_addtional;
+        }
 
+        return $bodyManualObservationLab;
+    }
+    public function bodyManualSpecimen($data_specimen, $data_parameter)
+    {
+        $bodyManualSpecimen = [
+            "resourceType" => "Specimen",
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/specimen/" . $data_parameter['organization_id'],
+                    "value" => $data_specimen['identifier_1'] . '|' . $data_specimen['procedure_code_original'],
+                    "assigner" => [
+                        "reference" => "Organization/" . $data_parameter['organization_id'],
+                    ]
+                ]
+            ],
+            "status" => "available",
+            "type" => [
+                "coding" => [
+                    [
+                        "system" => "http://snomed.info/sct",
+                        "code" => $data_specimen['snomed_code'],
+                        "display" =>  $data_specimen['snomed_display'],
+                    ]
+                ]
+            ],
+            // "collection" => [
+            //     "method" => [
+            //         "coding" => [
+            //             [
+            //                 "system" => "http://snomed.info/sct",
+            //                 "code" => "82078001",
+            //                 "display" => "Collection of blood specimen for laboratory"
+            //             ]
+            //         ]
+            //     ],
+            //     "collectedDateTime" => "2022-06-14T08=>15=>00+07=>00"
+            // ],
+            "subject" => [
+                "reference" => "Patient/" . $data_specimen['subject_reference'],
+                "display" =>  $data_specimen['subject_display'],
+            ],
+            "request" => [
+                [
+                    "reference" => "ServiceRequest/" . $data_specimen['satusehat_id']
+                ]
+            ],
+            "receivedTime" => $this->convertTimeStamp($data_specimen['authored_on']),
+        ];
+        return $bodyManualSpecimen;
+    }
+    public function bodyManualServiceRequest($data_service_request, $data_parameter)
+    {
+        $bodyManualServiceRequest = [
+            "resourceType" => "ServiceRequest",
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/servicerequest/" . $data_parameter['organization_id'],
+                    "value" => $data_service_request['identifier_1'] . '|' . $data_service_request['procedure_code_original']
+                ]
+            ],
+            "status" => "active",
+            "intent" => "original-order",
+            "priority" => "routine",
+            "category" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => "http://snomed.info/sct",
+                            "code" => $data_service_request['category_code'],
+                            "display" => $data_service_request['category_display']
+                        ]
+                    ]
+                ]
+            ],
+            "code" => [
+                "coding" => [
+                    [
+                        "system" => "http://loinc.org",
+                        "code" => $data_service_request['coding_code'],
+                        "display" => $data_service_request['coding_display']
+                    ]
+                ],
+                "text" => $data_service_request['reason_text']
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_service_request['subject_reference']
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_service_request['r_encounter']['satusehat_id'],
+                "display" => "Permintaan Pemeriksaan Golongan Darah Selasa, 14 Juni 2022 pukul 09=>30 WIB"
+            ],
+            "occurrenceDateTime" => $this->convertTimeStamp($data_service_request['occurrence_datetime']),
+            "authoredOn" => $this->convertTimeStamp($data_service_request['authored_on']),
+            "requester" => [
+                "reference" => "Practitioner/" . $data_service_request['participant_individual_reference'],
+                "display" =>  $data_service_request['participant_individual_display']
+            ],
+            "performer" => [
+                [
+                    "reference" => "Organization/" . $data_parameter['laboratory_id'],
+                    "display" => "Laboratorium"
+                ]
+            ],
+            "reasonCode" => [
+                [
+                    "text" => $data_service_request['reason_text']
+                ]
+            ]
+        ];
+
+        return $bodyManualServiceRequest;
+    }
     public function bodyManualMedication($data_medication_request, $data_parameter)
     {
         $bodyManualMedication = [

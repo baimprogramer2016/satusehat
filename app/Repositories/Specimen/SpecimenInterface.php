@@ -8,4 +8,8 @@ interface SpecimenInterface
 
     public function getDataSpecimenByOriginalCode($original_code);
     public function updateDataBundleSpecimenJob($param = []);
+
+    public function getDataSpecimenFind($id);
+
+    public function updateStatusSpecimen($id, $satusehat_id, $request, $response);
 }

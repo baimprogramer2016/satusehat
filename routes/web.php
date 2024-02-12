@@ -6,6 +6,7 @@ use App\Http\Controllers\CategoryRequestController;
 use App\Http\Controllers\CompositionControlller;
 use App\Http\Controllers\ConditionControlller;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DiagnosticReportController;
 use App\Http\Controllers\EncounterController;
 use App\Http\Controllers\JadwalController;
 use App\Http\Controllers\JobLogsController;
@@ -25,13 +26,11 @@ use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PractitionerController;
 use App\Http\Controllers\ProcedureControlller;
-use App\Http\Controllers\QueueController;
 use App\Http\Controllers\ServiceRequestController;
 use App\Http\Controllers\SinkronisasiController;
 use App\Http\Controllers\SnomedController;
 use App\Http\Controllers\SpecimenController;
 use App\Http\Controllers\UploadController;
-use App\Models\Condition;
 use Illuminate\Support\Facades\Route;
 
 
@@ -221,9 +220,23 @@ Route::post('/category-request-update', [CategoryRequestController::class, 'upda
 
 Route::get('/service-request', [ServiceRequestController::class, 'index'])->name('service-request')->middleware('auth');
 Route::get('/service-request-response-ss/{id}', [ServiceRequestController::class, 'responseSS'])->name('service-request-response-ss')->middleware('auth');
+Route::get('/service-request-modal-kirim-ss/{id}', [ServiceRequestController::class, 'modalKirimSS'])->name('service-request-modal-kirim-ss')->middleware('auth');
+Route::post('/service-request-kirim-ss/{id}', [ServiceRequestController::class, 'kirimSS'])->name('service-request-kirim-ss')->middleware('auth');
+
 
 Route::get('/specimen', [SpecimenController::class, 'index'])->name('specimen')->middleware('auth');
 Route::get('/specimen-response-ss/{id}', [SpecimenController::class, 'responseSS'])->name('specimen-response-ss')->middleware('auth');
+Route::get('/specimen-modal-kirim-ss/{id}', [SpecimenController::class, 'modalKirimSS'])->name('specimen-modal-kirim-ss')->middleware('auth');
+Route::post('/specimen-kirim-ss/{id}', [SpecimenController::class, 'kirimSS'])->name('specimen-kirim-ss')->middleware('auth');
+
 
 Route::get('/observation-lab', [ObservationLabController::class, 'index'])->name('observation-lab')->middleware('auth');
 Route::get('/observation-lab-response-ss/{id}', [ObservationLabController::class, 'responseSS'])->name('observation-lab-response-ss')->middleware('auth');
+Route::get('/observation-lab-modal-kirim-ss/{uuid}', [ObservationLabController::class, 'modalKirimSS'])->name('observation-lab-modal-kirim-ss')->middleware('auth');
+Route::post('/observation-lab-kirim-ss/{uuid}', [ObservationLabController::class, 'kirimSS'])->name('observation-lab-kirim-ss')->middleware('auth');
+
+
+Route::get('/diagnostic-report', [DiagnosticReportController::class, 'index'])->name('diagnostic-report')->middleware('auth');
+Route::get('/diagnostic-report-ss/{id}', [DiagnosticReportController::class, 'responseSS'])->name('diagnostic-report-response-ss')->middleware('auth');
+Route::get('/diagnostic-report-modal-kirim-ss/{id}', [DiagnosticReportController::class, 'modalKirimSS'])->name('diagnostic-report-modal-kirim-ss')->middleware('auth');
+Route::post('/diagnostic-report-kirim-ss/{id}', [DiagnosticReportController::class, 'kirimSS'])->name('diagnostic-report-kirim-ss')->middleware('auth');

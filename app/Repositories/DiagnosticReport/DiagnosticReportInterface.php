@@ -8,4 +8,7 @@ interface DiagnosticReportInterface
 
     public function getDataDiagnosticReportByOriginalCode($original_code);
     public function updateDataBundleDiagnosticReportJob($param = []);
+
+    public function getDataDiagnosticReportFind($id);
+    public function updateStatusDiagnosticReport($id, $satusehat_id, $request, $response);
 }

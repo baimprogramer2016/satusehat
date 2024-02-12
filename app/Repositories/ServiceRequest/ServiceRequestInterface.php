@@ -8,4 +8,8 @@ interface ServiceRequestInterface
 
     public function getDataServiceRequestByOriginalCode($original_code);
     public function updateDataBundleServiceRequestJob($param = []);
+
+    public function getDataServiceRequestFind($id);
+
+    public function updateStatusServiceRequest($id, $satusehat_id, $request, $response);
 }

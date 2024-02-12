@@ -4,7 +4,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">Observation (Lab & Radiology)</h3>
+            <h3 class="nk-block-title page-title">Diagnostic Report</h3>
             <div class="nk-block-des text-soft">
                 <p>Halaman Kunjungan Pasien</p>
             </div>
@@ -27,13 +27,12 @@
                             <thead>
                                 <tr>
                                     <th>Kode</th>
-                                    <th>ID Pasien</th>
-                                    <th>Tipe</th>
-                                    <th>Nama Pemeriksaan</th>
-                                    <th>Nilai</th>
-                                    <th>Satuan</th>
-                                    <th>Kode Tindakan</th>
+                                    <th>Kode Service</th>
                                     <th>Satu Sehat ID</th>
+                                    <th>Nama Pasien</th>
+                                    <th>Nama Dokter</th>
+                                    <th>Kategori</th>
+                                    <th>Catatan</th>
                                     <th>Tanggal</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
@@ -77,19 +76,18 @@
           language : {
                 sLengthMenu: "Show _MENU_"
             },
-          ajax: "{{ route('observation-lab') }}",
+          ajax: "{{ route('diagnostic-report') }}",
           columns: [
 
             //   {data: 'id', name: 'id'},
               {data: 'encounter_original_code', name: 'encounter_original_code'},
-              {data: 'subject_reference', name: 'subject_reference'},
-              {data: 'type_observation', name: 'type_observation'},
-              {data: 'code_display', name: 'code_display'},
-              {data: 'quantity_value', name: 'quantity_value'},
-              {data: 'quantity_unit', name: 'quantity_unit'},
-              {data: 'quantity_code', name: 'quantity_code'},
-              {data: 'satusehat_id', name: 'satusehat_id'},
-              {data: 'effective_datetime', name: 'effective_datetime'},
+              {data: 'identifier', name: 'identifier', orderable: false, searchable: true},
+              {data: 'satusehat_id_diagnostic_report', name: 'satusehat_id_diagnostic_report'},
+              {data: 'subject_display', name: 'subject_display'},
+              {data: 'participant_individual_display', name: 'participant_individual_display'},
+              {data: 'category_display', name: 'category_display'},
+              {data: 'reason_text', name: 'reason_text'},
+              {data: 'authored_on', name: 'authored_on'},
               {data: 'status', name: 'status', orderable: false, searchable: false},
               {data: 'action', name: 'action', orderable: false, searchable: false},
           ]
@@ -102,7 +100,7 @@
     function modalResponseSS(id)
     {
         loadingProcess(); //dari custom.js
-        var url     = '{{ route("observation-lab-response-ss", ":id") }}';
+        var url     = '{{ route("diagnostic-report-response-ss", ":id") }}';
         url         = url.replace(':id',id);
         $.ajax({
             type:"GET",
@@ -115,12 +113,12 @@
         })
     }
 
-    function modalKirimSS(uuid)
+    function modalKirimSS(id)
     {
         loadingProcess(); //dari custom.js
 
-        var url     = '{{ route("observation-lab-modal-kirim-ss", ":uuid") }}';
-        url         = url.replace(':uuid',uuid);
+        var url     = '{{ route("diagnostic-report-modal-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
         $.ajax({
             type:"GET",
             url:url,
@@ -133,27 +131,26 @@
     }
 
 
-    function kirimSatuSehat(uuid)
+    function kirimSatuSehat(id)
     {
         // loadingProcess(); //dari custom.js
 
         $(".btn-action").html('Proses Kirim....')
         $(".btn-action").prop("disabled", true);
         $(".result-message").html('...');
-        var url     = '{{ route("observation-lab-kirim-ss", ":uuid") }}';
-        url         = url.replace(':uuid',uuid);
+        var url     = '{{ route("diagnostic-report-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
 
         $.ajax({
             type:"POST",
             data: {
-                uuid: uuid,
+                id: id,
                 _token: "{{ csrf_token() }}",
 
             },
             url:url,
             success: function(response)
             {//resourceType = OperationOutcome
-                console.log(response)
 
                 result = JSON.parse(response);
                 // console.log(result.resourceType)

@@ -9,9 +9,9 @@ class ServiceRequestRepository implements ServiceRequestInterface
 {
     private $model;
     public function __construct(
-        ServiceRequest $serviceRequestInterface
+        ServiceRequest $serviceRequestModel
     ) {
-        $this->model = $serviceRequestInterface;
+        $this->model = $serviceRequestModel;
     }
     public function getQuery()
     {
@@ -40,6 +40,26 @@ class ServiceRequestRepository implements ServiceRequestInterface
             $data->satusehat_response = $param['satusehat_response'];
             $data->update();
         }
+        return $data;
+    }
+
+    public function getDataServiceRequestFind($id)
+    {
+        return $this->model->find($id);
+    }
+    public function updateStatusServiceRequest($id, $satusehat_id, $request, $response)
+    {
+        $data = $this->model->where('id', $id)
+            ->update([
+                'satusehat_id' => $satusehat_id,
+                'satusehat_request' => $request,
+                'satusehat_response' => $response,
+                'satusehat_send' => ($satusehat_id != null) ? 1 : 0,
+                'satusehat_statuscode' => ($satusehat_id != null) ? '200' : '500',
+                'satusehat_date' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+
         return $data;
     }
 }

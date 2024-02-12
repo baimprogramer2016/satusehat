@@ -351,6 +351,7 @@ CREATE OR REPLACE FUNCTION public.validasi_service_request(
 AS $BODY$
 BEGIN
 
+--insert dahulu
 INSERT INTO ss_service_request(
 identifier_1,
 identifier_2,
@@ -421,7 +422,7 @@ uuid_generate_v4() as uuid,uuid_generate_v4() as uuid_specimen,uuid_generate_v4(
 FROM
 (
 
-        SELECT service_loinc.*, ss_loinc.loinc_display,(select snomed_display FROM ss_snomed WHERE snomed_code = service_loinc.snomed_code) as snomed_display   //join ss_loinc
+        SELECT service_loinc.*, ss_loinc.loinc_display,(select snomed_display FROM ss_snomed WHERE snomed_code = service_loinc.snomed_code) as snomed_display
         FROM
         (
             SELECT service.*,loinc_code, snomed_code,
@@ -460,7 +461,12 @@ ss_service_request
 ON service.encounter_original_code = ss_service_request.encounter_original_code
 WHERE ss_service_request.id is null;
 
-//insert ke tabel observation
+--hapus dlu
+insert into ss_log_bridging(original_code,description, date, tab)
+select encounter_original_code,'Belum Ada Mapping Golongan Darah' as description,now(), 'ss_service_request' as tab from ss_service_request where procedure_result is not null AND procedure_code is null;
+delete from ss_service_request where procedure_result is not null AND procedure_code is null;
+
+--sudah bersih
 INSERT INTO ss_observation (encounter_original_code,type_observation, status,category_code, category_display, code_observation,code_display,subject_reference,
 performer_reference,encounter_display,effective_datetime,issued, quantity_value,quantity_unit,quantity_code,satusehat_send,uuid, subject_display, interpretation_code)
 SELECT *
@@ -491,6 +497,7 @@ FROM(
  WHERE uuid NOT IN(
      SELECT uuid FROM ss_observation WHERE type_observation NOT IN('suhu','diastole','sistol','nadi','pernapasan')
  );
+
 
 return 'success';
 END;
@@ -540,19 +547,19 @@ display varchar(100),
 category varchar(100)
 )
 
-insert into ss_master_mapping(original_code,original_display,code,display, cateogry)
+insert into ss_master_mapping(original_code,original_display,code,display, category)
 select 'A','A','LA19710-5','Group A','GOLONGAN DARAH'
-insert into ss_master_mapping(original_code,original_display,code,display, cateogry)
+insert into ss_master_mapping(original_code,original_display,code,display, category)
 select 'B','B','LA19709-7','Group O','GOLONGAN DARAH'
-insert into ss_master_mapping(original_code,original_display,code,display, cateogry)
+insert into ss_master_mapping(original_code,original_display,code,display, category)
 select 'O','O','LA19708-9','ABO & Rh group','GOLONGAN DARAH'
-insert into ss_master_mapping(original_code,original_display,code,display, cateogry)
+insert into ss_master_mapping(original_code,original_display,code,display, category)
 select 'AB','AB','LA28449-9','Group AB','GOLONGAN DARAH'
-insert into ss_master_mapping(original_code,original_display,code,display, cateogry)
+insert into ss_master_mapping(original_code,original_display,code,display, category)
 select 'A/Rh (+)','A/Rh (+)','LP36683-8','ABO & Rh group','GOLONGAN DARAH'
-insert into ss_master_mapping(original_code,original_display,code,display, cateogry)
+insert into ss_master_mapping(original_code,original_display,code,display, category)
 select 'O / Rh +','O / Rh +','LP36683-8','ABO & Rh group','GOLONGAN DARAH'
-insert into ss_master_mapping(original_code,original_display,code,display, cateogry)
+insert into ss_master_mapping(original_code,original_display,code,display, category)
 select 'B / Rh +','B / Rh +','LP36683-8','ABO & Rh group','GOLONGAN DARAH'
 ------
 
@@ -624,3 +631,9 @@ add category_request varchar(100)
 
 alter table ss_generate_token
 add laboratory_id varchar(255)
+
+create table ss_desc_resource(
+    description varchar(200)
+)
+
+--- SUDAH DI DEPLOY DI RSUDC--- ALTER

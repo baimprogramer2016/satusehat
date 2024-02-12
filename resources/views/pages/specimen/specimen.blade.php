@@ -113,63 +113,63 @@
         })
     }
 
-    // function modalKirimSS(id)
-    // {
-    //     loadingProcess(); //dari custom.js
+    function modalKirimSS(id)
+    {
+        loadingProcess(); //dari custom.js
 
-    //     var url     = '{{ route("composition-modal-kirim-ss", ":id") }}';
-    //     url         = url.replace(':id',id);
-    //     $.ajax({
-    //         type:"GET",
-    //         url:url,
-    //         success: function(response)
-    //         {
-    //             $("#content-modal").html("");
-    //             $("#content-modal").html(response);
-    //         }
-    //     })
-    // }
+        var url     = '{{ route("specimen-modal-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
 
 
-    // function kirimSatuSehat(id)
-    // {
-    //     // loadingProcess(); //dari custom.js
+    function kirimSatuSehat(id)
+    {
+        // loadingProcess(); //dari custom.js
 
-    //     $(".btn-action").html('Proses Kirim....')
-    //     $(".btn-action").prop("disabled", true);
-    //     $(".result-message").html('...');
-    //     var url     = '{{ route("composition-kirim-ss", ":id") }}';
-    //     url         = url.replace(':id',id);
+        $(".btn-action").html('Proses Kirim....')
+        $(".btn-action").prop("disabled", true);
+        $(".result-message").html('...');
+        var url     = '{{ route("specimen-kirim-ss", ":id") }}';
+        url         = url.replace(':id',id);
 
-    //     $.ajax({
-    //         type:"POST",
-    //         data: {
-    //             id: id,
-    //             _token: "{{ csrf_token() }}",
+        $.ajax({
+            type:"POST",
+            data: {
+                id: id,
+                _token: "{{ csrf_token() }}",
 
-    //         },
-    //         url:url,
-    //         success: function(response)
-    //         {//resourceType = OperationOutcome
+            },
+            url:url,
+            success: function(response)
+            {//resourceType = OperationOutcome
 
-    //             result = JSON.parse(response);
-    //             // console.log(result.resourceType)
-    //             if(result.resourceType == 'OperationOutcome')
-    //             {
-    //                 $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
-    //                 $(".btn-action").hide();
-    //             }else
-    //             {
-    //                 $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
-    //                 location.reload();
-    //                 $(".btn-action").html('Selesai');
-    //             }
+                result = JSON.parse(response);
+                // console.log(result.resourceType)
+                if(result.resourceType == 'OperationOutcome')
+                {
+                    $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
+                    $(".btn-action").hide();
+                }else
+                {
+                    $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
+                    location.reload();
+                    $(".btn-action").html('Selesai');
+                }
 
-    //             $("#response_ss").val(response);
+                $("#response_ss").val(response);
 
-    //         }
-    //     })
-    // }
+            }
+        })
+    }
 
 </script>
 

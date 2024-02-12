@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\ServiceRequest\ServiceRequestInterface;
 use App\Traits\ApiTrait;
 use App\Traits\GeneralTrait;
@@ -16,12 +17,14 @@ class ServiceRequestController extends Controller
     use ApiTrait;
     use JsonTrait;
 
-    private $service_request_repo;
+    private $service_request_repo, $parameter_repo;
 
     public function __construct(
-        ServiceRequestInterface $serviceRequestInterface
+        ServiceRequestInterface $serviceRequestInterface,
+        ParameterInterface $parameterInterface
     ) {
         $this->service_request_repo = $serviceRequestInterface;
+        $this->parameter_repo = $parameterInterface;
     }
     public function index(Request $request)
     {
@@ -41,7 +44,7 @@ class ServiceRequestController extends Controller
                     return $status;
                 })
                 ->addColumn('identifier', function ($item_service_request) {
-                    $status = '<td>' . $item_service_request->identifier_1 . '|' . $item_service_request->procedure_code . '</td>';
+                    $status = '<td>' . $item_service_request->identifier_1 . '|' . $item_service_request->procedure_code_original . '</td>';
 
                     return $status;
                 })
@@ -81,6 +84,61 @@ class ServiceRequestController extends Controller
             return view('pages.service-request.service-request-response-ss', [
                 "data_response" => $response_satusehat
             ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function modalKirimSS(Request $request, $id)
+    {
+        try {
+            return view('pages.service-request.service-request-kirim-ss', [
+                "data_service_request" => $this->service_request_repo->getDataServiceRequestFind($this->dec($id)),
+            ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+
+    public function kirimSS(Request $request)
+    {
+        try {
+            # untuk procedure bukan ID tapi encounter_original_code
+            $data_service_request = $this->service_request_repo->getDataServiceRequestFind($this->dec($request->id));
+            $data_parameter = $this->parameter_repo->getDataParameterFirst();
+
+            if (empty($data_service_request['r_encounter']['satusehat_id'])) {
+                $result =  [
+                    "resourceType" => "OperationOutcome",
+                    "message" => config('constan.error_message.error_encounter_no')
+                ];
+                return json_encode($result);
+            } else {
+
+                $payload_service_request = $this->bodyManualServiceRequest($data_service_request, $data_parameter);
+
+                $response = $this->post_general_ss('/ServiceRequest', $payload_service_request);
+                $body_parse = json_decode($response->body());
+
+                $satusehat_id = null;
+                if ($response->successful()) {
+                    # jika sukses tetapi hasil gagal
+                    if ($body_parse->resourceType == 'OperationOutcome') {
+                        $satusehat_id = null;
+                    } else {
+                        $satusehat_id = $body_parse->id;
+                        # hanya jika sukses baru update status
+                        $this->service_request_repo->updateStatusServiceRequest($this->dec($request->id), $satusehat_id, $payload_service_request, $response);
+                    }
+                }
+                # update status ke database
+                return $response;
+            }
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

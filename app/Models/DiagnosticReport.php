@@ -14,7 +14,7 @@ class DiagnosticReport extends Model
 
     public function r_status()
     {
-        return $this->hasOne(Status::class, 'status', 'satusehat_send_specimen');
+        return $this->hasOne(Status::class, 'status', 'satusehat_send_diagnostic_report');
     }
     public function r_encounter()
     {
@@ -23,5 +23,9 @@ class DiagnosticReport extends Model
     public function r_master_procedure()
     {
         return $this->hasOne(MasterProcedure::class,  'original_code', 'procedure_code_original');
+    }
+    public function r_observation()
+    {
+        return $this->hasOne(Observation::class,  'uuid', 'uuid_observation');
     }
 }

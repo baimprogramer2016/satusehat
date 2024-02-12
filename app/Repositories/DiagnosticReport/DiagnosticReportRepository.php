@@ -9,9 +9,9 @@ class DiagnosticReportRepository implements DiagnosticReportInterface
 {
     private $model;
     public function __construct(
-        DiagnosticReport $diagnosticReportInterface
+        DiagnosticReport $diagnosticReportModel
     ) {
-        $this->model = $diagnosticReportInterface;
+        $this->model = $diagnosticReportModel;
     }
     public function getQuery()
     {
@@ -40,6 +40,26 @@ class DiagnosticReportRepository implements DiagnosticReportInterface
             $data->satusehat_response_diagnostic_report = $param['satusehat_response'];
             $data->update();
         }
+        return $data;
+    }
+
+    public function getDataDiagnosticReportFind($id)
+    {
+        return $this->model->find($id);
+    }
+    public function updateStatusDiagnosticReport($id, $satusehat_id, $request, $response)
+    {
+        $data = $this->model->where('id', $id)
+            ->update([
+                'satusehat_id_diagnostic_report' => $satusehat_id,
+                'satusehat_request_diagnostic_report' => $request,
+                'satusehat_response_diagnostic_report' => $response,
+                'satusehat_send_diagnostic_report' => ($satusehat_id != null) ? 1 : 0,
+                'satusehat_statuscode_diagnostic_report' => ($satusehat_id != null) ? '200' : '500',
+                'satusehat_date_diagnostic_report' => Carbon::now()->format('Y-m-d H:i:s'),
+            ]);
+
+
         return $data;
     }
 }
