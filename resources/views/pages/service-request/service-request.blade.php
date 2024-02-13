@@ -27,7 +27,7 @@
                             <thead>
                                 <tr>
                                     <th>Kode</th>
-                                    <th>Kode Service</th>
+                                    <th>Loinc</th>
                                     <th>Satu Sehat ID</th>
                                     <th>Nama Pasien</th>
                                     <th>Nama Dokter</th>
@@ -81,7 +81,8 @@
 
             //   {data: 'id', name: 'id'},
               {data: 'encounter_original_code', name: 'encounter_original_code'},
-              {data: 'identifier', name: 'identifier', orderable: false, searchable: true},
+            //   {data: 'identifier', name: 'identifier', orderable: false, searchable: true},
+              {data: 'loinc_display', name: 'loinc_display'},
               {data: 'satusehat_id', name: 'satusehat_id'},
               {data: 'subject_display', name: 'subject_display'},
               {data: 'participant_individual_display', name: 'participant_individual_display'},

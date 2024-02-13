@@ -1336,7 +1336,7 @@ trait JsonTrait
         return $bodyBundleObservationLab;
     }
 
-    public function bodyBundleObservationLabGolongan($param)
+    public function bodyBundleObservationLabGolonganDarah($param)
     {
         return  [
             "coding" => [
@@ -1358,7 +1358,7 @@ trait JsonTrait
             ]
         ];
     }
-    public function bodyBundleObservationLabKolesterol($param)
+    public function bodyBundleObservationLabCekDarah($param)
     {
         return [
             "value" =>  (int)$param['procedure_result'],

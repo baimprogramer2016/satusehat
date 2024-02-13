@@ -36,7 +36,7 @@ class CategoryRequestRepository implements CategoryRequestInterface
     {
         return $this->model->where('display', $id)->update([
             'payload' => $request['payload'],
-            'field' => $request['payload'],
+            'field' => $request['field'],
             'diagnostic_report_code' => $request['diagnostic_report_code'],
             'diagnostic_report_display' => $request['diagnostic_report_display'],
         ]);

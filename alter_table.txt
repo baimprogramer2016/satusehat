@@ -368,8 +368,6 @@ procedure_standart,
 encounter_display,
 category_code,
 category_display,
-coding_code,
-coding_display,
 coding_text,
 obs_category_code,
 obs_category_display,
@@ -382,7 +380,12 @@ subject_reference,
 subject_display,
 participant_individual_reference,
 participant_individual_display,
-loinc_code,snomed_code, loinc_display, snomed_display,
+loinc_code,
+snomed_code,
+loinc_display,
+snomed_display,
+coding_code,
+coding_display,
 satusehat_send,satusehat_send_specimen,satusehat_send_diagnostic_report,
 uuid,uuid_specimen, uuid_observation,uuid_diagnostic_report
 )
@@ -402,8 +405,6 @@ service.procedure_standart,
 service.encounter_display,
 service.category_code,
 service.category_display,
-service.coding_code,
-service.coding_display,
 service.coding_text,
 service.obs_category_code,
 service.obs_category_display,
@@ -416,7 +417,12 @@ service.subject_reference,
 service.subject_display,
 service.participant_individual_reference,
 service.participant_individual_display,
-service.loinc_code,service.snomed_code,service.loinc_display, service.snomed_display,
+service.loinc_code,
+service.snomed_code,
+service.loinc_display,
+service.snomed_display,
+service.loinc_code,
+service.loinc_display,
 4 as satusehat_send,4 as satusehat_send_specimen,4 as satusehat_send_diagnostic_report,
 uuid_generate_v4() as uuid,uuid_generate_v4() as uuid_specimen,uuid_generate_v4() as uuid_observation,uuid_generate_v4() as uuid_diagnostic_report
 FROM
@@ -505,7 +511,6 @@ $BODY$;
 
 ALTER FUNCTION public.validasi_service_request()
 OWNER TO postgres;
-
 ---------------------------
 
 alter proc sp_master_tindakan_ss
@@ -619,9 +624,9 @@ diagnostic_report_display varchar(200)
 )
 
 INSERT INTO ss_category_request(display,payload,field) values('',null,null)
-INSERT INTO ss_category_request(display,payload,field,diagnostic_report_code,diagnostic_report_display) values('GOLONGAN DARAH','$this->bodyBundleObservationLabGolongan($param)','valueCodeableConcept','HM','Hematology')
+INSERT INTO ss_category_request(display,payload,field,diagnostic_report_code,diagnostic_report_display) values('GOLONGAN DARAH','$this->bodyBundleObservationLabGolonganDarah($param)','valueCodeableConcept','HM','Hematology')
 INSERT INTO ss_category_request(display,payload,field,diagnostic_report_code,diagnostic_report_display) values('BTA','$this->bodyBundleObservationLabBta($param)','valueCodeableConcept','MB','Microbiology')
-INSERT INTO ss_category_request(display,payload,field,diagnostic_report_code,diagnostic_report_display) values('KOLESTEROL','$this->bodyBundleObservationLabKolesterol($param)','valueQuantity','CH','Chemistry')
+INSERT INTO ss_category_request(display,payload,field,diagnostic_report_code,diagnostic_report_display) values('KOLESTEROL','$this->bodyBundleObservationLabCekDarah($param)','valueQuantity','CH','Chemistry')
 
 
 alter table ss_master_procedure
@@ -636,4 +641,15 @@ create table ss_desc_resource(
     description varchar(200)
 )
 
---- SUDAH DI DEPLOY DI RSUDC--- ALTER
+---END SUDAH DI DEPLOY DI RSUDC--- ALTER
+
+--add
+INSERT INTO ss_category_request(display,payload,field,diagnostic_report_code,diagnostic_report_display) values('DARAH RUTIN','$this->bodyBundleObservationLabCekDarah($param)','valueQuantity','HM','Hematology')
+INSERT INTO ss_category_request(display,payload,field,diagnostic_report_code,diagnostic_report_display) values('DARAH LENGKAP','$this->bodyBundleObservationLabCekDarah($param)','valueQuantity','HM','Hematology')
+
+
+ALTER TABLE ss_observation
+ALTER COLUMN category_display TYPE text;
+
+ALTER TABLE ss_observation
+ALTER COLUMN code_display TYPE text;
