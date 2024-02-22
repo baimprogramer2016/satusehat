@@ -100,7 +100,7 @@
 
                     </div>
                     <div class="card-amount">
-                        <span class="amount"> {{ number_format($data_dashboard['data_current_year_all'] ?? 0) }} <span
+                        <span class="amount"> {{ number_format($data_dashboard['data_year_all'] ?? 0) }} <span
                                 class="currency currency-usd">Encounter</span>
                         </span>
                         {{-- <span class="change up text-danger"><em class="icon ni ni-arrow-long-up"></em>1.93%</span>
