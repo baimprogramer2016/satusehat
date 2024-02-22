@@ -57,15 +57,13 @@ Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->m
 Route Application
 */
 
-Route::get('/dashboard', function () {
-    return view('pages.dashboard');
-})->middleware('auth');
-
 Route::get('/', [LoginController::class, 'index']);
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/proses-login', [LoginController::class, 'authenticate'])->name('proses-login');
 Route::get('/proses-logout', [LoginController::class, 'signOut'])->name('proses-logout');
+Route::get('/dashboard-laporan', [DashboardController::class, 'laporan'])->name('dashboard-laporan')->middleware('auth');
+Route::get('/dashboard-laporan-download', [DashboardController::class, 'laporanDownload'])->name('dashboard-laporan-download')->middleware('auth');
 
 Route::get('/parameter', [ParameterController::class, 'index'])->name('parameter')->middleware('auth');
 Route::get('/parameter-ubah', [ParameterController::class, 'ubah'])->name('parameter-ubah')->middleware('auth');
@@ -113,7 +111,6 @@ Route::get('/lokasi-response-ss/{id}', [LocationController::class, 'responseSS']
 Route::get('/lokasi-modal-kirim-ss/{id}', [LocationController::class, 'modalKirimSS'])->name('lokasi-modal-kirim-ss')->middleware('auth');
 Route::post('/lokasi-kirim-ss/{id}', [LocationController::class, 'kirimSS'])->name('lokasi-kirim-ss')->middleware('auth');
 
-
 Route::get('/pasien', [PatientController::class, 'index'])->name('pasien')->middleware('auth');
 Route::get('/pasien-response-ss/{id}', [PatientController::class, 'responseSS'])->name('pasien-response-ss')->middleware('auth');
 Route::get('/pasien-ubah-ihs/{id}', [PatientController::class, 'ubahIHS'])->name('pasien-ubah-ihs')->middleware('auth');
@@ -141,12 +138,10 @@ Route::get('/medication-request-response-ss/{id}', [MedicationRequestController:
 Route::get('/medication-request-modal-kirim-ss/{id}', [MedicationRequestController::class, 'modalKirimSS'])->name('medication-request-modal-kirim-ss')->middleware('auth');
 Route::post('/medication-request-kirim-ss/{id}', [MedicationRequestController::class, 'kirimSS'])->name('medication-request-kirim-ss')->middleware('auth');
 
-
 Route::get('/medication-dispense', [MedicationDispenseController::class, 'index'])->name('medication-dispense')->middleware('auth');
 Route::get('/medication-dispense-response-ss/{id}', [MedicationDispenseController::class, 'responseSS'])->name('medication-dispense-response-ss')->middleware('auth');
 Route::get('/medication-dispense-modal-kirim-ss/{id}', [MedicationDispenseController::class, 'modalKirimSS'])->name('medication-dispense-modal-kirim-ss')->middleware('auth');
 Route::post('/medication-dispense-kirim-ss/{id}', [MedicationDispenseController::class, 'kirimSS'])->name('medication-dispense-kirim-ss')->middleware('auth');
-
 
 Route::get('/encounter', [EncounterController::class, 'index'])->name('encounter')->middleware('auth');
 Route::get('/encounter-detail/{original_code}', [EncounterController::class, 'detail'])->name('encounter-detail')->middleware('auth');

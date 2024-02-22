@@ -73,8 +73,8 @@
                     <label class="form-label" for="satusehat_send">Status</label>
                     <div class="form-control-wrap">
                         <select class="form-control" id="default-06" name="satusehat_send" id="satusehat_send">
-                            <option value="{{ $data_location->r_status->status }}">{{
-                                $data_location->r_status->description }}</option>
+                            <option value="{{ $data_location->r_status->status ?? ''}}">{{
+                                $data_location->r_status->description ?? ''}}</option>
                             @foreach ($data_status as $item_status)
                             <option value="{{ $item_status->status }}">{{ $item_status->description }}</option>
                             @endforeach

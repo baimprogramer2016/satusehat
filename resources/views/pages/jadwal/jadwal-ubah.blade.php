@@ -1,5 +1,5 @@
 <div class="nk-upload-form">
-    <h5 class="title mb-3">atur Jadwal</h5>
+    <h5 class="title mb-3">Atur Jadwal</h5>
 </div>
 <div class="nk-upload-list">
 

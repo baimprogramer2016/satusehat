@@ -31,7 +31,9 @@ class ObservationLabRepository implements ObservationLabInterface
     #ini untuk bundle
     public function getDataObservationLabByOriginalCode($original_code)
     {
-        return $this->model->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
+        return $this->model->where('encounter_original_code', $original_code)
+            // ->whereNotIn('procedure_unit', ['mm/jam', 'mm3', 'Pg'])
+            ->orderBy('id', 'asc')->get();
     }
 
     public function getDataObservationLabFind($uuid)

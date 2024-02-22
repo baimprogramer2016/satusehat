@@ -58,7 +58,7 @@
                                     <td>{{ $item_lokasi->name }}</td>
                                     <td>{{ $item_lokasi->r_managing_organization->name ?? '' }}</td>
                                     <td
-                                        class="{{ ($item_lokasi->r_status->status == 1) ? 'text-success' : 'text-warning'  }}">
+                                        class="{{ (!empty($item_lokasi->r_status->status) ?? 1  == 1) ? 'text-success' : 'text-warning'  }}">
                                         {{ $item_lokasi->r_status->description ?? '' }}</td>
                                     <td>
                                         <div class="drodown">

@@ -12,5 +12,6 @@ class CategoryRequest extends Model
 
     protected $fillable = ['display', 'payload'];
 
+
     public $timestamps  = false;
 }

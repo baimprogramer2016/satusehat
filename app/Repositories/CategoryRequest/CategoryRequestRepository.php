@@ -15,8 +15,6 @@ class CategoryRequestRepository implements CategoryRequestInterface
         $this->model = new CategoryRequest();
     }
 
-
-
     public function getQuery()
     {
         $query = $this->model;
