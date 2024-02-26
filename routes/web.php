@@ -63,6 +63,7 @@ Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/proses-login', [LoginController::class, 'authenticate'])->name('proses-login');
 Route::get('/proses-logout', [LoginController::class, 'signOut'])->name('proses-logout');
 Route::get('/dashboard-laporan', [DashboardController::class, 'laporan'])->name('dashboard-laporan')->middleware('auth');
+Route::get('/dashboard-service', [DashboardController::class, 'runService'])->name('dashboard-service')->middleware('auth');
 Route::get('/dashboard-laporan-download', [DashboardController::class, 'laporanDownload'])->name('dashboard-laporan-download')->middleware('auth');
 
 Route::get('/parameter', [ParameterController::class, 'index'])->name('parameter')->middleware('auth');

@@ -9,6 +9,7 @@ use App\Repositories\Dashboard\DashboardInterface;
 use App\Repositories\Encounter\EncounterInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Maatwebsite\Excel\Facades\Excel;
 use Throwable;
 
@@ -37,11 +38,11 @@ class DashboardController extends Controller
             ];
 
             $data_progress = [
-                "encounter_persen" => ($this->data_dashboard_repo->getYearSuccesAll() / $this->data_dashboard_repo->getYearAll() * 100) ?? 0,
-                "condition_persen" => ($this->data_dashboard_repo->getConditionSuccessAll() / $this->data_dashboard_repo->getConditionAll() * 100) ?? 0,
-                "observation_persen" => ($this->data_dashboard_repo->getObservationSuccessAll() / $this->data_dashboard_repo->getObservationAll() * 100) ?? 0,
-                "medication_request_persen" => ($this->data_dashboard_repo->getMedicationRequestSuccessAll() / $this->data_dashboard_repo->getMedicationRequestAll() * 100) ?? 0,
-                "medication_dispense_persen" => ($this->data_dashboard_repo->getMedicationDispenseSuccessAll() / $this->data_dashboard_repo->getMedicationDispenseAll() * 100) ?? 0
+                "encounter_persen" => ($this->data_dashboard_repo->getYearSuccesAll() ?? 0 / $this->data_dashboard_repo->getYearAll() ?? 0 * 100) ?? 0,
+                "condition_persen" => ($this->data_dashboard_repo->getConditionSuccessAll() ?? 0 / $this->data_dashboard_repo->getConditionAll() ?? 0 * 100) ?? 0,
+                "observation_persen" => ($this->data_dashboard_repo->getObservationSuccessAll() ?? 0 / $this->data_dashboard_repo->getObservationAll() ?? 0 * 100) ?? 0,
+                "medication_request_persen" => ($this->data_dashboard_repo->getMedicationRequestSuccessAll() ?? 0 / $this->data_dashboard_repo->getMedicationRequestAll() ?? 0 * 100) ?? 0,
+                "medication_dispense_persen" => ($this->data_dashboard_repo->getMedicationDispenseSuccessAll() ?? 0 / $this->data_dashboard_repo->getMedicationDispenseAll() ?? 0 * 100) ?? 0
             ];
             return view('pages.dashboard.dashboard', [
                 "data_dashboard" => $data_result,
@@ -73,5 +74,13 @@ class DashboardController extends Controller
                 "message" => $e
             ]);
         }
+    }
+
+    public function runService()
+    {
+        // Artisan::call('schedule:work');
+        Artisan::call('queue:work');
+
+        return response()->json(['message' => 'Schedule Worker started']);
     }
 }

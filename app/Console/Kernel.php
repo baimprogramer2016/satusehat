@@ -32,7 +32,7 @@ class Kernel extends ConsoleKernel
         }
         // menjalan scheduler Sinkronisasi
         $data_sinkronisasi = Sinkronisasi::where('status', 1)->get();
-        if ($data_sinkronisasi->count() > 1) {
+        if ($data_sinkronisasi->count() > 0) {
             foreach ($data_sinkronisasi as $item_sinkronisasi_kernel) {
                 $schedule->call('App\Http\Controllers\SinkronisasiController@runJob', ["param_id_sinkronisasi" => Crypt::encrypt($item_sinkronisasi_kernel->id)])->cron($item_sinkronisasi_kernel->cron);
             }

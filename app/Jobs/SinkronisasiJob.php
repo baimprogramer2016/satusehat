@@ -57,7 +57,14 @@ class SinkronisasiJob implements ShouldQueue
 
             # insert target
             foreach ($result_query as $item_result) {
-                DB::table($this->sinkronisasi_repo->target)->insert((array) $item_result);
+                $object_properties = get_object_vars($item_result);
+
+                // Iterasi melalui setiap properti dan mengganti tanda petik dalam nilai properti
+                foreach ($object_properties as $property => $value) {
+                    // Ganti tanda petik dengan string kosong
+                    $object_properties[$property] = preg_replace('/[^A-Za-z0-9\-]/', '', $value);
+                }
+                DB::table($this->sinkronisasi_repo->target)->insert((array) $object_properties);
             }
 
             # jalan kan SP jika ada dan setelah query di jalankan

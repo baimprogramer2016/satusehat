@@ -24,6 +24,9 @@
                                 class="btn btn-white btn-dim btn-outline-success"><em
                                     class="icon ni ni-reports"></em><span>Laporan</span></a>
                         </li>
+                        <li><a onClick="runService()" class="btn btn-white btn-dim btn-outline-danger"><em
+                                    class="icon ni ni-play"></em><span>Service</span></a>
+                        </li>
                         {{-- <li class="nk-block-tools-opt">
                             <div class="drodown">
                                 <a href="#" class="dropdown-toggle btn btn-icon btn-primary" data-toggle="dropdown"><em
@@ -286,6 +289,17 @@
             {
                 $("#content-modal").html("");
                 $("#content-modal").html(response);
+            }
+        })
+    }
+    function runService()
+    {
+        $.ajax({
+            type:"GET",
+            url:"{{ route('dashboard-service') }}",
+            success: function(response)
+            {
+               console.log(response);
             }
         })
     }

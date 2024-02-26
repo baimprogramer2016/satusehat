@@ -46,7 +46,7 @@ class DashboardRepository implements DashboardInterface
     }
     public function getCurrentYearWaiting()
     {
-        return $this->model->whereYear('period_start', Carbon::now()->year)->where('satusehat_send', '<>', 1)->whereNull('satusehat_statuscode')->count();
+        return $this->model->whereYear('period_start', Carbon::now()->year)->whereNull('satusehat_send')->whereNull('satusehat_statuscode')->count();
     }
 
     public function getYearAll()
@@ -63,7 +63,7 @@ class DashboardRepository implements DashboardInterface
     }
     public function getYearWaitingAll()
     {
-        return $this->model->where('satusehat_send', '<>', 1)->whereNull('satusehat_statuscode')->count();
+        return $this->model->whereNull('satusehat_send')->whereNull('satusehat_statuscode')->count();
     }
 
     public function getConditionAll()
