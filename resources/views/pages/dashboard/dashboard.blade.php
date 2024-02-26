@@ -81,12 +81,12 @@
                                     number_format($data_dashboard['data_current_year_failed'] ?? 0)
                                     }} <span class="currency currency-usd"></span></div>
                             </div>
-                            <div class="invest-data-history bg-warning  rounded-lg">
+                            {{-- <div class="invest-data-history bg-warning  rounded-lg">
                                 <div class="title  text-white">Belum Dikirim</div>
                                 <div class="amount  text-white"> {{
                                     number_format($data_dashboard['data_current_year_waiting'] ?? 0)
                                     }} <span class="currency currency-usd"></span></div>
-                            </div>
+                            </div> --}}
                         </div>
 
                     </div>
