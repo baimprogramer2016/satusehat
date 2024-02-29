@@ -128,4 +128,13 @@ trait GeneralTrait
 
         return $result;
     }
+
+    function createPercent($value1, $value2)
+    {
+        if ($value1 === null || $value2 === null || $value1 === 0 || $value2 === 0) {
+            return 0;
+        } else {
+            return ($value1 / $value2) * 100;
+        }
+    }
 }

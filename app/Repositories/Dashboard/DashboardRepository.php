@@ -77,11 +77,11 @@ class DashboardRepository implements DashboardInterface
 
     public function getObservationAll()
     {
-        return $this->observation_model->count();
+        return $this->observation_model->whereIn('type_observation', ['suhu', 'diastole', 'sistol', 'nadi', 'pernapasan'])->count();
     }
     public function getObservationSuccessAll()
     {
-        return $this->observation_model->where('satusehat_statuscode', 200)->count();
+        return $this->observation_model->where('satusehat_statuscode', 200)->whereIn('type_observation', ['suhu', 'diastole', 'sistol', 'nadi', 'pernapasan'])->count();
     }
     public function getMedicationRequestAll()
     {
@@ -98,6 +98,14 @@ class DashboardRepository implements DashboardInterface
     public function getMedicationDispenseSuccessAll()
     {
         return $this->medication_dispense_model->where('satusehat_statuscode', 200)->count();
+    }
+    public function getObservationLabAll()
+    {
+        return $this->observation_model->whereIn('type_observation', ['Laboratory'])->count();
+    }
+    public function getObservationLabSuccessAll()
+    {
+        return $this->observation_model->where('satusehat_statuscode', 200)->whereIn('type_observation', ['Laboratory'])->count();
     }
 
     //LAPORAN

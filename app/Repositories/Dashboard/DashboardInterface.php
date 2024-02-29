@@ -25,6 +25,9 @@ interface DashboardInterface
     public function getMedicationDispenseAll();
     public function getMedicationDispenseSuccessAll();
 
+    public function getObservationLabAll();
+    public function getObservationLabSuccessAll();
+
 
     //LAPORAN
     public function getLaporanEncounter($param = []);

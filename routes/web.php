@@ -42,6 +42,7 @@ Route Application
 # MANUAL - DEBUG
 // Route::get('/queue', [QueueController::class, 'index'])->name('queue');
 // Route::get('/query', [SinkronisasiController::class, 'query'])->name('query');
+Route::get('/tes-sinkronisasi', [SinkronisasiController::class, 'tesRunJob'])->name('tesRunJob');
 
 # KFA
 // Route::get('/get-kfa', [KfaController::class, 'getKfa'])->name('get-kfa')->middleware('auth');

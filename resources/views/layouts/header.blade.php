@@ -47,15 +47,15 @@
                                 <a href="{{ route('parameter') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Parameter</span></a>
                             </li>
-
-                            <li class="nk-menu-item">
-                                <a href="{{ route('jadwal') }}" class="nk-menu-link"><span class="nk-menu-text">Jadwal
-                                        (Kirim)</span></a>
-                            </li>
                             <li class="nk-menu-item">
                                 <a href="{{ route('sinkronisasi') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Sinkronisasi (Tarik)</span></a>
                             </li>
+                            <li class="nk-menu-item">
+                                <a href="{{ route('jadwal') }}" class="nk-menu-link"><span class="nk-menu-text">Jadwal
+                                        (Kirim)</span></a>
+                            </li>
+
                             <li class="nk-menu-item">
                                 <a href="{{ route('jobs') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Queue</span></a>
@@ -94,6 +94,10 @@
                                         class="nk-menu-text">KFA</span></a>
                             </li>
                             <li class="nk-menu-item">
+                                <a href="{{ route('medication') }}" class="nk-menu-link"><span
+                                        class="nk-menu-text">Medication</span></a>
+                            </li>
+                            <li class="nk-menu-item">
                                 <a href="{{ route('snomed') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Snomed</span></a>
                             </li>
@@ -108,7 +112,7 @@
                                 <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
                                         <a href="{{ route('category-request') }}" class="nk-menu-link"><span
-                                                class="nk-menu-text">Kategory</span></a>
+                                                class="nk-menu-text">Kategori</span></a>
                                     </li>
                                     <li class="nk-menu-item">
                                         <a href="{{ route('master-procedure') }}" class="nk-menu-link"><span
@@ -172,10 +176,7 @@
                                     <span class="nk-menu-text">Resource 3</span>
                                 </a>
                                 <ul class="nk-menu-sub">
-                                    <li class="nk-menu-item">
-                                        <a href="{{ route('medication') }}" class="nk-menu-link"><span
-                                                class="nk-menu-text">Medication</span></a>
-                                    </li>
+
                                     <li class="nk-menu-item">
                                         <a href="{{ route('medication-request') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Medication Request</span></a>

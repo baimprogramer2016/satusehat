@@ -61,8 +61,8 @@ class SinkronisasiJob implements ShouldQueue
 
                 // Iterasi melalui setiap properti dan mengganti tanda petik dalam nilai properti
                 foreach ($object_properties as $property => $value) {
-                    // Ganti tanda petik dengan string kosong
-                    $object_properties[$property] = preg_replace('/[^A-Za-z0-9\-]/', '', $value);
+                    // menghilangkan tanda karakter tidak dikenal
+                    $object_properties[$property] = str_replace('?', ' ', mb_convert_encoding($value, "UTF-8"));
                 }
                 DB::table($this->sinkronisasi_repo->target)->insert((array) $object_properties);
             }
@@ -73,7 +73,7 @@ class SinkronisasiJob implements ShouldQueue
                 if (strpos($sp, "#")) {
                     $sp_result = explode("#", $sp);
                     foreach ($sp_result as $index => $item_result) {
-                        echo $item_result[$index];
+                        // echo $item_result[$index];
                         DB::select($item_result[$index]);
                     }
                 } else {

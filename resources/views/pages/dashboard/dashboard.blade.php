@@ -234,12 +234,24 @@
                                 </div>
                             </div>
                             <div class="progress progress-md">
-                                <div class="progress-bar  bg-dark"
+                                <div class="progress-bar  bg-aqua"
                                     data-progress="{{ ROUND($data_progress['medication_dispense_persen']) }}">
                                 </div>
                             </div>
                         </div>
-
+                        <div class="progress-wrap">
+                            <div class="progress-text">
+                                <div class="progress-label">Laboratorium</div>
+                                <div class="progress-amount">{{ ROUND($data_progress['observation_lab_persen']) }}%
+                                </div>
+                            </div>
+                            <div class="progress progress-md">
+                                <div class="progress-bar  bg-danger"
+                                    data-progress="{{ ROUND($data_progress['observation_lab_persen']) }}">
+                                </div>
+                            </div>
+                        </div>
+                        {{--
                         <div class="progress-wrap">
                             <div class="progress-text">
                                 <div class="progress-label">Allergy</div>
@@ -249,7 +261,7 @@
                                 <div class="progress-bar bg-danger" data-progress="33"></div>
                             </div>
                         </div>
-                    </div>
+                    </div> --}}
                     {{-- <div class="invest-top-ck mt-auto">
                         <canvas class="iv-plan-purchase" id="planPurchase"></canvas>
                     </div> --}}

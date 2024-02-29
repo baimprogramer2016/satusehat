@@ -11,11 +11,13 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Traits\GeneralTrait;
 use Throwable;
 
 class DashboardController extends Controller
 {
 
+    use GeneralTrait;
     private $data_dashboard_repo;
     public function __construct(
         DashboardInterface $dashboardInterface,
@@ -38,11 +40,13 @@ class DashboardController extends Controller
             ];
 
             $data_progress = [
-                "encounter_persen" => ($this->data_dashboard_repo->getYearSuccesAll() ?? 0 / $this->data_dashboard_repo->getYearAll() ?? 0 * 100) ?? 0,
-                "condition_persen" => ($this->data_dashboard_repo->getConditionSuccessAll() ?? 0 / $this->data_dashboard_repo->getConditionAll() ?? 0 * 100) ?? 0,
-                "observation_persen" => ($this->data_dashboard_repo->getObservationSuccessAll() ?? 0 / $this->data_dashboard_repo->getObservationAll() ?? 0 * 100) ?? 0,
-                "medication_request_persen" => ($this->data_dashboard_repo->getMedicationRequestSuccessAll() ?? 0 / $this->data_dashboard_repo->getMedicationRequestAll() ?? 0 * 100) ?? 0,
-                "medication_dispense_persen" => ($this->data_dashboard_repo->getMedicationDispenseSuccessAll() ?? 0 / $this->data_dashboard_repo->getMedicationDispenseAll() ?? 0 * 100) ?? 0
+                "encounter_persen" => $this->createPercent($this->data_dashboard_repo->getYearSuccesAll(), $this->data_dashboard_repo->getYearAll()),
+                "condition_persen" => $this->createPercent($this->data_dashboard_repo->getConditionSuccessAll(), $this->data_dashboard_repo->getConditionAll()),
+                "observation_persen" => $this->createPercent($this->data_dashboard_repo->getObservationSuccessAll(), $this->data_dashboard_repo->getObservationAll()),
+                "medication_request_persen" => $this->createPercent($this->data_dashboard_repo->getMedicationRequestSuccessAll(), $this->data_dashboard_repo->getMedicationRequestAll()),
+                "medication_dispense_persen" => $this->createPercent($this->data_dashboard_repo->getMedicationDispenseSuccessAll(), $this->data_dashboard_repo->getMedicationDispenseAll()),
+                "observation_lab_persen" => $this->createPercent($this->data_dashboard_repo->getObservationLabSuccessAll(), $this->data_dashboard_repo->getObservationLabAll()),
+
             ];
             return view('pages.dashboard.dashboard', [
                 "data_dashboard" => $data_result,

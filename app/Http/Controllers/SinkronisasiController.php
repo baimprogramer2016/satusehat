@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Jobs\SinkronisasiJob;
 use App\Models\Queue;
 use App\Models\Sinkronisasi;
+use Illuminate\Support\Str;
 use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\Sinkronisasi\SinkronisasiInterface;
 use Illuminate\Http\Request;
@@ -167,5 +168,31 @@ class SinkronisasiController extends Controller
     {
         $data_sinkronisasi = Sinkronisasi::where('status', 1)->get();
         return $data_sinkronisasi;
+    }
+
+    public function tesRunJob(Request $request)
+    {
+        $text_query = Sinkronisasi::where('kode', 'encounter_sync')->first();
+
+        $result_query =  DB::connection('odbc_cileungsi')->select($text_query->query);
+        // $tes =  $result_query[0]->subject_display;
+        // return  preg_replace('/[^\p{L}\p{N}\s]/u', '', $tes);
+
+
+
+        # insert target
+        foreach ($result_query as $item_result) {
+            $object_properties = get_object_vars($item_result);
+
+            // Iterasi melalui setiap properti dan mengganti tanda petik dalam nilai properti
+            foreach ($object_properties as $property => $value) {
+                // Ganti tanda petik dengan string kosong
+                // $object_properties[$property] = preg_replace('/[^\p{L}\p{N}\s,.]/u', '', $value);
+                $object_properties[$property] = str_replace('?', '`', mb_convert_encoding($value, "UTF-8"));
+            }
+
+            // return $object_properties;
+            DB::table($text_query->target)->insert((array) $object_properties);
+        }
     }
 }
