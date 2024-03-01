@@ -13,6 +13,7 @@ use App\Http\Controllers\JobLogsController;
 use App\Http\Controllers\JobsController;
 use App\Http\Controllers\KfaController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\LogErrorController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\LoincController;
 use App\Http\Controllers\MasterProcedureController;
@@ -237,3 +238,5 @@ Route::get('/diagnostic-report', [DiagnosticReportController::class, 'index'])->
 Route::get('/diagnostic-report-ss/{id}', [DiagnosticReportController::class, 'responseSS'])->name('diagnostic-report-response-ss')->middleware('auth');
 Route::get('/diagnostic-report-modal-kirim-ss/{id}', [DiagnosticReportController::class, 'modalKirimSS'])->name('diagnostic-report-modal-kirim-ss')->middleware('auth');
 Route::post('/diagnostic-report-kirim-ss/{id}', [DiagnosticReportController::class, 'kirimSS'])->name('diagnostic-report-kirim-ss')->middleware('auth');
+
+Route::get('/log-error', [LogErrorController::class, 'index'])->name('log-error')->middleware('auth');

@@ -44,6 +44,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\CategoryRequest\CategoryRequestInterface::class, \App\Repositories\CategoryRequest\CategoryRequestRepository::class);
         $this->app->bind(\App\Repositories\DiagnosticReport\DiagnosticReportInterface::class, \App\Repositories\DiagnosticReport\DiagnosticReportRepository::class);
         $this->app->bind(\App\Repositories\Dashboard\DashboardInterface::class, \App\Repositories\Dashboard\DashboardRepository::class);
+        $this->app->bind(\App\Repositories\LogError\LogErrorInterface::class, \App\Repositories\LogError\LogErrorRepository::class);
     }
 
     /**

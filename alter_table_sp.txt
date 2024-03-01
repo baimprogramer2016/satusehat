@@ -1,0 +1,419 @@
+-- FUNCTION: public.validasi_composition()
+
+-- DROP FUNCTION IF EXISTS public.validasi_composition();
+
+CREATE OR REPLACE FUNCTION public.validasi_composition(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+
+BEGIN
+INSERT INTO ss_composition(original_code,encounter_original_code,type_code,type_display,category_code,category_display,subject_reference,subject_display,date,author_reference,author_display,title,text_status,text_div,satusehat_send,uuid, section_code, section_code_display)
+
+SELECT composition.original_code,composition.encounter_original_code,'18842-5' as type_code,'Discharge summary' as type_display,'LP173421-1' as category_code,'Report' as category_display,
+composition.subject_reference,composition.subject_display,composition.date,composition.participant_individual_reference,composition.participant_individual_display,composition.title,
+composition.text_status,composition.text_div,4 as satusehat_send,uuid_generate_v4() as uuid, section_code, section_code_display
+FROM
+(
+
+    SELECT tbl_composition.*, ss_master_procedure.loinc_code as section_code, ss_master_procedure.loinc_display as section_code_display
+    FROM
+    (
+
+        select temp_composition.*,ss_encounter.subject_reference,ss_encounter.subject_display,ss_encounter.participant_individual_reference,ss_encounter.participant_individual_display
+        FROM temp_composition
+        LEFT JOIN
+        ss_encounter
+        ON temp_composition.encounter_original_code = ss_encounter.original_code
+	    WHERE ss_encounter.original_code is not null
+	) as tbl_composition
+	LEFT join
+	ss_master_procedure
+	ON tbl_composition.original_code = ss_master_procedure.original_code
+	WHERE ss_master_procedure.id is not null
+) as composition
+LEFT JOIN
+ss_composition
+ON composition.encounter_original_code = ss_composition.encounter_original_code
+WHERE ss_composition.encounter_original_code is null;
+
+	INSERT INTO ss_log_bridging(original_code,description,date,tab)
+	SELECT a.encounter_original_code,concat(a.original_code , ' pada Master Tindakan Tidak ada') as description,now() as date,'composition' as tab
+	FROM
+	temp_composition a
+	LEFT JOIN
+	ss_master_procedure b
+	ON a.original_code = b.original_code
+	WHERE b.original_code is null;
+	return 'success';
+
+return 'success';
+END;
+
+$BODY$;
+
+ALTER FUNCTION public.validasi_composition()
+    OWNER TO postgres;
+
+-------------------------------------------------------
+
+-- FUNCTION: public.validasi_medication_dispense()
+
+-- DROP FUNCTION IF EXISTS public.validasi_medication_dispense();
+
+CREATE OR REPLACE FUNCTION public.validasi_medication_dispense(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+INSERT INTO ss_medication_dispense(identifier_1,identifier_2,encounter_original_code,satusehat_send,uuid, farmasi_id, farmasi_name)
+
+SELECT tab_dispense.*,uuid_generate_v4(),(select location_farmasi_id from ss_generate_token LIMIT 1) as location_reference,'Apotek' as  location_display FROM (
+    SELECT temp_dispense.identifier_1,temp_dispense.identifier_2,temp_dispense.encounter_original_code,4 as satusehat_send FROM
+    (
+        select a.* from
+        temp_medication_dispense a,
+        ss_medication_request b
+        WHERE concat(a.identifier_1,a.identifier_2) = concat(b.identifier_1,b.identifier_2)
+        AND a.encounter_original_code = b.encounter_original_code
+        AND b.satusehat_id is null
+    ) as temp_dispense
+    LEFT JOIN ss_medication_dispense
+    ON temp_dispense.encounter_original_code = ss_medication_dispense.encounter_original_code
+    WHERE ss_medication_dispense.identifier_1 is null
+) as tab_dispense
+LEFT JOIN
+ss_encounter
+ON tab_dispense.encounter_original_code = ss_encounter.original_code
+WHERE ss_encounter.satusehat_id is null ;
+
+INSERT INTO ss_log_bridging(original_code,description,date,tab)
+SELECT a.encounter_original_code,'Tidak Ada Medication Request' as description,now() as date,'medication_dispense' as tab
+FROM
+temp_medication_dispense a
+LEFT JOIN
+ss_medication_request b
+ON a.encounter_original_code = b.encounter_original_code
+WHERE b.encounter_original_code is null;
+
+return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_medication_dispense()
+    OWNER TO postgres;
+----------------------
+
+-- FUNCTION: public.validasi_medication_request()
+
+-- DROP FUNCTION IF EXISTS public.validasi_medication_request();
+
+CREATE OR REPLACE FUNCTION public.validasi_medication_request(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+DELETE FROM temp_medication_request WHERE dose_quantity_value is null;
+DELETE FROM temp_medication_request WHERE dose_quantity_value ='';
+
+INSERT INTO ss_medication_request(identifier_1,identifier_2,subject_reference,subject_display,encounter_original_code,authored_on,requester_reference,requester_display,ins_text,
+ins_additional,ins_patient,int_timing_frequency,int_timing_period,int_timing_period_unit,route_code, route_display,dose_quantity_value,dose_quantity_unit,dose_quantity_code,
+dispense_interval_value,dispense_interval_unit,dispense_interval_code,validity_period_start,validity_period_end,number_of_repeats,quantity_value,quantity_unit,quantity_code,
+expected_value,expected_unit,expected_code,satusehat_send,uuid,uuid_medication )
+
+SELECT TAB_FINAL.*
+FROM
+(
+
+    SELECT  identifier_1,identifier_2,subject_reference,subject_display,encounter_original_code,
+    case when authored_on is null then TAB_JOIN.period_start else authored_on end as authored_on,
+    requester_reference,requester_display,
+            ins_text,ins_additional,ins_patient,
+            1 as int_timing_frequency,1 as int_timing_period,'d' as int_timing_period_unit,
+            ss_kfa_group.act_code as route_code, ss_kfa_group.act_display as route_display,
+            f_dose_qty(dose_quantity_value) as dose_quantity_value,
+            ss_kfa_group.satuan_disesuaikan as dose_quantity_unit,ss_kfa_group.satuan_disesuaikan as dose_quantity_code,
+            1 as dispense_interval_value,'days' as dispense_interval_unit,'d' as dispense_interval_code,
+            case when authored_on is null then TAB_JOIN.period_start else authored_on end as validity_period_start,
+            case when authored_on is null then TAB_JOIN.period_start else authored_on end + (CAST(CAST(f_calc_expected_value(quantity_value,dose_quantity_value) as float) as integer) || ' days')::INTERVAL as validity_period_end,
+            0 number_of_repeats,quantity_value,ss_kfa_group.satuan_disesuaikan as quantity_unit,ss_kfa_group.satuan_disesuaikan as quantity_code,
+            f_calc_expected_value(quantity_value,dose_quantity_value) as expected_value,
+            'days' as expected_unit,'d' as expected_code,
+            4 as satusehat_send,uuid_generate_v4() as uuid,uuid_generate_v4() as uuid_medication
+    FROM
+    (
+
+           SELECT
+            mr.*,medication.*,subject_reference,subject_display,
+            participant_individual_reference as requester_reference,participant_individual_display as requester_display,encounter.period_start
+            FROM
+            temp_medication_request mr
+            JOIN
+            ss_medication medication
+            ON
+            mr.identifier_2 = medication.original_code
+            JOIN
+            ss_encounter encounter
+            ON mr.encounter_original_code = encounter.original_code
+            WHERE medication.kfa_code is not null
+
+    ) as TAB_JOIN,
+    ss_kfa_group
+    WHERE ss_kfa_group.kode_kfa = TAB_JOIN.kfa_code
+) as TAB_FINAL
+LEFT JOIN
+ss_medication_request
+ON TAB_FINAL.identifier_1 = ss_medication_request.identifier_1
+WHERE ss_medication_request.identifier_1 is null;
+
+INSERT INTO ss_log_bridging(original_code,description,date,tab)
+	SELECT a.encounter_original_code,'KFA Belum Di Mapping' as description,now() as date,'medication_request' as tab
+	FROM
+	temp_medication_request a
+	LEFT JOIN
+	ss_medication b
+	ON a.identifier_2 = b.original_code
+	JOIN
+    ss_encounter encounter
+    ON a.encounter_original_code = encounter.original_code
+    WHERE b.kfa_code is null;
+
+
+return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_medication_request()
+    OWNER TO postgres;
+
+---------------------------
+-- FUNCTION: public.validasi_practitioner_1()
+
+-- DROP FUNCTION IF EXISTS public.validasi_practitioner_1();
+
+CREATE OR REPLACE FUNCTION public.validasi_practitioner_1(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+	--2. Insert ke patient jika belum ada di table pasien
+	INSERT INTO ss_practitioner(nik,name,satusehat_process,original_code)
+	select a.nik,a.name,4 as satusehat_process,a.original_code  from
+	temp_practitioner a
+	left join
+	ss_practitioner b
+	ON a.original_code = b.original_code
+	WHERE b.id is null;
+
+
+	INSERT into ss_log_bridging(original_code,description,date, tab)
+	select a.original_code,'Data Tidak Lengkap, Periksa NIK' as description, now(), 'practitioner' as tab  from
+	temp_practitioner a
+	left join
+	ss_patient b
+	ON a.original_code = b.original_code
+	WHERE b.id is null
+	AND LENGTH(a.nik) <> 16;
+
+	return 'success';
+
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_practitioner_1()
+    OWNER TO postgres;
+
+---------
+-- FUNCTION: public.validasi_service_request()
+
+-- DROP FUNCTION IF EXISTS public.validasi_service_request();
+
+CREATE OR REPLACE FUNCTION public.validasi_service_request(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+INSERT INTO ss_service_request(
+identifier_1,
+identifier_2,
+identifier_2_system,
+identifier_2_code,
+encounter_original_code,
+procedure_code_original,
+procedure_code,
+procedure_code_display,
+procedure_result,
+procedure_unit,
+procedure_interpretation,
+procedure_standart,
+encounter_display,
+category_code,
+category_display,
+coding_text,
+obs_category_code,
+obs_category_display,
+occurrence_datetime,
+authored_on,
+body_site_code,
+body_site_display,
+reason_text,
+subject_reference,
+subject_display,
+participant_individual_reference,
+participant_individual_display,
+loinc_code,
+snomed_code,
+loinc_display,
+snomed_display,
+coding_code,
+coding_display,
+satusehat_send,satusehat_send_specimen,satusehat_send_diagnostic_report,
+uuid,uuid_specimen, uuid_observation,uuid_diagnostic_report
+)
+SELECT
+service.identifier_1,
+service.identifier_2,
+service.identifier_2_system,
+service.identifier_2_code,
+service.encounter_original_code,
+service.procedure_code_original,
+service.procedure_code,
+service.procedure_code_display,
+service.procedure_result,
+service.procedure_unit,
+service.procedure_interpretation,
+service.procedure_standart,
+service.encounter_display,
+service.category_code,
+service.category_display,
+service.coding_text,
+service.obs_category_code,
+service.obs_category_display,
+service.occurrence_datetime,
+service.authored_on,
+service.body_site_code,
+service.body_site_display,
+service.reason_text,
+service.subject_reference,
+service.subject_display,
+service.participant_individual_reference,
+service.participant_individual_display,
+service.loinc_code,
+service.snomed_code,
+service.loinc_display,
+service.snomed_display,
+service.loinc_code,
+service.loinc_display,
+4 as satusehat_send,4 as satusehat_send_specimen,4 as satusehat_send_diagnostic_report,
+uuid_generate_v4() as uuid,uuid_generate_v4() as uuid_specimen,uuid_generate_v4() as uuid_observation,uuid_generate_v4() as uuid_diagnostic_report
+FROM
+(
+
+        SELECT service_loinc.*, ss_loinc.loinc_display,(select snomed_display FROM ss_snomed WHERE snomed_code = service_loinc.snomed_code) as snomed_display
+        FROM
+        (
+            SELECT service.*,loinc_code, snomed_code,
+            case
+                when ss_master_procedure.category_request = 'GOLONGAN DARAH' then f_master_mapping_code(service.procedure_result)
+                else ''
+            end as procedure_code,
+            case
+                when ss_master_procedure.category_request = 'GOLONGAN DARAH' then f_master_mapping_code_display(service.procedure_result)
+                else ''
+            end as procedure_code_display
+            FROM
+            (
+                SELECT
+                service.*,
+                encounter.subject_reference,
+                encounter.subject_display,
+                encounter.participant_individual_reference,
+                encounter.participant_individual_display
+                FROM
+                temp_service_request service,
+                ss_encounter encounter
+                WHERE service.encounter_original_code = encounter.original_code
+            ) as service
+            JOIN
+            ss_master_procedure
+            ON service.procedure_code_original = ss_master_procedure.original_code
+            WHERE ss_master_procedure.loinc_code is not null
+            AND ss_master_procedure.category_request is not null
+         ) as service_loinc
+         JOIN ss_loinc
+         ON service_loinc.loinc_code = ss_loinc.loinc_code
+) as service
+LEFT JOIN
+ss_service_request
+ON service.encounter_original_code = ss_service_request.encounter_original_code
+WHERE ss_service_request.id is null;
+
+insert into ss_log_bridging(original_code,description, date, tab)
+select encounter_original_code,'Belum Ada Mapping Golongan Darah' as description,now(), 'ss_service_request' as tab from ss_service_request where procedure_result is not null AND procedure_code is null;
+delete from ss_service_request where procedure_result is not null AND procedure_code is null;
+
+INSERT INTO ss_observation (encounter_original_code,type_observation, status,category_code, category_display, code_observation,code_display,subject_reference,
+performer_reference,encounter_display,effective_datetime,issued, quantity_value,quantity_unit,quantity_code,satusehat_send,uuid, subject_display, interpretation_code)
+SELECT *
+FROM(
+    SELECT
+    encounter_original_code,
+    obs_category_display as type_observation,
+    'final' as status,
+    obs_category_code as category_code,
+    obs_category_display as category_display,
+    loinc_code as code_observation,
+    loinc_display as code_display,
+    subject_reference ,
+    participant_individual_reference as performer_reference,
+    '-' as encounter_display,
+    occurrence_datetime as effective_datetime,
+    authored_on as issued,
+    case when procedure_code_display = '' then procedure_result else procedure_code_display end as quantity_value,
+    case when procedure_code = '' then procedure_unit else procedure_code end  as quantity_unit,
+    case when procedure_code = '' then procedure_unit else procedure_code end  as quantity_code,
+    4 as satusehat_send,
+    uuid_observation as uuid,
+    subject_display,procedure_interpretation
+    FROM ss_service_request where encounter_original_code IN(
+    SELECT encounter_original_code FROM temp_service_request
+    )
+ ) as service_tab
+ WHERE uuid NOT IN(
+     SELECT uuid FROM ss_observation WHERE type_observation NOT IN('suhu','diastole','sistol','nadi','pernapasan')
+ );
+
+
+ INSERT INTO ss_log_bridging(original_code,description,date,tab)
+	SELECT a.encounter_original_code,'Cek Master Tindakan/Snomed/Loinc' as description,now() as date,'service_request' as tab
+	FROM
+	temp_service_request a
+	LEFT JOIN
+	ss_service_request b
+	ON concat(a.encounter_original_code, a.procedure_code_original) = concat(b.encounter_original_code, b.procedure_code_original)
+	WHERE b.encounter_original_code is null;
+return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_service_request()
+    OWNER TO postgres;

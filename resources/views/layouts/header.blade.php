@@ -47,10 +47,30 @@
                                 <a href="{{ route('parameter') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Parameter</span></a>
                             </li>
-                            <li class="nk-menu-item">
+                            {{-- <li class="nk-menu-item">
                                 <a href="{{ route('sinkronisasi') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Sinkronisasi (Tarik)</span></a>
-                            </li>
+                            </li> --}}
+                            <li class="nk-menu-item has-sub">
+                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                    <span class="nk-menu-text">Sinkronisasi</span>
+                                </a>
+                                <ul class="nk-menu-sub">
+
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('sinkronisasi') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Sinkronisasi (Tarik)</span></a>
+                                    </li>
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('log-error') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Log Error</span></a>
+                                    </li>
+                                    {{-- <li class="nk-menu-item">
+                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
+                                                class="nk-menu-text">Medication Dispense</span></a>
+                                    </li> --}}
+                                </ul><!-- .nk-menu-sub -->
+                            </li><!-- .nk-menu-item -->
                             <li class="nk-menu-item">
                                 <a href="{{ route('jadwal') }}" class="nk-menu-link"><span class="nk-menu-text">Jadwal
                                         (Kirim)</span></a>
@@ -219,6 +239,7 @@
                                     </li> --}}
                                 </ul><!-- .nk-menu-sub -->
                             </li><!-- .nk-menu-item -->
+
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
 
