@@ -21,6 +21,7 @@ class MasterIcd10Repository implements MasterIcd10Interface
     {
         // return $this->model->where('code2', 'like', '%' . $param . '%')
         //     ->where('description', 'like', '%' . $param . '%')->get();
-        return $this->model->where('code2', 'ilike', '%' . $param . '%')->get();
+        return $this->model->where('code2', 'ilike', '%' . $param . '%')
+            ->orwhere('description', 'ilike', '%' . $param . '%')->get();
     }
 }
