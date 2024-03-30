@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Repositories\Condition\ConditionInterface;
+use App\Repositories\Encounter\EncounterInterface;
+use App\Repositories\MasterIcd10\MasterIcd10Interface;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\Datatables;
 use App\Traits\GeneralTrait;
@@ -16,13 +18,19 @@ class ConditionControlller extends Controller
     use GeneralTrait;
     use ApiTrait;
     use JsonTrait;
-    private $condition_repo;
+    private $condition_repo, $encounter_repo, $master_icd_10_repo;
+    private $jumlah_form = [0, 1, 2, 3, 4];
 
     public function __construct(
         ConditionInterface $conditionInterface,
+        EncounterInterface $encounterInterface,
+        MasterIcd10Interface $masterIcd10Interface,
+
 
     ) {
         $this->condition_repo = $conditionInterface;
+        $this->encounter_repo = $encounterInterface;
+        $this->master_icd_10_repo = $masterIcd10Interface;
     }
 
     public function index(Request $request)
@@ -134,6 +142,94 @@ class ConditionControlller extends Controller
                 "message" => $e
             ]);
         }
+    }
+
+
+    public function formTambah(Request $request)
+    {
+        try {
+            return view(
+                'pages.condition.condition-tambah',
+                [
+                    "jumlah_form" => $this->jumlah_form
+                ]
+            );
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+
+    function saveCondition(Request $request)
+    {
+        // return $request->all();
+        $request->validate([
+            'encounter_original_code' => 'required|exists:ss_encounter,original_code',
+            'code_icd_display.0' => 'required',
+            'onset_datetime.0' => 'required',
+            'onset_datetime_hour.0' => 'required',
+            'rank.0' => 'required',
+
+        ]);
+
+        try {
+
+            $data_insert = [];
+            $jml_form = count($request->code_icd_display);
+
+            $data_encounter = $this->encounter_repo->getDataEncounterByOriginalCode($request->encounter_original_code);
+            for ($i = 0; $i < $jml_form; $i++) {
+
+                //jika kosong break;
+                if ($request->code_icd_display[$i] == '') {
+                    break;
+                }
+
+                $code_icd_split = explode(" # ", $request->code_icd_display[$i]);
+                $insert['encounter_original_code'] = $request->encounter_original_code;
+                $insert['rank'] = $request->rank[$i];
+                $insert['clinical_code'] = 'active';
+                $insert['clinical_display'] = 'Active';
+                $insert['category_code'] = 'encounter-diagnosis';
+                $insert['category_display'] = 'Encounter Diagnosis';
+                $insert['code_icd'] = $code_icd_split[0];
+                $insert['code_icd_display'] = $code_icd_split[1];
+                $insert['subject_reference'] = $data_encounter->subject_reference;
+                $insert['subject_display'] = $data_encounter->subject_display;
+                $insert['encounter_display'] = '-';
+                $insert['onset_datetime'] = $this->formatDate2($request->onset_datetime[$i], $request->onset_datetime_hour[$i]);
+                $insert['record_date'] = $this->formatDate2($request->onset_datetime[$i], $request->onset_datetime_hour[$i]);
+                $insert['satusehat_send'] = 4;
+                $insert['uuid'] = $this->getUUID();
+
+                array_push($data_insert, $insert);
+            }
+
+            $this->condition_repo->storeCondition($data_insert);
+
+            return redirect('condition-tambah')
+                ->with("pesan", config('constan.message.form.success_saved'))
+                ->with('warna', 'success');
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function searchIcd10(Request $request, $id)
+    {
+
+
+        $data_result = $this->master_icd_10_repo->getQuery($id);
+
+        $tampung = [];
+        foreach ($data_result as $item_result) {
+            array_push($tampung, $item_result->code2 . ' # ' . $item_result->description);
+        }
+        return $tampung;
     }
 
     //

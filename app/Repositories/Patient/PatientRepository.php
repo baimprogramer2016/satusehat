@@ -22,6 +22,10 @@ class PatientRepository implements PatientInterface
     {
         return $this->model->find($id);
     }
+    public function getDataPatientOriginalCode($id)
+    {
+        return $this->model->where('original_code', $id)->whereNotNull('satusehat_id')->first();
+    }
 
     public function updatePatient($request = [], $id)
     {
@@ -56,5 +60,26 @@ class PatientRepository implements PatientInterface
             ->whereNull('satusehat_statuscode')
             // ->whereIn('nik', ['1277032308980006', '1203217010990001'])
             ->get();
+    }
+    public function storePatient($request = [])
+    {
+
+        if ($request['satusehat_id'] == config('constan.error_message.id_ihs_error') || empty($request['satusehat_id'])) {
+            $satusehat_id = null;
+            $satusehat_send = 4;
+        } else {
+            $satusehat_id = $request['satusehat_id'];
+            $satusehat_send = 1;
+        }
+        $this->model->create([
+            'nik' => $request['nik'],
+            'name' => $request['name'],
+            'satusehat_id' => $satusehat_id,
+            'satusehat_process' => $satusehat_send,
+            'original_code' => $request['original_code'],
+            // Tambahkan field-field lainnya di sini...
+        ]);
+
+        return $this->model;
     }
 }

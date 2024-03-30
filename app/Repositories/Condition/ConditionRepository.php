@@ -5,9 +5,12 @@ namespace App\Repositories\Condition;
 use App\Models\Condition;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Traits\GeneralTrait;
 
 class ConditionRepository implements ConditionInterface
 {
+
+    use GeneralTrait;
     private $model;
     public function __construct(Condition $conditionModel)
     {
@@ -62,5 +65,16 @@ class ConditionRepository implements ConditionInterface
         $data->update();
 
         return $data;
+    }
+
+
+    public function storeCondition($request =  [])
+    {
+
+        foreach ($request as $item) {
+            $this->model->create($item);
+        }
+
+        return $this->model;
     }
 }

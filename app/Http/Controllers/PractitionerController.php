@@ -210,4 +210,56 @@ class PractitionerController extends Controller
             ]);
         }
     }
+
+    public function tambah()
+    {
+        return view('pages.practitioner.practitioner-tambah');
+    }
+    public function checkNik(Request $request)
+    {
+        try {
+            $endpoint = '/Patient?identifier=https://fhir.kemkes.go.id/id';
+            if ($request->pa == 'practitioner') {
+                $endpoint = '/Practitioner?identifier=https://fhir.kemkes.go.id/id';
+            }
+
+            $nik = $this->enc('nik|' . $request->nik);
+
+            $response_satusehat  = json_decode($this->api_response_ss($endpoint, $nik));
+
+            if ($response_satusehat->total > 0) {
+                $result['id_ihs'] = $response_satusehat->entry[0]->resource->id;
+                $result['color'] = "bg-success text-white";
+            } else {
+                $result['id_ihs'] = config('constan.error_message.id_ihs_error');
+                $result['color'] = "bg-danger text-white";
+            }
+            return $result;
+        } catch (Throwable $e) {
+            return "error";
+        }
+    }
+
+    function storePractitioner(Request $request)
+    {
+
+        $request->validate([
+            'nik' => 'required|unique:ss_practitioner,nik',
+            'name' => 'required',
+            'original_code' => 'required',
+        ]);
+        try {
+            $this->practitioner_repo->storePractitioner($request->all());
+
+            return redirect('praktisi-tambah')
+                ->with("pesan", config('constan.message.form.success_saved'))
+                ->with('warna', 'success');
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+
+        //simpan
+    }
 }

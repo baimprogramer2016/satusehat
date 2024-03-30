@@ -79,6 +79,7 @@ class PatientController extends Controller
         try {
             $endpoint = '/Patient?identifier=https://fhir.kemkes.go.id/id';
             $nik = $this->enc('nik|' . $this->dec($id));
+
             $response_satusehat  = $this->api_response_ss($endpoint, $nik);
             return view('pages.patient.patient-response-ss', [
                 "data_response" => $response_satusehat
@@ -206,5 +207,58 @@ class PatientController extends Controller
                 "message" => $e
             ]);
         }
+    }
+
+    public function tambah()
+    {
+        return view('pages.patient.patient-tambah');
+    }
+
+    public function checkNik(Request $request)
+    {
+        try {
+            $endpoint = '/Patient?identifier=https://fhir.kemkes.go.id/id';
+            if ($request->pa == 'practitioner') {
+                $endpoint = '/Practitioner?identifier=https://fhir.kemkes.go.id/id';
+            }
+
+            $nik = $this->enc('nik|' . $request->nik);
+
+            $response_satusehat  = json_decode($this->api_response_ss($endpoint, $nik));
+
+            if ($response_satusehat->total > 0) {
+                $result['id_ihs'] = $response_satusehat->entry[0]->resource->id;
+                $result['color'] = "bg-success text-white";
+            } else {
+                $result['id_ihs'] = config('constan.error_message.id_ihs_error');
+                $result['color'] = "bg-danger text-white";
+            }
+            return $result;
+        } catch (Throwable $e) {
+            return "error";
+        }
+    }
+
+    function storePatient(Request $request)
+    {
+
+        $request->validate([
+            'nik' => 'required|unique:ss_patient,nik',
+            'name' => 'required',
+            'original_code' => 'required',
+        ]);
+        try {
+            $this->patient_repo->storePatient($request->all());
+
+            return redirect('pasien-tambah')
+                ->with("pesan", config('constan.message.form.success_saved'))
+                ->with('warna', 'success');
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+
+        //simpan
     }
 }

@@ -48,7 +48,7 @@ return [
         "failed_success" => "Proses Sukses",
         "failed_ss_1" => "TIdak bisa dihapus, data sudah dikirm ke satu sehat",
         "message_waiting" => "Please Wait....",
-        "id_ihs_error" => "ID IHS Tidak Ditemukan ",
+        "id_ihs_error" => "ID IHS Tidak Ditemukan",
         "toast_job_already" => "Gagal - Job Sudah ada dalam Proses Antrian",
         "toast_job_running" => "Job dijalankan",
         "toast_job_data_update" => "Data Sudah Update Semua",

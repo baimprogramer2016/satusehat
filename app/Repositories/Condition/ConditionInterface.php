@@ -10,4 +10,5 @@ interface ConditionInterface
     public function updateDataBundleConditionJob($param = [], $rank);
     public function getDataConditionFind($id);
     public function updateStatusCondition($id, $satusehat_id, $request, $response);
+    public function storeCondition($request =  []);
 }

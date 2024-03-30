@@ -56,6 +56,7 @@ class OrganizationController extends Controller
 
             $this->organization_repo->storeOrganization($request->all());
 
+
             return redirect('organisasi')
                 ->with("pesan", config('constan.message.form.success_saved'))
                 ->with('warna', 'success');

@@ -16,8 +16,11 @@
                         class="icon ni ni-more-v"></em></a>
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
-                        <li><button class="btn btn-white btn-dim btn-outline-primary btn-run-job"
-                                data-toggle="modal"><em class="icon ni ni-play"></em><span>Update ID
+                        <li><a href="{{ route('praktisi-tambah') }}"
+                                class="btn btn-white btn-dim btn-outline-primary mr-2"><em
+                                    class="icon ni ni-plus"></em><span>Tambah </span></a><button
+                                class="btn btn-white btn-dim btn-outline-primary btn-run-job" data-toggle="modal"><em
+                                    class="icon ni ni-play"></em><span>Update ID
                                     IHS<br>Max {{ env('MAX_RECORD') }} Record</span></button>
                         </li>
                     </ul>

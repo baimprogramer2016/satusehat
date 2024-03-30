@@ -121,6 +121,9 @@ Route::post('/pasien-update-ihs', [PatientController::class, 'updateIHS'])->name
 Route::get('/pasien-ubah/{id}', [PatientController::class, 'ubah'])->name('pasien-ubah')->middleware('auth');
 Route::post('/pasien-update', [PatientController::class, 'update'])->name('pasien-update')->middleware('auth');
 Route::post('/pasien-run-job', [PatientController::class, 'runJob'])->name('pasien-run-job')->middleware('auth');
+Route::get('/pasien-tambah', [PatientController::class, 'tambah'])->name('pasien-tambah')->middleware('auth');
+Route::get('/pasien-check-nik', [PatientController::class, 'checkNik'])->name('pasien-check-nik')->middleware('auth');
+Route::post('/pasien-simpan', [PatientController::class, 'storePatient'])->name('pasien-simpan')->middleware('auth');
 
 Route::get('/praktisi', [PractitionerController::class, 'index'])->name('praktisi')->middleware('auth');
 Route::get('/praktisi-response-ss/{id}', [PractitionerController::class, 'responseSS'])->name('praktisi-response-ss')->middleware('auth');
@@ -129,6 +132,9 @@ Route::post('/praktisi-update-ihs', [PractitionerController::class, 'updateIHS']
 Route::get('/praktisi-ubah/{id}', [PractitionerController::class, 'ubah'])->name('praktisi-ubah')->middleware('auth');
 Route::post('/praktisi-update', [PractitionerController::class, 'update'])->name('praktisi-update')->middleware('auth');
 Route::post('/praktisi-run-job', [PractitionerController::class, 'runJob'])->name('praktisi-run-job')->middleware('auth');
+Route::get('/praktisi-tambah', [PractitionerController::class, 'tambah'])->name('praktisi-tambah')->middleware('auth');
+Route::get('/praktisi-check-nik', [PractitionerController::class, 'checkNik'])->name('praktisi-check-nik')->middleware('auth');
+Route::post('/praktisi-simpan', [PractitionerController::class, 'storePractitioner'])->name('praktisi-simpan')->middleware('auth');
 
 Route::get('/kfa', [KfaController::class, 'index'])->name('kfa')->middleware('auth');
 Route::get('/medication', [MedicationController::class, 'index'])->name('medication')->middleware('auth');
@@ -153,11 +159,20 @@ Route::get('/encounter-modal-kirim-ss/{id}', [EncounterController::class, 'modal
 Route::post('/encounter-kirim-ss/{id}', [EncounterController::class, 'kirimSS'])->name('encounter-kirim-ss')->middleware('auth');
 Route::get('/encounter-modal-update-ss/{id}', [EncounterController::class, 'modalUpdateSS'])->name('encounter-modal-update-ss')->middleware('auth');
 Route::post('/encounter-update-ss/{id}', [EncounterController::class, 'updateSS'])->name('encounter-update-ss')->middleware('auth');
+Route::get('/encounter-tambah', [EncounterController::class, 'formTambah'])->name('encounter-tambah')->middleware('auth');
+Route::get('/encounter-check-nik', [EncounterController::class, 'checkNik'])->name('encounter-check-nik')->middleware('auth');
+Route::post('/encounter-simpan', [EncounterController::class, 'saveEncounter'])->name('encounter-simpan')->middleware('auth');
+Route::get('/encounter-edit/{id}', [EncounterController::class, 'formEdit'])->name('encounter-edit')->middleware('auth');
+Route::post('/encounter-update/{id}', [EncounterController::class, 'updateEncounter'])->name('encounter-update')->middleware('auth');
+
 
 Route::get('/condition', [ConditionControlller::class, 'index'])->name('condition')->middleware('auth');
 Route::get('/condition-response-ss/{id}', [ConditionControlller::class, 'responseSS'])->name('condition-response-ss')->middleware('auth');
 Route::get('/condition-modal-kirim-ss/{id}', [ConditionControlller::class, 'modalKirimSS'])->name('condition-modal-kirim-ss')->middleware('auth');
 Route::post('/condition-kirim-ss/{id}', [ConditionControlller::class, 'kirimSS'])->name('condition-kirim-ss')->middleware('auth');
+Route::get('/condition-tambah', [ConditionControlller::class, 'formTambah'])->name('condition-tambah')->middleware('auth');
+Route::post('/condition-simpan', [ConditionControlller::class, 'saveCondition'])->name('condition-simpan')->middleware('auth');
+Route::get('/condition-search-icd-10/{id}', [ConditionControlller::class, 'searchIcd10'])->name('condition-search-icd-10')->middleware('auth');
 
 Route::get('/observation', [ObservationControlller::class, 'index'])->name('observation')->middleware('auth');
 Route::get('/observation-response-ss/{id}', [ObservationControlller::class, 'responseSS'])->name('observation-response-ss')->middleware('auth');

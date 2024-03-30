@@ -21,6 +21,14 @@ class LocationRepository implements LocationInterface
     {
         return $this->model->get();
     }
+    public function getDataLocationByIDSS($id)
+    {
+        return $this->model->where('satusehat_id', $id)->first();
+    }
+    public function getDataLocationReadySatuSehat()
+    {
+        return $this->model->whereNotNull('satusehat_id')->get();
+    }
     # menyimpan data
     public function storeLocation($request = [], $physical_display)
     {

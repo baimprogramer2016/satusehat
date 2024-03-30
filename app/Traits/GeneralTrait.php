@@ -9,6 +9,7 @@ use Exception;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Crypt;
+use Ramsey\Uuid\Uuid;
 
 
 use Illuminate\Support\Facades\Http;
@@ -136,5 +137,51 @@ trait GeneralTrait
         } else {
             return ($value1 / $value2) * 100;
         }
+    }
+
+    function formatDate($tanggal, $jam, $menit)
+    {
+        return  date('Y-m-d H:i:s', strtotime($tanggal . ' ' . $jam . ':' . $menit));
+    }
+    function formatDate2($tanggal, $waktu)
+    {
+        return  date('Y-m-d H:i:s', strtotime($tanggal . ' ' . $waktu));
+    }
+    function formatDateReverse($tanggal)
+    {
+        return  date('Y-m-d H:i:s', strtotime($tanggal));
+    }
+
+
+
+    function jenisRawat()
+    {
+        $jenis_rawat = [
+            [
+                "kode" => "AMB",
+                "keterangan" => "ambulatory",
+                "keterangan2" => "Rawat Jalan",
+            ],
+        ];
+
+        return  $jenis_rawat;
+    }
+    function cariJenisRawat($kode)
+    {
+        $jenis_rawat = [
+            [
+                "kode" => "AMB",
+                "keterangan" => "ambulatory",
+                "keterangan2" => "Rawat Jalan",
+            ],
+        ];
+
+        return  collect($jenis_rawat)->where('kode', $kode)->first();
+    }
+
+    function getUUID()
+    {
+        $uuid4 = Uuid::uuid4();
+        return $uuid4->toString();
     }
 }

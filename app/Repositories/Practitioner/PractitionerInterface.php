@@ -10,4 +10,7 @@ interface PractitionerInterface
     public function updatePractitioner($request = [], $id);
     public function updateIhsPractitioner($request = []);
     public function getDataPractitionerReadyJob();
+    public function storePractitioner($request = []);
+
+    public function getDataPractitionerOriginalCode($id);
 }

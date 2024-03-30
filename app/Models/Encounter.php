@@ -21,4 +21,12 @@ class Encounter extends Model
     {
         return $this->hasMany(Condition::class, 'encounter_original_code', 'original_code')->orderBy('ss_condition.rank', 'asc');;
     }
+    public function r_patient()
+    {
+        return $this->hasOne(Patient::class, 'satusehat_id', 'subject_reference');
+    }
+    public function r_practitioner()
+    {
+        return $this->hasOne(Practitioner::class, 'satusehat_id', 'participant_individual_reference');
+    }
 }
