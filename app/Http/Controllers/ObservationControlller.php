@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
 use App\Models\Observation;
+use App\Repositories\Encounter\EncounterInterface;
 use App\Repositories\Observation\ObservationInterface;
 use Yajra\DataTables\Facades\Datatables;
 use Throwable;
@@ -17,12 +18,14 @@ class ObservationControlller extends Controller
     use GeneralTrait;
     use ApiTrait;
     use JsonTrait;
-    private $observation_repo;
+    private $observation_repo, $encounter_repo;
 
     public function __construct(
         ObservationInterface $observationInterface,
+        EncounterInterface $encounterInterface
     ) {
         $this->observation_repo = $observationInterface;
+        $this->encounter_repo = $encounterInterface;
     }
 
     public function index(Request $request)
@@ -47,15 +50,18 @@ class ObservationControlller extends Controller
                     if ($item_observation->satusehat_send == 1) {
                         $li_kirim_ss = '';
                         $li_response_ss = "<li><a href='#file-upload' data-toggle='modal' onClick=modalResponseSS('" . $this->enc($item_observation->satusehat_id) . "')><em class='icon ni ni-eye'></em><span>Response Satu Sehat</span></a></li>";
+                        $li_edit_ss = "";
                     } else {
                         $li_kirim_ss = "<li><a href='#file-upload' data-toggle='modal'  onClick=modalKirimSS('" . $this->enc($item_observation->id) . "')><em class='icon ni ni-send'></em><span>Kirim ke Satu Sehat</span></a></li>";
                         $li_response_ss = '';
+                        $li_edit_ss = "<li><a href='" . route('observation-edit', $this->enc($item_observation->id)) . "'><em class='icon ni ni-edit'></em><span>Edit</span></a></li>";
                     }
                     $action_update = ' <div class="drodown">
                         <a href="#" class="dropdown-toggle btn btn-icon btn-trigger"data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <ul class="link-list-opt no-bdr">
                             ' .
+                        $li_edit_ss .
                         $li_kirim_ss .
                         $li_response_ss
                         . '
@@ -131,6 +137,121 @@ class ObservationControlller extends Controller
                 # update status ke database
                 return $response;
             }
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function formTambah(Request $request)
+    {
+        try {
+
+            return view(
+                'pages.observation.observation-tambah',
+                [
+                    "data_type_observation" => $this->typeObservation()
+                ]
+            );
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    function saveObservation(Request $request)
+    {
+        // return $request->all();
+        $request->validate([
+            'encounter_original_code' => 'required|exists:ss_encounter,original_code',
+            'effective_datetime.0' => 'required',
+            'effective_datetime_hour.0' => 'required',
+            'quantity_value.0' => 'required',
+        ]);
+
+        try {
+
+
+            $data_insert = [];
+            $jml_form = count($request->type_observation);
+
+            $data_encounter = $this->encounter_repo->getDataEncounterByOriginalCode($request->encounter_original_code);
+            for ($i = 0; $i < $jml_form; $i++) {
+
+                $insert['encounter_original_code'] = $request->encounter_original_code;
+                $insert['type_observation'] = $request->type_observation[$i];
+                $insert['status'] = 'final';
+                $insert['category_code'] = 'vital-signs';
+                $insert['category_display'] = 'Vital Signs';
+                $insert['code_observation'] = $request->code_observation[$i];
+                $insert['code_display'] = $request->code_display[$i];
+                $insert['subject_reference'] = $data_encounter->subject_reference;
+                $insert['subject_display'] = $data_encounter->subject_display;
+                $insert['performer_reference'] = $data_encounter->participant_individual_reference;
+                $insert['encounter_display'] = '-';
+                $insert['effective_datetime'] = $this->formatDate2($request->effective_datetime[$i], $request->effective_datetime_hour[$i]);
+                $insert['issued'] = $this->formatDate2($request->effective_datetime[$i], $request->effective_datetime_hour[$i]);
+                $insert['quantity_value'] = $request->quantity_value[$i];
+                $insert['quantity_unit'] = $request->quantity_unit[$i];
+                $insert['quantity_code'] = $request->quantity_code[$i];
+                $insert['satusehat_send'] = 4;
+                $insert['uuid'] = $this->getUUID();
+
+                array_push($data_insert, $insert);
+            }
+
+
+            $this->observation_repo->storeObservation($data_insert);
+
+            return redirect('observation-tambah')
+                ->with("pesan", config('constan.message.form.success_saved'))
+                ->with('warna', 'success');
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+    public function formEdit(Request $request, $id)
+    {
+        try {
+            return view(
+                'pages.observation.observation-edit',
+                [
+                    "data_observation" => $this->observation_repo->getDataObservationFind($this->dec($id))
+                ]
+            );
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    function updateObservation(Request $request, $id)
+    {
+        // return $request->all();
+        $request->validate([
+            'encounter_original_code' => 'required|exists:ss_encounter,original_code',
+            'effective_datetime' => 'required',
+            'effective_datetime_hour' => 'required',
+            'quantity_value' => 'required',
+        ]);
+
+        try {
+            $insert['encounter_original_code'] = $request->encounter_original_code;
+            $insert['quantity_value'] = $request->quantity_value;
+            $insert['effective_datetime'] = $this->formatDate2($request->effective_datetime, $request->effective_datetime_hour);
+            $insert['issued'] = $this->formatDate2($request->effective_datetime, $request->effective_datetime_hour);
+            $insert['satusehat_send'] = 4;
+
+            $this->observation_repo->updateObservation($insert, $id);
+
+            return redirect('observation')
+                ->with("pesan", config('constan.message.form.success_saved'))
+                ->with('warna', 'success');
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

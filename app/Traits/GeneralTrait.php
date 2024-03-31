@@ -184,4 +184,47 @@ trait GeneralTrait
         $uuid4 = Uuid::uuid4();
         return $uuid4->toString();
     }
+
+    function typeObservation()
+    {
+        $type_observation = [
+            [
+                "type_observation" => "suhu",
+                "code_observation" => "8310-5",
+                "code_display" => "Body temperature",
+                "quantity_unit" => "C",
+                "quantity_code" => "Cel",
+            ],
+            [
+                "type_observation" => "diastole",
+                "code_observation" => "8462-4",
+                "code_display" => "Diastolic blood pressure",
+                "quantity_unit" => "mm[Hg]",
+                "quantity_code" => "mm[Hg]",
+            ],
+            [
+                "type_observation" => "sistol",
+                "code_observation" => "8480-6",
+                "code_display" => "Systolic blood pressure",
+                "quantity_unit" => "mm[Hg]",
+                "quantity_code" => "mm[Hg]",
+            ],
+            [
+                "type_observation" => "nadi",
+                "code_observation" => "8867-4",
+                "code_display" => "Heart rate",
+                "quantity_unit" => "beats/minute",
+                "quantity_code" => "/min",
+            ],
+            [
+                "type_observation" => "pernapasan",
+                "code_observation" => "9279-1",
+                "code_display" => "Respiratory rate",
+                "quantity_unit" => "breaths/minute",
+                "quantity_code" => "/min",
+            ],
+        ];
+
+        return $type_observation;
+    }
 }

@@ -55,15 +55,18 @@ class ConditionControlller extends Controller
                     if ($item_condition->satusehat_send == 1) {
                         $li_kirim_ss = '';
                         $li_response_ss = "<li><a href='#file-upload' data-toggle='modal' onClick=modalResponseSS('" . $this->enc($item_condition->satusehat_id) . "')><em class='icon ni ni-eye'></em><span>Response Satu Sehat</span></a></li>";
+                        $li_edit_ss = "";
                     } else {
                         $li_kirim_ss = "<li><a href='#file-upload' data-toggle='modal' onClick=modalKirimSS('" . $this->enc($item_condition->id) . "')><em class='icon ni ni-send'></em><span>Kirim ke Satu Sehat</span></a></li>";
                         $li_response_ss = '';
+                        $li_edit_ss = "<li><a href='" . route('condition-edit', $this->enc($item_condition->id)) . "'><em class='icon ni ni-edit'></em><span>Edit</span></a></li>";
                     }
                     $action_update = ' <div class="drodown">
                         <a href="#" class="dropdown-toggle btn btn-icon btn-trigger"data-toggle="dropdown"><em class="icon ni ni-more-h"></em></a>
                         <div class="dropdown-menu dropdown-menu-right">
                             <ul class="link-list-opt no-bdr">
                             ' .
+                        $li_edit_ss .
                         $li_kirim_ss .
                         $li_response_ss
                         . '
@@ -231,6 +234,57 @@ class ConditionControlller extends Controller
         }
         return $tampung;
     }
+    public function formEdit(Request $request, $id)
+    {
+        try {
+            return view(
+                'pages.condition.condition-edit',
+                [
+                    "data_condition" => $this->condition_repo->getDataConditionFind($this->dec($id))
+                ]
+            );
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+
+    function updateCondition(Request $request, $id)
+    {
+        // return $request->all();
+        $request->validate([
+            'encounter_original_code' => 'required|exists:ss_encounter,original_code',
+            'code_icd_display' => 'required',
+            'onset_datetime' => 'required',
+            'onset_datetime_hour' => 'required',
+            'rank' => 'required',
+        ]);
+
+        try {
+            $code_icd_split = explode(" # ", $request->code_icd_display);
+            $insert['encounter_original_code'] = $request->encounter_original_code;
+            $insert['rank'] = $request->rank;
+            $insert['code_icd'] = $code_icd_split[0];
+            $insert['code_icd_display'] = $code_icd_split[1];
+
+            $insert['onset_datetime'] = $this->formatDate2($request->onset_datetime, $request->onset_datetime_hour);
+            $insert['record_date'] = $this->formatDate2($request->onset_datetime, $request->onset_datetime_hour);
+            $insert['satusehat_send'] = 4;
+
+            $this->condition_repo->updateCondition($insert, $id);
+
+            return redirect('condition')
+                ->with("pesan", config('constan.message.form.success_saved'))
+                ->with('warna', 'success');
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
 
     //
 }

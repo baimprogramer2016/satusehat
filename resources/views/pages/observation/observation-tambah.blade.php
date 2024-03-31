@@ -7,7 +7,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">Tambah Condition</h3>
+            <h3 class="nk-block-title page-title">Tambah Observation</h3>
             <div class="nk-block-des text-soft">
                 <p>Halaman Kunjungan Pasien</p>
             </div>
@@ -19,7 +19,7 @@
                         class="icon ni ni-more-v"></em></a>
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
-                        <li><a href="{{ route('condition') }}" class=" btn btn-white btn-dim btn-outline-primary"><em
+                        <li><a href="{{ route('observation') }}" class=" btn btn-white btn-dim btn-outline-primary"><em
                                     class="icon ni ni-list"></em><span>Data</span></a>
                         </li>
 
@@ -41,15 +41,15 @@
                 @endif
                 <div class="card card-preview">
                     <div class="card-inner">
-                        <form action="{{ route('condition-simpan') }}" method="POST">
+                        <form action="{{ route('observation-simpan') }}" method="POST">
                             @csrf
                             <div class="preview-block">
-                                <span class="preview-title-lg overline-title">Condition</span>
+                                <span class="preview-title-lg overline-title">Observation (TTV)</span>
                                 <div class="row gy-4" id="panel_list">
 
                                     <div class="col-sm-12">
                                         <div class="form-group">
-                                            <label class="form-label" for="encounter_original_code[]">No
+                                            <label class="form-label" for="encounter_original_code">No
                                                 Registrasi</label>
                                             <div class="form-control-wrap">
                                                 <input type="text"
@@ -65,21 +65,22 @@
                                             </div>
                                         </div>
                                     </div>
-                                    @foreach ($jumlah_form as $index => $value)
+                                    @foreach ($data_type_observation as $index => $value)
+                                    <input type="hidden" value="{{ $value['code_observation'] }}"
+                                        name="code_observation[]">
+                                    <input type="hidden" value="{{ $value['code_display'] }}" name="code_display[]">
 
-
-                                    <div class="col-sm-7">
+                                    <div class="col-sm-2">
                                         <div class="form-group">
-                                            <label class="form-label" for="code_icd_display[]">{{ $index + 1 }}. ICD 10
+                                            <label class="form-label" for="type_observation[]">Tipe
                                             </label>
                                             <div class="form-control-wrap">
-
                                                 <input type="text"
-                                                    class="form-control form-control-sm autocomplete-input @error('code_icd_display.{{ $index}}') is-invalid @enderror"
-                                                    id="code_icd_display_{{ $index }}" name='code_icd_display[]'
-                                                    placeholder="Keterangan"
-                                                    value="{{ old('code_icd_display.'.$index.'') }}" />
-                                                @error('code_icd_display.' . $index)
+                                                    class="form-control form-control-sm autocomplete-input @error('type_observation.{{ $index}}') is-invalid @enderror"
+                                                    id="type_observation_{{ $index }}" readonly
+                                                    name='type_observation[]' placeholder="Type"
+                                                    value="{{ old('type_observation.'.$index.'',$value['type_observation']) }}" />
+                                                @error('type_observation.' . $index)
                                                 <div class="alert alert-sm alert-danger alert-custom">{{ $message }}
                                                 </div>
                                                 @enderror
@@ -90,16 +91,17 @@
 
                                     <div class="col-sm-2">
                                         <div class="form-group">
-                                            <label class="form-label" for="onset_datetime[]">Tanggal Tindakan</label>
+                                            <label class="form-label" for="effective_datetime[]">Tanggal
+                                                Tindakan</label>
                                             <div class="form-control-wrap">
                                                 <div class="form-icon form-icon-right">
                                                     <em class="icon ni ni-calendar-alt"></em>
                                                 </div>
                                                 <input type="datetime"
-                                                    class="form-control  form-control-sm form-control-outlined date-picker @error('onset_datetime.{{ $index}}') is-invalid @enderror"
-                                                    id="onset_datetime[]" name="onset_datetime[]"
-                                                    value="{{ old('onset_datetime.'.$index.'') }}" />
-                                                @error('onset_datetime.'.$index)
+                                                    class="form-control  form-control-sm form-control-outlined date-picker @error('effective_datetime.{{ $index}}') is-invalid @enderror"
+                                                    id="effective_datetime[]" name="effective_datetime[]"
+                                                    value="{{ old('effective_datetime.'.$index.'') }}" />
+                                                @error('effective_datetime.'.$index)
                                                 <div class="alert alert-sm alert-danger alert-custom">{{ $message }}
                                                 </div>
                                                 @enderror
@@ -109,29 +111,60 @@
                                     </div>
                                     <div class="col-sm-2">
                                         <div class="form-group">
-                                            <label class="form-label" for="onset_datetime_hour[]">Waktu</label>
+                                            <label class="form-label" for="effective_datetime_hour[]">Waktu</label>
                                             <div class="form-control-wrap">
                                                 <input type="time"
-                                                    class="form-control  form-control-sm @error('onset_datetime_hour[]') is-invalid @enderror"
-                                                    id="onset_datetime_hour[]" name='onset_datetime_hour[]'
+                                                    class="form-control  form-control-sm @error('effective_datetime_hour[]') is-invalid @enderror"
+                                                    id="effective_datetime_hour[]" name='effective_datetime_hour[]'
                                                     placeholder="Waktu"
-                                                    value="{{ old('onset_datetime_hour.'.$index.'') }}" />
-                                                @error('onset_datetime_hour.'.$index)
+                                                    value="{{ old('effective_datetime_hour.'.$index.'') }}" />
+                                                @error('effective_datetime_hour.'.$index)
                                                 <div class="alert alert-sm alert-danger alert-custom">{{ $message }}
                                                 </div>
                                                 @enderror
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-1">
+                                    <div class="col-sm-2">
                                         <div class="form-group">
-                                            <label class="form-label" for="default-06">Rank</label>
+                                            <label class="form-label" for="default-06">Qty</label>
                                             <div class="form-control-wrap">
-                                                <input type="number"
-                                                    class="form-control  form-control-sm @error('rank.{{ $index }}') is-invalid @enderror"
-                                                    id="rank[]" name='rank[]' placeholder="rank"
-                                                    value="{{ old('rank.'.$index.'', $value + 1) }}" readonly />
-                                                @error('rank.'.$index)
+                                                <input type="number" step="any"
+                                                    class="form-control  form-control-sm @error('quantity_value.{{ $index }}') is-invalid @enderror"
+                                                    id="quantity_value[]" name='quantity_value[]' placeholder="Qty"
+                                                    value="{{ old('quantity_value.'.$index.'',0) }}" />
+                                                @error('quantity_value.'.$index)
+                                                <div class="alert alert-sm alert-danger alert-custom">{{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-06">Unit</label>
+                                            <div class="form-control-wrap">
+                                                <input type="text"
+                                                    class="form-control  form-control-sm @error('quantity_unit.{{ $index }}') is-invalid @enderror"
+                                                    id="quantity_unit[]" name='quantity_unit[]' placeholder="Qty"
+                                                    readonly
+                                                    value="{{ old('quantity_unit.'.$index.'', $value['quantity_unit']) }}" />
+                                                @error('quantity_unit.'.$index)
+                                                <div class="alert alert-sm alert-danger alert-custom">{{ $message }}
+                                                </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="form-group">
+                                            <label class="form-label" for="default-06">Kode</label>
+                                            <div class="form-control-wrap">
+                                                <input type="text"
+                                                    class="form-control  form-control-sm @error('quantity_code.{{ $index }}') is-invalid @enderror"
+                                                    id="quantity_code[]" name='quantity_code[]' readonly
+                                                    value="{{ old('quantity_code.'.$index.'', $value['quantity_code']) }}" />
+                                                @error('quantity_code.'.$index)
                                                 <div class="alert alert-sm alert-danger alert-custom">{{ $message }}
                                                 </div>
                                                 @enderror

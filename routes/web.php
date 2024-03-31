@@ -173,11 +173,17 @@ Route::post('/condition-kirim-ss/{id}', [ConditionControlller::class, 'kirimSS']
 Route::get('/condition-tambah', [ConditionControlller::class, 'formTambah'])->name('condition-tambah')->middleware('auth');
 Route::post('/condition-simpan', [ConditionControlller::class, 'saveCondition'])->name('condition-simpan')->middleware('auth');
 Route::get('/condition-search-icd-10/{id}', [ConditionControlller::class, 'searchIcd10'])->name('condition-search-icd-10')->middleware('auth');
+Route::get('/condition-edit/{id}', [ConditionControlller::class, 'formEdit'])->name('condition-edit')->middleware('auth');
+Route::post('/condition-update/{id}', [ConditionControlller::class, 'updateCondition'])->name('condition-update')->middleware('auth');
 
 Route::get('/observation', [ObservationControlller::class, 'index'])->name('observation')->middleware('auth');
 Route::get('/observation-response-ss/{id}', [ObservationControlller::class, 'responseSS'])->name('observation-response-ss')->middleware('auth');
 Route::get('/observation-modal-kirim-ss/{id}', [ObservationControlller::class, 'modalKirimSS'])->name('observation-modal-kirim-ss')->middleware('auth');
 Route::post('/observation-kirim-ss/{id}', [ObservationControlller::class, 'kirimSS'])->name('observation-kirim-ss')->middleware('auth');
+Route::get('/observation-tambah', [ObservationControlller::class, 'formTambah'])->name('observation-tambah')->middleware('auth');
+Route::post('/observation-simpan', [ObservationControlller::class, 'saveObservation'])->name('observation-simpan')->middleware('auth');
+Route::get('/observation-edit/{id}', [ObservationControlller::class, 'formEdit'])->name('observation-edit')->middleware('auth');
+Route::post('/observation-update/{id}', [ObservationControlller::class, 'updateObservation'])->name('observation-update')->middleware('auth');
 
 Route::get('/procedure', [ProcedureControlller::class, 'index'])->name('procedure')->middleware('auth');
 Route::get('/procedure-response-ss/{id}', [ProcedureControlller::class, 'responseSS'])->name('procedure-response-ss')->middleware('auth');

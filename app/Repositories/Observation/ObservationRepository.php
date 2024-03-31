@@ -64,4 +64,28 @@ class ObservationRepository implements ObservationInterface
 
         return $data;
     }
+
+
+    public function storeObservation($request =  [])
+    {
+
+        foreach ($request as $item) {
+            $this->model->create($item);
+        }
+
+        return $this->model;
+    }
+
+    public function updateObservation($request =  [], $id)
+    {
+        $data = $this->model->find($id);
+        $data->encounter_original_code = $request['encounter_original_code'];
+        $data->effective_datetime = $request['effective_datetime'];
+        $data->issued = $request['issued'];
+        $data->quantity_value = $request['quantity_value'];
+        $data->satusehat_send = $request['satusehat_send'];
+        $data->update();
+
+        return $data;
+    }
 }

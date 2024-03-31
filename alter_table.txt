@@ -533,6 +533,9 @@ alter table ss_loinc
 add description varchar(255)
 
 
+create table ss_desc_resource(
+    description varchar(200)
+)
 insert into ss_desc_resource(description) values('AllergyIntolerance.reaction.manifestation')
 insert into ss_desc_resource(description) values('Observation.category.coding')
 insert into ss_desc_resource(description) values('Observation.interpretation')
@@ -637,9 +640,7 @@ add category_request varchar(100)
 alter table ss_generate_token
 add laboratory_id varchar(255)
 
-create table ss_desc_resource(
-    description varchar(200)
-)
+
 
 ---END SUDAH DI DEPLOY DI RSUDC--- ALTER
 

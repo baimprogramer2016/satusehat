@@ -77,4 +77,19 @@ class ConditionRepository implements ConditionInterface
 
         return $this->model;
     }
+
+    public function updateCondition($request =  [], $id)
+    {
+        $data = $this->model->find($id);
+        $data->encounter_original_code = $request['encounter_original_code'];
+        $data->rank = $request['rank'];
+        $data->code_icd = $request['code_icd'];
+        $data->code_icd_display = $request['code_icd_display'];
+        $data->onset_datetime = $request['onset_datetime'];
+        $data->record_date = $request['record_date'];
+        $data->satusehat_send = $request['satusehat_send'];
+        $data->update();
+
+        return $data;
+    }
 }

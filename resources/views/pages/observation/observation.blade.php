@@ -9,6 +9,22 @@
                 <p>Halaman Kunjungan Pasien</p>
             </div>
         </div><!-- .nk-block-head-content -->
+        <div class="nk-block-head-content">
+
+            <div class="toggle-wrap nk-block-tools-toggle">
+                <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="pageMenu"><em
+                        class="icon ni ni-more-v"></em></a>
+                <div class="toggle-expand-content" data-content="pageMenu">
+                    <ul class="nk-block-tools g-3">
+                        <li><a href="{{ route('observation-tambah') }}"
+                                class=" btn btn-white btn-dim btn-outline-primary"><em
+                                    class="icon ni ni-plus"></em><span>Tambah</span></a>
+                        </li>
+
+                    </ul>
+                </div><!-- .toggle-expand-content -->
+            </div><!-- .toggle-wrap -->
+        </div>
 
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->

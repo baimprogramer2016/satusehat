@@ -11,4 +11,7 @@ interface ObservationInterface
 
     public function getDataObservationFind($id);
     public function updateStatusObservation($id, $satusehat_id, $request, $response);
+
+    public function storeObservation($request =  []);
+    public function updateObservation($request =  [], $id);
 }
