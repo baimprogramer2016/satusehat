@@ -61,7 +61,8 @@
                                     <td>{{ $item_organisasi->name }}</td>
                                     <td>{{ $item_organisasi->r_partof->name ?? '' }}</td>
                                     <td
-                                        class="{{ (!empty($item_organisasi->r_status->status) ?? 1 == 1) ? 'text-success' : 'text-warning'  }}">
+                                        class="{{ optional($item_organisasi->r_status)->status != 1 ? 'text-warning' : 'text-success' }}">
+
                                         {{ $item_organisasi->r_status->description ?? '' }}</td>
                                     <td>
                                         <div class="drodown">

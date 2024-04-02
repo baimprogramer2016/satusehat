@@ -2261,7 +2261,7 @@ trait JsonTrait
     {
         $bodyManualEncounter = [
             "resourceType" => "Encounter",
-            "status" => "finished",
+            "status" => "arrived",
             "class" => [
                 "system" => "http://terminology.hl7.org/CodeSystem/v3-ActCode",
                 "code" => $data_encounter['class_code'],
@@ -2291,8 +2291,7 @@ trait JsonTrait
                 ]
             ],
             "period" => [
-                "start" => $this->convertTimeStamp($data_encounter['period_start']),
-                "end" => $this->convertTimeStamp($data_encounter['period_end'])
+                "start" => $this->convertTimeStamp($data_encounter['period_start'])
             ],
             "location" => [
                 [
@@ -2307,22 +2306,7 @@ trait JsonTrait
                 [
                     "status" => "arrived",
                     "period" => [
-                        "start" => $this->convertTimeStamp($data_encounter['status_history_arrived_start']),
-                        "end" => $this->convertTimeStamp($data_encounter['status_history_arrived_end'])
-                    ]
-                ],
-                [
-                    "status" => "in-progress",
-                    "period" => [
-                        "start" => $this->convertTimeStamp($data_encounter['status_history_inprogress_start']),
-                        "end" =>  $this->convertTimeStamp($data_encounter['status_history_inprogress_end'])
-                    ]
-                ],
-                [
-                    "status" => "finished",
-                    "period" => [
-                        "start" => $this->convertTimeStamp($data_encounter['status_history_finished_start']),
-                        "end" =>  $this->convertTimeStamp($data_encounter['status_history_finished_end'])
+                        "start" => $this->convertTimeStamp($data_encounter['status_history_arrived_start'])
                     ]
                 ]
             ],
@@ -2336,6 +2320,8 @@ trait JsonTrait
                 ]
             ]
         ];
+
+
 
         return $bodyManualEncounter;
     }

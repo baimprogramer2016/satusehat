@@ -75,7 +75,7 @@
                                                 <input type="text"
                                                     class="form-control @error('id_pasien') is-invalid @enderror"
                                                     id="id_pasien" name='id_pasien' placeholder="ID Pasien"
-                                                    value="{{ old('id_pasien',$data_encounter->r_patient->original_code) }}" />
+                                                    value="{{ old('id_pasien',optional($data_encounter->r_patient)->original_code) }}" />
                                                 @error('id_pasien')
                                                 <div class="alert alert-sm alert-danger alert-custom">{{ $message }}
                                                 </div>
@@ -144,7 +144,7 @@
                                                 <input type="text"
                                                     class="form-control @error('id_praktisi') is-invalid @enderror"
                                                     id="id_praktisi" name='id_praktisi' placeholder="ID Dokter"
-                                                    value="{{ old('id_praktisi',$data_encounter->r_practitioner->original_code) }}" />
+                                                    value="{{ old('id_praktisi',optional($data_encounter->r_practitioner)->original_code) }}" />
                                                 @error('id_praktisi')
                                                 <div class="alert alert-sm alert-danger alert-custom">{{ $message }}
                                                 </div>
