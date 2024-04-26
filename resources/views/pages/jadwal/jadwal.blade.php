@@ -11,7 +11,19 @@
         </div><!-- .nk-block-head-content -->
         <div class="nk-block-head-content">
 
-        </div><!-- .nk-block-head-content -->
+            <div class="toggle-wrap nk-block-tools-toggle">
+                <a href="#" class="btn btn-icon btn-trigger toggle-expand mr-n1" data-target="pageMenu"><em
+                        class="icon ni ni-more-v"></em></a>
+                <div class="toggle-expand-content" data-content="pageMenu">
+                    <ul class="nk-block-tools g-3">
+                        <li><a href="#file-upload" onClick="modalSetBundle()"
+                                class="btn btn-white btn-dim btn-outline-primary" data-toggle="modal"><em
+                                    class="icon ni ni-setting"></em><span>Atur Bundle</span></a>
+                        </li>
+                    </ul>
+                </div><!-- .toggle-expand-content -->
+            </div><!-- .toggle-wrap -->
+        </div>
     </div><!-- .nk-block-between -->
 </div><!-- .nk-block-head -->
 <div class="nk-block">
@@ -120,6 +132,47 @@
                 $("#content-modal").html(response);
             }
         })
+    }
+    function modalSetBundle(id)
+    {
+        loadingProcess(); //dari custom.js
+        var url     = '{{ route("atur-bundle") }}';
+
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+
+    function eventStatus(resource, index)
+    {
+
+        var isChecked = $("#customCheck"+index).prop("checked");
+        isChecked = isChecked == true ? 1 : 0;
+
+        var url     = '{{ route("atur-bundle-update", ":resource") }}';
+        url         = url.replace(':resource',resource);
+
+        $.ajax({
+            type:"POST",
+            url:url,
+            data : {
+                resource : resource,
+                isChecked : isChecked,
+                _token: "{{ csrf_token() }}",
+            },
+            success: function(response)
+            {
+
+            }
+        })
+
+
     }
 
 </script>

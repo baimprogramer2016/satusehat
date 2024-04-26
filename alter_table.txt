@@ -352,6 +352,7 @@ AS $BODY$
 BEGIN
 
 --insert dahulu
+
 INSERT INTO ss_service_request(
 identifier_1,
 identifier_2,
@@ -386,6 +387,7 @@ loinc_display,
 snomed_display,
 coding_code,
 coding_display,
+procedure,
 satusehat_send,satusehat_send_specimen,satusehat_send_diagnostic_report,
 uuid,uuid_specimen, uuid_observation,uuid_diagnostic_report
 )
@@ -423,6 +425,7 @@ service.loinc_display,
 service.snomed_display,
 service.loinc_code,
 service.loinc_display,
+service.cat,
 4 as satusehat_send,4 as satusehat_send_specimen,4 as satusehat_send_diagnostic_report,
 uuid_generate_v4() as uuid,uuid_generate_v4() as uuid_specimen,uuid_generate_v4() as uuid_observation,uuid_generate_v4() as uuid_diagnostic_report
 FROM
@@ -439,7 +442,8 @@ FROM
             case
                 when ss_master_procedure.category_request = 'GOLONGAN DARAH' then f_master_mapping_code_display(service.procedure_result)
                 else ''
-            end as procedure_code_display
+            end as procedure_code_display,
+            ss_master_procedure.category as cat
             FROM
             (
                 SELECT
@@ -503,6 +507,7 @@ FROM(
  WHERE uuid NOT IN(
      SELECT uuid FROM ss_observation WHERE type_observation NOT IN('suhu','diastole','sistol','nadi','pernapasan')
  );
+
 
 
 return 'success';
@@ -654,3 +659,110 @@ ALTER COLUMN category_display TYPE text;
 
 ALTER TABLE ss_observation
 ALTER COLUMN code_display TYPE text;
+
+--udpate ss_poli - bontang
+
+create table temp_poli(
+original_code varchar(20),
+name varchar(255)
+)
+
+
+//UPDATE STORE PROCEDURE VALIDASI_SERVICE_REQUEST DI ATAS
+
+CREATE OR REPLACE FUNCTION public.validasi_poli(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+	INSERT INTO ss_poli(original_code,name)
+	select a.original_code, a.name from
+	temp_poli a
+	left join
+	ss_poli b
+	ON a.original_code = b.original_code
+	WHERE b.id is null;
+
+	return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_poli()
+    OWNER TO postgres;
+
+
+------------------------
+alter table ss_service_request
+add procedure varchar(30)
+
+UPDATE ss_service_request SET
+procedure = 'lab'
+
+
+ALTER PROCEDURE [DBA].[sp_master_tindakan_ss]
+as
+select
+pemeriksaan_id as original_code,
+pemeriksaan_desc as original_display,
+'lab' as category
+from
+lab_pemeriksaan
+union all
+select
+tindakan_id as original_code,
+tindakan_desc as original_display,
+'radiologi' as category
+from master_tindakan
+where tindakan_id IN('000941','000995','000977','000969','001088')
+
+--update service request
+
+
+ALTER TABLE ss_jadwal
+ALTER COLUMN command TYPE VARCHAR(255);
+
+insert into ss_jadwal(kode,name,cron,command,status)
+select 'condition_job','Condition','* * * * *', 'App\Http\Controllers\ConditionController@runJob',0
+union all
+select 'observation_job','Observation TTV','* * * * *', 'App\Http\Controllers\ObservationController@runJob',0
+union all
+select 'procedure_job','Procedure','* * * * *', 'App\Http\Controllers\ProcedureController@runJob',0
+union all
+select 'composition_job','Composition','* * * * *', 'App\Http\Controllers\CompositionController@runJob',0
+union all
+select 'medication_request_job','Medication Request','* * * * *', 'App\Http\Controllers\MedicationRequestController@runJob',0
+union all
+select 'medication_dispense_job','Medication Dispense','* * * * *', 'App\Http\Controllers\MedicationDispenseController@runJob',0
+union all
+select 'service_request_job','Service Request ','* * * * *', 'App\Http\Controllers\ServiceRequestController@runJob',0
+union all
+select 'speciment_job','Medication ','* * * * *', 'App\Http\Controllers\SpecimentController@runJob',0
+union all
+select 'observation_job','Observation Lab / Radiologi','* * * * *', 'App\Http\Controllers\ObservationController@runJob',0
+union all
+select 'diagnostic_report_job','Diagnostic Report','* * * * *', 'App\Http\Controllers\DiagnosticReportController@runJob',0
+
+
+create table ss_bundle_set(
+resource varchar(100),
+description varchar(100),
+status int
+)
+
+INSERT INTO ss_bundle_set(resource,description,status)
+SELECT 'condition','Condition',0
+union all
+SELECT 'observation_ttv','Observation TTV',0
+union all
+SELECT 'procedure','Procedure',0
+union all
+SELECT 'composition','Composition',0
+union all
+SELECT 'medication','Medication Request & Medication Dispense' ,0
+union all
+SELECT 'service_request','Service Request , Speciment, Observation Lab/Radiologi & Diagnostic Report',0
+

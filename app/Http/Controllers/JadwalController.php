@@ -49,4 +49,24 @@ class JadwalController extends Controller
             ]);
         }
     }
+
+    public function aturBundle(Request $request)
+    {
+        return view('pages.jadwal.atur-bundle', [
+            "data_bundle_set" => $this->jadwal_repo->getDataBundleSet(),
+        ]);
+    }
+
+    public function aturBundleUpdate(Request $request)
+    {
+        try {
+
+            $data = $this->jadwal_repo->updateAturBundle($request->resource, $request->isChecked);
+            return $data;
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
 }

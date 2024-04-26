@@ -2,11 +2,33 @@
 
 namespace App\Traits;
 
+use App\Models\BundleSet;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use App\Repositories\Jadwal\JadwalInterface;
+
 
 trait JsonTrait
 {
+    public $atur_bundle_repo;
+
+    public function __construct(JadwalInterface $jadwalInterface)
+    {
+        $this->atur_bundle_repo = $jadwalInterface;
+    }
+
+    public function getJadwalSet()
+    {
+        $data_jadwal_set = BundleSet::orderBy('resource', 'asc')->get();
+        $tampung = [];
+        foreach ($data_jadwal_set as $item) {
+            array_push($tampung, $item);
+        }
+
+        return collect($tampung);
+    }
+
+
     public function convertTimeStamp($date)
     {
         $carbonDate = Carbon::parse($date, 'Asia/Jakarta');
@@ -203,7 +225,6 @@ trait JsonTrait
 
         # settingan Organization ID dll
         $data_parameter = $param['parameter'];
-
         $data_encounter = $param['bundle'];
         $data_observation = $param['observation'];
         $data_procedure = $param['procedure'];
@@ -216,105 +237,125 @@ trait JsonTrait
         $data_diagnostic_report = $param['diagnostic_report'];
 
 
+        // return $this->getJadwalSet();
         # push ke entry
         $bodyEncounter = $this->bodyBundleEncounter($data_parameter, $data_encounter);
         array_push($bodyBundle['entry'], $bodyEncounter);
-
         #condition
-        # ambiJika ada ,Ambil dari relasion dari model encounter r_condition dengan parameter encounter
-        if (count($data_encounter['r_condition']) > 0) {
-            foreach ($data_encounter['r_condition'] as $data_diagnosa) {
-                $bodyCondition = $this->bodyBundleCondition($data_diagnosa, $data_encounter['uuid']);
-                array_push($bodyBundle['entry'], $bodyCondition);
-            }
-        }
+        //cek dahulu aktif atau tidak
+        if ($this->getJadwalSet()->where('resource', 'condition')->first()->status == 1) {
 
-        # observation
-        if (count($data_observation) > 0) {
-            foreach ($data_observation as $item_observation) {
-                $bodyObservation = $this->bodyBundleObservation($item_observation, $data_encounter['uuid']);
-                array_push($bodyBundle['entry'], $bodyObservation);
-            }
-        }
-
-        # procedure
-        if (count($data_procedure) > 0) {
-            $bodyProcedure = $this->bodyBundleProcedure($data_encounter, $data_encounter['r_condition'], $data_procedure);
-            array_push($bodyBundle['entry'], $bodyProcedure);
-        }
-
-        # composition
-        if (count($data_composition) > 0) {
-            foreach ($data_composition as $item_composition) {
-                $bodyComposition = $this->bodyBundlecomposition($item_composition, $data_parameter, $data_encounter['uuid']);
-                array_push($bodyBundle['entry'], $bodyComposition);
-            }
-        }
-        # medication , Medication Request
-        if (count($data_medication_request) > 0) {
-            foreach ($data_medication_request as $item_medication_request) {
-
-                # cek kfa lagi
-                if (!empty($item_medication_request['r_medication']['r_kfa'])) {
-
-                    #medication
-                    $bodyMedication = $this->bodyBundleMedication($item_medication_request, $data_parameter, $data_encounter['uuid']);
-                    array_push($bodyBundle['entry'], $bodyMedication);
-
-                    #medication request
-                    $bodyMedicationRequest = $this->bodyBundleMedicationRequest($item_medication_request, $data_parameter, $data_encounter['uuid']);
-                    array_push($bodyBundle['entry'], $bodyMedicationRequest);
+            # ambiJika ada ,Ambil dari relasion dari model encounter r_condition dengan parameter encounter
+            if (count($data_encounter['r_condition']) > 0) {
+                foreach ($data_encounter['r_condition'] as $data_diagnosa) {
+                    $bodyCondition = $this->bodyBundleCondition($data_diagnosa, $data_encounter['uuid']);
+                    array_push($bodyBundle['entry'], $bodyCondition);
                 }
             }
         }
 
-        # medication dispense
-        if (count($data_medication_dispense) > 0) {
-            foreach ($data_medication_dispense as $item_medication_dispense) {
-                if (!empty($item_medication_dispense)) {
-                    foreach ($item_medication_dispense['r_medication_request'] as $item_request) {
-                        # yang request dan dispense sesuai dengan yang keluar saja
-                        if (($item_medication_dispense['identifier_2'] == $item_request['identifier_2'])
-                            && $item_medication_dispense['identifier_1'] == $item_request['identifier_1']
-                        ) {
-                            # cek terlebih dahulu kfa ya ada tidak
-                            if (!empty($item_request['r_medication']['r_kfa'])) {
-                                #medication Dispense ,
-                                $bodyMedicationDispense = $this->bodyBundleMedicationDispense($item_medication_dispense, $item_request, $data_parameter, $data_encounter['uuid']);
-                                array_push($bodyBundle['entry'], $bodyMedicationDispense);
+        # observation
+        //cek dahulu aktif atau tidak
+
+        if ($this->getJadwalSet()->where('resource', 'observation_ttv')->first()->status == 1) {
+            if (count($data_observation) > 0) {
+                foreach ($data_observation as $item_observation) {
+                    $bodyObservation = $this->bodyBundleObservation($item_observation, $data_encounter['uuid']);
+                    array_push($bodyBundle['entry'], $bodyObservation);
+                }
+            }
+        }
+
+        # procedure
+        if ($this->getJadwalSet()->where('resource', 'procedure')->first()->status == 1) {
+            if (count($data_procedure) > 0) {
+                $bodyProcedure = $this->bodyBundleProcedure($data_encounter, $data_encounter['r_condition'], $data_procedure);
+                array_push($bodyBundle['entry'], $bodyProcedure);
+            }
+        }
+
+
+        # composition
+        if ($this->getJadwalSet()->where('resource', 'composition')->first()->status == 1) {
+            if (count($data_composition) > 0) {
+                foreach ($data_composition as $item_composition) {
+                    $bodyComposition = $this->bodyBundlecomposition($item_composition, $data_parameter, $data_encounter['uuid']);
+                    array_push($bodyBundle['entry'], $bodyComposition);
+                }
+            }
+        }
+
+        # medication , Medication Request
+        if ($this->getJadwalSet()->where('resource', 'medication')->first()->status == 1) {
+            if (count($data_medication_request) > 0) {
+                foreach ($data_medication_request as $item_medication_request) {
+
+                    # cek kfa lagi
+                    if (!empty($item_medication_request['r_medication']['r_kfa'])) {
+
+                        #medication
+                        $bodyMedication = $this->bodyBundleMedication($item_medication_request, $data_parameter, $data_encounter['uuid']);
+                        array_push($bodyBundle['entry'], $bodyMedication);
+
+                        #medication request
+                        $bodyMedicationRequest = $this->bodyBundleMedicationRequest($item_medication_request, $data_parameter, $data_encounter['uuid']);
+                        array_push($bodyBundle['entry'], $bodyMedicationRequest);
+                    }
+                }
+            }
+
+
+            # medication dispense
+            if (count($data_medication_dispense) > 0) {
+                foreach ($data_medication_dispense as $item_medication_dispense) {
+                    if (!empty($item_medication_dispense)) {
+                        foreach ($item_medication_dispense['r_medication_request'] as $item_request) {
+                            # yang request dan dispense sesuai dengan yang keluar saja
+                            if (($item_medication_dispense['identifier_2'] == $item_request['identifier_2'])
+                                && $item_medication_dispense['identifier_1'] == $item_request['identifier_1']
+                            ) {
+                                # cek terlebih dahulu kfa ya ada tidak
+                                if (!empty($item_request['r_medication']['r_kfa'])) {
+                                    #medication Dispense ,
+                                    $bodyMedicationDispense = $this->bodyBundleMedicationDispense($item_medication_dispense, $item_request, $data_parameter, $data_encounter['uuid']);
+                                    array_push($bodyBundle['entry'], $bodyMedicationDispense);
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        # service
-        if (count($data_service_request) > 0) {
-            foreach ($data_service_request as $item_service_request) {
-                $bodyServiceRequest = $this->bodyBundleServiceRequest($data_encounter['uuid'],  $item_service_request, $data_parameter);
-                array_push($bodyBundle['entry'], $bodyServiceRequest);
-            }
-        }
 
-        # specimen
-        if (count($data_specimen) > 0) {
-            foreach ($data_specimen as $item_specimen) {
-                $bodySpecimen = $this->bodyBundleSpecimen($data_encounter['uuid'],  $item_specimen, $data_parameter);
-                array_push($bodyBundle['entry'], $bodySpecimen);
+        # service
+        if ($this->getJadwalSet()->where('resource', 'service_request')->first()->status == 1) {
+            if (count($data_service_request) > 0) {
+                foreach ($data_service_request as $item_service_request) {
+                    $bodyServiceRequest = $this->bodyBundleServiceRequest($data_encounter['uuid'],  $item_service_request, $data_parameter);
+                    array_push($bodyBundle['entry'], $bodyServiceRequest);
+                }
             }
-        }
-        # observation lab
-        if (count($data_observation_lab) > 0) {
-            foreach ($data_observation_lab as $item_observation_lab) {
-                $bodyObservationLab = $this->bodyBundleObservationLab($data_encounter['uuid'],  $item_observation_lab, $data_parameter);
-                array_push($bodyBundle['entry'], $bodyObservationLab);
+
+            # specimen
+            if (count($data_specimen) > 0) {
+                foreach ($data_specimen as $item_specimen) {
+                    $bodySpecimen = $this->bodyBundleSpecimen($data_encounter['uuid'],  $item_specimen, $data_parameter);
+                    array_push($bodyBundle['entry'], $bodySpecimen);
+                }
             }
-        }
-        # diagnostic report
-        if (count($data_diagnostic_report) > 0) {
-            foreach ($data_diagnostic_report as $item_diagnostic_report) {
-                $bodyDiagnosticReport = $this->bodyBundleDiagnosticReport($data_encounter['uuid'],  $item_diagnostic_report, $data_parameter);
-                array_push($bodyBundle['entry'], $bodyDiagnosticReport);
+            # observation lab
+            if (count($data_observation_lab) > 0) {
+                foreach ($data_observation_lab as $item_observation_lab) {
+                    $bodyObservationLab = $this->bodyBundleObservationLab($data_encounter['uuid'],  $item_observation_lab, $data_parameter);
+                    array_push($bodyBundle['entry'], $bodyObservationLab);
+                }
+            }
+            # diagnostic report
+            if (count($data_diagnostic_report) > 0) {
+                foreach ($data_diagnostic_report as $item_diagnostic_report) {
+                    $bodyDiagnosticReport = $this->bodyBundleDiagnosticReport($data_encounter['uuid'],  $item_diagnostic_report, $data_parameter);
+                    array_push($bodyBundle['entry'], $bodyDiagnosticReport);
+                }
             }
         }
 

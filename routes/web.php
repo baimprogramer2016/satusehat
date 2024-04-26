@@ -210,6 +210,9 @@ Route::post('/sinkronisasi-run/{param_id_sinkronisasi}', [SinkronisasiController
 Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal')->middleware('auth');
 Route::get('/jadwal-ubah/{id}', [JadwalController::class, 'ubah'])->name('jadwal-ubah')->middleware('auth');
 Route::post('/jadwal-update', [JadwalController::class, 'update'])->name('jadwal-update')->middleware('auth');
+Route::get('/atur-bundle', [JadwalController::class, 'aturBundle'])->name('atur-bundle')->middleware('auth');
+Route::post('/atur-bundle-update/{resource}', [JadwalController::class, 'aturBundleUpdate'])->name('atur-bundle-update')->middleware('auth');
+
 
 Route::get('/jobs', [JobsController::class, 'index'])->name('jobs')->middleware('auth');
 Route::get('/job-logs', [JobLogsController::class, 'index'])->name('job-logs')->middleware('auth');

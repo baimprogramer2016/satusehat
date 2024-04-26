@@ -9,4 +9,8 @@ interface JadwalInterface
     public function getDataJadwalById($id);
 
     public function updateJadwal($cron, $status, $id);
+
+    public function getDataBundleSet();
+    public function updateAturBundle($resource, $isChecked);
+    public function getDataBundleSetQuery();
 }

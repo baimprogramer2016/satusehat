@@ -7,6 +7,7 @@ use App\Repositories\Composition\CompositionInterface;
 use App\Repositories\Condition\ConditionInterface;
 use App\Repositories\DiagnosticReport\DiagnosticReportInterface;
 use App\Repositories\Encounter\EncounterInterface;
+use App\Repositories\Jadwal\JadwalInterface;
 use App\Repositories\Procedure\ProcedureInterface;
 use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\MedicationDispense\MedicationDispenseInterface;
@@ -43,6 +44,7 @@ class BundleController extends Controller
         $specimen_repo,
         $observation_lab_repo,
         $diagnostic_report_repo;
+
     public $parameter_repo;
     protected $job_id = 0;
     public function __construct(
@@ -58,7 +60,7 @@ class BundleController extends Controller
         ServiceRequestInterface $serviceRequestInterface,
         SpecimenInterface $specimenInterface,
         ObservationLabInterface $observationLabInterface,
-        DiagnosticReportInterface $diagnosticReportInterface
+        DiagnosticReportInterface $diagnosticReportInterface,
     ) {
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;

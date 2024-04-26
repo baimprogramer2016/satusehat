@@ -7,8 +7,9 @@ use App\Repositories\Composition\CompositionInterface;
 use App\Repositories\Condition\ConditionInterface;
 use App\Repositories\DiagnosticReport\DiagnosticReportInterface;
 use App\Repositories\Encounter\EncounterInterface;
+
 use App\Repositories\JobLogs\JobLogsInterface;
-use App\Repositories\Medication\MedicationInterface;
+
 use App\Repositories\MedicationDispense\MedicationDispenseInterface;
 use App\Repositories\MedicationRequest\MedicationRequestInterface;
 use App\Repositories\Observation\ObservationInterface;
@@ -44,6 +45,7 @@ class BundleDevController extends Controller
         $speciment_repo,
         $observation_lab_repo,
         $diagnostic_report_repo;
+
     public $parameter_repo;
     protected $job_id = 0;
     public function __construct(
@@ -59,8 +61,10 @@ class BundleDevController extends Controller
         ServiceRequestInterface $serviceRequestInterface,
         SpecimenInterface $specimenInterface,
         ObservationLabInterface $observationLabInterface,
-        DiagnosticReportInterface $diagnosticReportInterface
+        DiagnosticReportInterface $diagnosticReportInterface,
+
     ) {
+
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;
         $this->condition_repo = $conditionInterface;
@@ -128,6 +132,7 @@ class BundleDevController extends Controller
                             $res['encounter_original_code'] = $item_bundle->original_code; # regno encounter
                             #parameter body json per item
                             $param_bundle['bundle'] = $item_bundle;
+
                             $param_bundle['observation'] = $this->observation_repo->getDataObservationByOriginalCode($item_bundle->original_code);
                             $param_bundle['procedure'] = $this->procedure_repo->getDataProcedureByOriginalCode($item_bundle->original_code);
                             $param_bundle['composition'] = $this->composition_repo->getDataCompositionByOriginalCode($item_bundle->original_code);
