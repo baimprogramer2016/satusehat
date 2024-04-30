@@ -213,7 +213,7 @@
                             </li><!-- .nk-menu-item -->
                             <li class="nk-menu-item has-sub">
                                 <a href="#" class="nk-menu-link nk-menu-toggle">
-                                    <span class="nk-menu-text">Resource 4</span>
+                                    <span class="nk-menu-text">Resource 4 (Lab)</span>
                                 </a>
                                 <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
@@ -223,6 +223,30 @@
                                     <li class="nk-menu-item">
                                         <a href="{{ route('specimen') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Speciment</span></a>
+                                    </li>
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('observation-lab') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Observation</span></a>
+                                    </li>
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('diagnostic-report') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Diagnostic Report</span></a>
+                                    </li>
+
+                                    {{-- <li class="nk-menu-item">
+                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
+                                                class="nk-menu-text">Medication Dispense</span></a>
+                                    </li> --}}
+                                </ul><!-- .nk-menu-sub -->
+                            </li><!-- .nk-menu-item -->
+                            <li class="nk-menu-item has-sub">
+                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                    <span class="nk-menu-text">Resource 6 (Radiologi)</span>
+                                </a>
+                                <ul class="nk-menu-sub">
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('service-request-radiology') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Service Request</span></a>
                                     </li>
                                     <li class="nk-menu-item">
                                         <a href="{{ route('observation-lab') }}" class="nk-menu-link"><span

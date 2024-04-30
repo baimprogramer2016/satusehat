@@ -18,7 +18,7 @@ class ObservationLabRepository implements ObservationLabInterface
     }
     public function getQuery()
     {
-        return $this->model->query();
+        return $this->model->query()->where('procedure', 'lab');
     }
 
     //untuk observation
@@ -32,6 +32,7 @@ class ObservationLabRepository implements ObservationLabInterface
     public function getDataObservationLabByOriginalCode($original_code)
     {
         return $this->model->where('encounter_original_code', $original_code)
+            ->where('procedure', 'lab')
             // ->whereNotIn('procedure_unit', ['mm/jam', 'mm3', 'Pg'])
             ->orderBy('id', 'asc')->get();
     }

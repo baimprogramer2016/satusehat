@@ -1497,6 +1497,92 @@ trait JsonTrait
 
 
     #############################  MANUAL ###################################
+    public function bodyManualServiceRequestRadiology($data_service_request, $data_parameter)
+    {
+        $bodyManualServiceRequestRadiology = [
+            "resourceType" => "ServiceRequest",
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/servicerequest/" . $data_parameter['organization_id'],
+                    "value" => $data_service_request['identifier_1'] . '|' . $data_service_request['procedure_code_original']
+                ],
+                [
+                    "use" => "usual",
+                    "type" => [
+                        "coding" => [
+                            [
+                                "system" => "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                "code" => $data_service_request['identifier_2_code']
+                            ]
+                        ]
+                    ],
+                    "system" => "http://sys-ids.kemkes.go.id/acsn/" . $data_parameter['organization_id'],
+                    "value" => $data_service_request['identifier_2']
+                ]
+            ],
+            "status" => "active",
+            "intent" => "original-order",
+            "priority" => "routine",
+            "category" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => "http://snomed.info/sct",
+                            "code" => $data_service_request['category_code'],
+                            "display" => $data_service_request['category_display']
+                        ]
+                    ]
+                ]
+            ],
+            "code" => [
+                "coding" => [
+                    [
+                        "system" => "http://loinc.org",
+                        "code" => $data_service_request['coding_code'],
+                        "display" => $data_service_request['coding_display']
+                    ]
+                ],
+                "text" => $data_service_request['reason_text']
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_service_request['subject_reference']
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_service_request['r_encounter']['satusehat_id'],
+            ],
+            "occurrenceDateTime" => $this->convertTimeStamp($data_service_request['occurrence_datetime']),
+            "authoredOn" => $this->convertTimeStamp($data_service_request['authored_on']),
+            "requester" => [
+                "reference" => "Practitioner/" . $data_service_request['participant_individual_reference'],
+                "display" =>  $data_service_request['participant_individual_display']
+            ],
+            "performer" => [
+                [
+                    "reference" => "Organization/" . $data_parameter['laboratory_id'],
+                    "display" => "Radiology"
+                ]
+            ],
+            // "bodySite" => [
+            //     [
+            //         "coding" => [
+            //             [
+            //                 "system" => "http://snomed.info/sct",
+            //                 "code" => "80581009",
+            //                 "display" => "Upper abdomen structure"
+            //             ]
+            //         ]
+            //     ]
+            // ],
+            "reasonCode" => [
+                [
+                    "text" => $data_service_request['reason_text']
+                ]
+            ]
+        ];
+
+        return $bodyManualServiceRequestRadiology;
+    }
+
     public function bodyManualDiagnosticReport($data_diagnostic_report, $data_parameter)
     {
         $bodyManualDiagnosticReport = [
@@ -1729,7 +1815,7 @@ trait JsonTrait
             ],
             "encounter" => [
                 "reference" => "Encounter/" . $data_service_request['r_encounter']['satusehat_id'],
-                "display" => "Permintaan Pemeriksaan Golongan Darah Selasa, 14 Juni 2022 pukul 09=>30 WIB"
+                "display" => "-"
             ],
             "occurrenceDateTime" => $this->convertTimeStamp($data_service_request['occurrence_datetime']),
             "authoredOn" => $this->convertTimeStamp($data_service_request['authored_on']),

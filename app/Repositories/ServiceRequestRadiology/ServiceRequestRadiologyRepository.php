@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Repositories\ServiceRequest;
+namespace App\Repositories\ServiceRequestRadiology;
 
 use App\Models\ServiceRequest;
 use Carbon\Carbon;
 
-class ServiceRequestRepository implements ServiceRequestInterface
+class ServiceRequestRadiologyRepository implements ServiceRequestRadiologyInterface
 {
     private $model;
     public function __construct(
@@ -15,20 +15,20 @@ class ServiceRequestRepository implements ServiceRequestInterface
     }
     public function getQuery()
     {
-        return $this->model->query()->where('procedure', 'lab');
+        return $this->model->query()->where('procedure', 'radiologi');
     }
 
-    public function getDataServiceRequestByOriginalCode($original_code)
+    public function getDataServiceRequestRadiologyByOriginalCode($original_code)
     {
-        return $this->model->where('encounter_original_code', $original_code)->where('procedure', 'lab')->orderBy('id', 'asc')->get();
+        return $this->model->where('encounter_original_code', $original_code)->where('procedure', 'radiologi')->orderBy('id', 'asc')->get();
     }
 
 
-    public function updateDataBundleServiceRequestJob($param = [])
+    public function updateDataBundleServiceRequestRadiologyJob($param = [])
     {
         $data = $this->model
             ->where('encounter_original_code', $param['encounter_original_code'])
-            ->where('procedure', 'lab')
+            ->where('procedure', 'radiologi')
             ->whereNull('satusehat_id')
             ->orderBy('id', 'asc')
             ->first();
@@ -44,11 +44,11 @@ class ServiceRequestRepository implements ServiceRequestInterface
         return $data;
     }
 
-    public function getDataServiceRequestFind($id)
+    public function getDataServiceRequestRadiologyFind($id)
     {
         return $this->model->find($id);
     }
-    public function updateStatusServiceRequest($id, $satusehat_id, $request, $response)
+    public function updateStatusServiceRequestRadiology($id, $satusehat_id, $request, $response)
     {
         $data = $this->model->where('id', $id)
             ->update([

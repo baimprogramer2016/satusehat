@@ -28,6 +28,7 @@ use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PractitionerController;
 use App\Http\Controllers\ProcedureControlller;
 use App\Http\Controllers\ServiceRequestController;
+use App\Http\Controllers\ServiceRequestRadiologyController;
 use App\Http\Controllers\SinkronisasiController;
 use App\Http\Controllers\SnomedController;
 use App\Http\Controllers\SpecimenController;
@@ -264,3 +265,8 @@ Route::get('/diagnostic-report-modal-kirim-ss/{id}', [DiagnosticReportController
 Route::post('/diagnostic-report-kirim-ss/{id}', [DiagnosticReportController::class, 'kirimSS'])->name('diagnostic-report-kirim-ss')->middleware('auth');
 
 Route::get('/log-error', [LogErrorController::class, 'index'])->name('log-error')->middleware('auth');
+
+Route::get('/service-request-radiology', [ServiceRequestRadiologyController::class, 'index'])->name('service-request-radiology')->middleware('auth');
+Route::get('/service-request-radiology-modal-kirim-ss/{id}', [ServiceRequestRadiologyController::class, 'modalKirimSS'])->name('service-request-radiology-modal-kirim-ss')->middleware('auth');
+Route::post('/service-request-radiology-kirim-ss/{id}', [ServiceRequestRadiologyController::class, 'kirimSS'])->name('service-request-radiology-kirim-ss')->middleware('auth');
+// Route::get('/service-request-radiology-response-ss/{id}', [ServiceRequestController::class, 'responseSS'])->name('service-request-radiology-response-ss')->middleware('auth');

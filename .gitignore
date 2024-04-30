@@ -3,7 +3,7 @@
 /public/build
 /public/uploads
 /public/hot
-/public/.htaccess
+# /public/.htaccess
 /public/storage
 /config/database.php
 /storage/*.key

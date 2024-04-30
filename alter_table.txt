@@ -472,8 +472,8 @@ ON service.encounter_original_code = ss_service_request.encounter_original_code
 WHERE ss_service_request.id is null;
 
 --hapus dlu
-insert into ss_log_bridging(original_code,description, date, tab)
-select encounter_original_code,'Belum Ada Mapping Golongan Darah' as description,now(), 'ss_service_request' as tab from ss_service_request where procedure_result is not null AND procedure_code is null;
+--insert into ss_log_bridging(original_code,description, date, tab)
+--select encounter_original_code,'Belum Ada Mapping Golongan Darah' as description,now(), 'ss_service_request' as tab from ss_service_request where procedure_result is not null AND procedure_code is null;
 delete from ss_service_request where procedure_result is not null AND procedure_code is null;
 
 --sudah bersih
@@ -764,5 +764,193 @@ SELECT 'composition','Composition',0
 union all
 SELECT 'medication','Medication Request & Medication Dispense' ,0
 union all
-SELECT 'service_request','Service Request , Speciment, Observation Lab/Radiologi & Diagnostic Report',0
+SELECT 'service_request','Service Request Lab',0
+union all
+SELECT 'service_request_radiology','Service Request Radiology',0
+
+
+
+ALTER TABLE temp_service_request
+ALTER COLUMN reason_text SET DATA TYPE text;
+
+ALTER TABLE ss_service_request
+ALTER COLUMN reason_text SET DATA TYPE text;
+
+--validasi service_request_radiologi
+
+CREATE OR REPLACE FUNCTION public.validasi_service_request_radiology(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+--insert dahulu
+
+INSERT INTO ss_service_request(
+identifier_1,
+identifier_2,
+identifier_2_system,
+identifier_2_code,
+encounter_original_code,
+procedure_code_original,
+procedure_code,
+procedure_code_display,
+procedure_result,
+procedure_unit,
+procedure_interpretation,
+procedure_standart,
+encounter_display,
+category_code,
+category_display,
+coding_text,
+obs_category_code,
+obs_category_display,
+occurrence_datetime,
+authored_on,
+body_site_code,
+body_site_display,
+reason_text,
+subject_reference,
+subject_display,
+participant_individual_reference,
+participant_individual_display,
+loinc_code,
+snomed_code,
+loinc_display,
+snomed_display,
+coding_code,
+coding_display,
+procedure,
+satusehat_send,satusehat_send_specimen,satusehat_send_diagnostic_report,
+uuid,uuid_specimen, uuid_observation,uuid_diagnostic_report
+)
+SELECT
+service.identifier_1,
+service.identifier_2,
+service.identifier_2_system,
+service.identifier_2_code,
+service.encounter_original_code,
+service.procedure_code_original,
+service.procedure_code,
+service.procedure_code_display,
+service.procedure_result,
+service.procedure_unit,
+service.procedure_interpretation,
+service.procedure_standart,
+service.encounter_display,
+service.category_code,
+service.category_display,
+service.coding_text,
+service.obs_category_code,
+service.obs_category_display,
+service.occurrence_datetime,
+service.authored_on,
+service.body_site_code,
+service.body_site_display,
+service.reason_text,
+service.subject_reference,
+service.subject_display,
+service.participant_individual_reference,
+service.participant_individual_display,
+service.loinc_code,
+service.snomed_code,
+service.loinc_display,
+service.snomed_display,
+service.loinc_code,
+service.loinc_display,
+service.cat,
+4 as satusehat_send,4 as satusehat_send_specimen,4 as satusehat_send_diagnostic_report,
+uuid_generate_v4() as uuid,uuid_generate_v4() as uuid_specimen,uuid_generate_v4() as uuid_observation,uuid_generate_v4() as uuid_diagnostic_report
+FROM
+(
+
+        SELECT service_loinc.*, ss_loinc.loinc_display,(select snomed_display FROM ss_snomed WHERE snomed_code = service_loinc.snomed_code) as snomed_display
+        FROM
+        (
+            SELECT service.*,loinc_code, snomed_code,
+            case
+                when ss_master_procedure.category_request = 'GOLONGAN DARAH' then f_master_mapping_code(service.procedure_result)
+                else ''
+            end as procedure_code,
+            case
+                when ss_master_procedure.category_request = 'GOLONGAN DARAH' then f_master_mapping_code_display(service.procedure_result)
+                else ''
+            end as procedure_code_display,
+            ss_master_procedure.category as cat
+            FROM
+            (
+                SELECT
+                service.*,
+                encounter.subject_reference,
+                encounter.subject_display,
+                encounter.participant_individual_reference,
+                encounter.participant_individual_display
+                FROM
+                temp_service_request service,
+                ss_encounter encounter
+                WHERE service.encounter_original_code = encounter.original_code
+            ) as service
+            JOIN
+            ss_master_procedure
+            ON service.procedure_code_original = ss_master_procedure.original_code
+            WHERE ss_master_procedure.loinc_code is not null
+
+         ) as service_loinc
+         JOIN ss_loinc
+         ON service_loinc.loinc_code = ss_loinc.loinc_code
+) as service
+LEFT JOIN
+ss_service_request
+ON service.encounter_original_code = ss_service_request.encounter_original_code
+WHERE ss_service_request.id is null;
+
+--hapus dlu
+--insert into ss_log_bridging(original_code,description, date, tab)
+--select encounter_original_code,'Belum Ada Mapping Golongan Darah' as description,now(), 'ss_service_request' as tab from ss_service_request where procedure_result is not null AND procedure_code is null;
+delete from ss_service_request where  procedure_code is null;
+
+--sudah bersih
+INSERT INTO ss_observation (encounter_original_code,type_observation, status,category_code, category_display, code_observation,code_display,subject_reference,
+performer_reference,encounter_display,effective_datetime,issued, quantity_value,quantity_unit,quantity_code,satusehat_send,uuid, subject_display, interpretation_code)
+SELECT *
+FROM(
+    SELECT
+    encounter_original_code,
+    obs_category_display as type_observation,
+    'final' as status,
+    obs_category_code as category_code,
+    obs_category_display as category_display,
+    loinc_code as code_observation,
+    loinc_display as code_display,
+    subject_reference ,
+    participant_individual_reference as performer_reference,
+    '-' as encounter_display,
+    occurrence_datetime as effective_datetime,
+    authored_on as issued,
+    case when procedure_code_display = '' then procedure_result else procedure_code_display end as quantity_value,
+    case when procedure_code = '' then procedure_unit else procedure_code end  as quantity_unit,
+    case when procedure_code = '' then procedure_unit else procedure_code end  as quantity_code,
+    4 as satusehat_send,
+    uuid_observation as uuid,
+    subject_display,procedure_interpretation
+    FROM ss_service_request where encounter_original_code IN(
+    SELECT encounter_original_code FROM temp_service_request
+    )
+ ) as service_tab
+ WHERE uuid NOT IN(
+     SELECT uuid FROM ss_observation WHERE type_observation NOT IN('suhu','diastole','sistol','nadi','pernapasan','Laboratory')
+ );
+
+return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_service_request_radiology()
+OWNER TO postgres;
+
+select * from ss_service_request
+
 

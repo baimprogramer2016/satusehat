@@ -15,12 +15,12 @@ class SpecimenRepository implements SpecimenInterface
     }
     public function getQuery()
     {
-        return $this->model->query();
+        return $this->model->query()->where('procedure', 'lab');
     }
 
     public function getDataSpecimenByOriginalCode($original_code)
     {
-        return $this->model->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
+        return $this->model->where('encounter_original_code', $original_code)->where('procedure', 'lab')->orderBy('id', 'asc')->get();
     }
 
 
@@ -28,6 +28,7 @@ class SpecimenRepository implements SpecimenInterface
     {
         $data = $this->model
             ->where('encounter_original_code', $param['encounter_original_code'])
+            ->where('procedure', 'lab')
             ->whereNull('satusehat_id_specimen')
             ->orderBy('id', 'asc')
             ->first();

@@ -46,6 +46,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\Dashboard\DashboardInterface::class, \App\Repositories\Dashboard\DashboardRepository::class);
         $this->app->bind(\App\Repositories\LogError\LogErrorInterface::class, \App\Repositories\LogError\LogErrorRepository::class);
         $this->app->bind(\App\Repositories\MasterIcd10\MasterIcd10Interface::class, \App\Repositories\MasterIcd10\MasterIcd10Repository::class);
+        $this->app->bind(\App\Repositories\ServiceRequestRadiology\ServiceRequestRadiologyInterface::class, \App\Repositories\ServiceRequestRadiology\ServiceRequestRadiologyRepository::class);
     }
 
     /**

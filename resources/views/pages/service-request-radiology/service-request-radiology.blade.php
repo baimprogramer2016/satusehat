@@ -4,7 +4,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">Specimen (Lab)</h3>
+            <h3 class="nk-block-title page-title">Service Request (Radiologi)</h3>
             <div class="nk-block-des text-soft">
                 <p>Halaman Kunjungan Pasien</p>
             </div>
@@ -76,14 +76,14 @@
           language : {
                 sLengthMenu: "Show _MENU_"
             },
-          ajax: "{{ route('specimen') }}",
+          ajax: "{{ route('service-request-radiology') }}",
           columns: [
 
             //   {data: 'id', name: 'id'},
               {data: 'encounter_original_code', name: 'encounter_original_code'},
             //   {data: 'identifier', name: 'identifier', orderable: false, searchable: true},
               {data: 'loinc_display', name: 'loinc_display'},
-              {data: 'satusehat_id_specimen', name: 'satusehat_id_specimen'},
+              {data: 'satusehat_id', name: 'satusehat_id'},
               {data: 'subject_display', name: 'subject_display'},
               {data: 'participant_individual_display', name: 'participant_individual_display'},
               {data: 'category_display', name: 'category_display'},
@@ -96,29 +96,11 @@
 
     });
 
-
-
-    function modalResponseSS(id)
-    {
-        loadingProcess(); //dari custom.js
-        var url     = '{{ route("specimen-response-ss", ":id") }}';
-        url         = url.replace(':id',id);
-        $.ajax({
-            type:"GET",
-            url:url,
-            success: function(response)
-            {
-                $("#content-modal").html("");
-                $("#content-modal").html(response);
-            }
-        })
-    }
-
     function modalKirimSS(id)
     {
         loadingProcess(); //dari custom.js
 
-        var url     = '{{ route("specimen-modal-kirim-ss", ":id") }}';
+        var url     = '{{ route("service-request-radiology-modal-kirim-ss", ":id") }}';
         url         = url.replace(':id',id);
         $.ajax({
             type:"GET",
@@ -130,7 +112,6 @@
             }
         })
     }
-
 
     function kirimSatuSehat(id)
     {
@@ -139,7 +120,7 @@
         $(".btn-action").html('Proses Kirim....')
         $(".btn-action").prop("disabled", true);
         $(".result-message").html('...');
-        var url     = '{{ route("specimen-kirim-ss", ":id") }}';
+        var url     = '{{ route("service-request-radiology-kirim-ss", ":id") }}';
         url         = url.replace(':id',id);
 
         $.ajax({
@@ -152,21 +133,21 @@
             url:url,
             success: function(response)
             {//resourceType = OperationOutcome
-
-                result = JSON.parse(response);
+console.log(response);
+                // result = JSON.parse(response);
                 // console.log(result.resourceType)
-                if(result.resourceType == 'OperationOutcome')
-                {
-                    $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
-                    $(".btn-action").hide();
-                }else
-                {
-                    $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
-                    location.reload();
-                    $(".btn-action").html('Selesai');
-                }
+                // if(result.resourceType == 'OperationOutcome')
+                // {
+                //     $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
+                //     $(".btn-action").hide();
+                // }else
+                // {
+                //     $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
+                //     location.reload();
+                //     $(".btn-action").html('Selesai');
+                // }
 
-                $("#response_ss").val(response);
+                $("#response_ss").val(JSON.stringify(response));
 
             }
         })
