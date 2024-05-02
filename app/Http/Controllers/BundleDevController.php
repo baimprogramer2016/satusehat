@@ -17,6 +17,7 @@ use App\Repositories\ObservationLab\ObservationLabInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\Procedure\ProcedureInterface;
 use App\Repositories\ServiceRequest\ServiceRequestInterface;
+use App\Repositories\ServiceRequestRadiology\ServiceRequestRadiologyInterface;
 use App\Repositories\Specimen\SpecimenInterface;
 use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
@@ -44,7 +45,8 @@ class BundleDevController extends Controller
         $service_request_repo,
         $speciment_repo,
         $observation_lab_repo,
-        $diagnostic_report_repo;
+        $diagnostic_report_repo,
+        $service_request_radiology_repo;
 
     public $parameter_repo;
     protected $job_id = 0;
@@ -62,6 +64,7 @@ class BundleDevController extends Controller
         SpecimenInterface $specimenInterface,
         ObservationLabInterface $observationLabInterface,
         DiagnosticReportInterface $diagnosticReportInterface,
+        ServiceRequestRadiologyInterface $serviceRequestRadiologyInterface
 
     ) {
 
@@ -78,6 +81,7 @@ class BundleDevController extends Controller
         $this->speciment_repo = $specimenInterface;
         $this->observation_lab_repo = $observationLabInterface;
         $this->diagnostic_report_repo = $diagnosticReportInterface;
+        $this->service_request_radiology_repo = $serviceRequestRadiologyInterface;
     }
     public function runJob(Request $request)
     {
@@ -142,6 +146,7 @@ class BundleDevController extends Controller
                             $param_bundle['specimen'] = $this->speciment_repo->getDataSpecimenByOriginalCode($item_bundle->original_code);
                             $param_bundle['observation_lab'] = $this->observation_lab_repo->getDataObservationLabByOriginalCode($item_bundle->original_code);
                             $param_bundle['diagnostic_report'] = $this->diagnostic_report_repo->getDataDiagnosticReportByOriginalCode($item_bundle->original_code);
+                            $param_bundle['service_request_radiology'] = $this->service_request_radiology_repo->getDataServiceRequestRadiologyByOriginalCode($item_bundle->original_code);
 
 
                             # API POST Bundle

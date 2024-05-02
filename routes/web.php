@@ -34,6 +34,7 @@ use App\Http\Controllers\SnomedController;
 use App\Http\Controllers\SpecimenController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
+use App\Models\Encounter;
 
 
 
@@ -269,4 +270,4 @@ Route::get('/log-error', [LogErrorController::class, 'index'])->name('log-error'
 Route::get('/service-request-radiology', [ServiceRequestRadiologyController::class, 'index'])->name('service-request-radiology')->middleware('auth');
 Route::get('/service-request-radiology-modal-kirim-ss/{id}', [ServiceRequestRadiologyController::class, 'modalKirimSS'])->name('service-request-radiology-modal-kirim-ss')->middleware('auth');
 Route::post('/service-request-radiology-kirim-ss/{id}', [ServiceRequestRadiologyController::class, 'kirimSS'])->name('service-request-radiology-kirim-ss')->middleware('auth');
-// Route::get('/service-request-radiology-response-ss/{id}', [ServiceRequestController::class, 'responseSS'])->name('service-request-radiology-response-ss')->middleware('auth');
+Route::get('/service-request-radiology-response-ss/{id}', [ServiceRequestRadiologyController::class, 'responseSS'])->name('service-request-radiology-response-ss')->middleware('auth');

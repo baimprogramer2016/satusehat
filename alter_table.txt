@@ -766,7 +766,7 @@ SELECT 'medication','Medication Request & Medication Dispense' ,0
 union all
 SELECT 'service_request','Service Request Lab',0
 union all
-SELECT 'service_request_radiology','Service Request Radiology',0
+SELECT 'service_request_radiology','Service Request Radiology (Jangan di Centang)',0
 
 
 

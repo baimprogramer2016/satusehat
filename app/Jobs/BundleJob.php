@@ -32,7 +32,8 @@ class BundleJob implements ShouldQueue
         $service_request_repo,
         $specimen_repo,
         $observation_lab_repo,
-        $diagnostic_report_repo;
+        $diagnostic_report_repo,
+        $service_request_radiology_repo;
     protected $parameter_repo;
     protected $job_id;
     protected $job_logs_repo;
@@ -51,7 +52,8 @@ class BundleJob implements ShouldQueue
         $service_request_repo,
         $specimen_repo,
         $observation_lab_repo,
-        $diagnostic_report_repo
+        $diagnostic_report_repo,
+        $service_request_radiology_repo
     ) {
         $this->bundle_repo = $bundle_repo; #data yang akan dieksekusi
         $this->condition_repo = $condition_repo;
@@ -67,6 +69,7 @@ class BundleJob implements ShouldQueue
         $this->specimen_repo = $specimen_repo;
         $this->observation_lab_repo = $observation_lab_repo;
         $this->diagnostic_report_repo = $diagnostic_report_repo;
+        $this->service_request_radiology_repo = $service_request_radiology_repo;
     }
 
     /**
@@ -104,6 +107,7 @@ class BundleJob implements ShouldQueue
                 $param_bundle['specimen'] = $this->specimen_repo->getDataSpecimenByOriginalCode($item_bundle->original_code);
                 $param_bundle['observation_lab'] = $this->observation_lab_repo->getDataObservationLabByOriginalCode($item_bundle->original_code);
                 $param_bundle['diagnostic_report'] = $this->diagnostic_report_repo->getDataDiagnosticReportByOriginalCode($item_bundle->original_code);
+                $param_bundle['service_request_radiology'] = $this->service_request_radiology_repo->getDataServiceRequestRadiologyByOriginalCode($item_bundle->original_code);
 
                 # API POST Bundle
                 $payload_bundle = $this->bodyBundle($param_bundle); // data bundle

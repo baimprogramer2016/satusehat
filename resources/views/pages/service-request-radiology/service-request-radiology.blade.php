@@ -96,6 +96,22 @@
 
     });
 
+    function modalResponseSS(id)
+    {
+        loadingProcess(); //dari custom.js
+        var url     = '{{ route("service-request-radiology-response-ss", ":id") }}';
+        url         = url.replace(':id',id);
+        $.ajax({
+            type:"GET",
+            url:url,
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+
     function modalKirimSS(id)
     {
         loadingProcess(); //dari custom.js
@@ -133,21 +149,20 @@
             url:url,
             success: function(response)
             {//resourceType = OperationOutcome
-console.log(response);
-                // result = JSON.parse(response);
-                // console.log(result.resourceType)
-                // if(result.resourceType == 'OperationOutcome')
-                // {
-                //     $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
-                //     $(".btn-action").hide();
-                // }else
-                // {
-                //     $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
-                //     location.reload();
-                //     $(".btn-action").html('Selesai');
-                // }
 
-                $("#response_ss").val(JSON.stringify(response));
+                result = JSON.parse(response);
+                console.log(result.resourceType)
+                if(result.resourceType == 'OperationOutcome')
+                {
+                    $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
+                    $(".btn-action").hide();
+                }else
+                {
+                    $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
+                    location.reload();
+                    $(".btn-action").html('Selesai');
+                }
+                $("#response_ss").val(response);
 
             }
         })

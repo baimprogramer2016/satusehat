@@ -122,7 +122,6 @@ class ServiceRequestRadiologyController extends Controller
 
                 $payload_service_request = $this->bodyManualServiceRequestRadiology($data_service_request, $data_parameter);
 
-                return "Belum Bisa untuk Fitur Ini";
                 $response = $this->post_general_ss('/ServiceRequest', $payload_service_request);
                 $body_parse = json_decode($response->body());
 

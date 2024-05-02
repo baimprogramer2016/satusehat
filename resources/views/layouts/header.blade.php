@@ -248,14 +248,14 @@
                                         <a href="{{ route('service-request-radiology') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Service Request</span></a>
                                     </li>
-                                    <li class="nk-menu-item">
+                                    {{-- <li class="nk-menu-item">
                                         <a href="{{ route('observation-lab') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Observation</span></a>
                                     </li>
                                     <li class="nk-menu-item">
                                         <a href="{{ route('diagnostic-report') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Diagnostic Report</span></a>
-                                    </li>
+                                    </li> --}}
 
                                     {{-- <li class="nk-menu-item">
                                         <a href="html/transaction-crypto.html" class="nk-menu-link"><span

@@ -28,7 +28,6 @@ class ServiceRequestRepository implements ServiceRequestInterface
     {
         $data = $this->model
             ->where('encounter_original_code', $param['encounter_original_code'])
-            ->where('procedure', 'lab')
             ->whereNull('satusehat_id')
             ->orderBy('id', 'asc')
             ->first();

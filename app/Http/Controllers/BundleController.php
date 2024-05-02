@@ -16,6 +16,7 @@ use App\Repositories\Observation\ObservationInterface;
 use App\Repositories\ObservationLab\ObservationLabInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\ServiceRequest\ServiceRequestInterface;
+use App\Repositories\ServiceRequestRadiology\ServiceRequestRadiologyInterface;
 use App\Repositories\Specimen\SpecimenInterface;
 use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
@@ -43,7 +44,8 @@ class BundleController extends Controller
         $service_request_repo,
         $specimen_repo,
         $observation_lab_repo,
-        $diagnostic_report_repo;
+        $diagnostic_report_repo,
+        $service_request_radiology_repo;
 
     public $parameter_repo;
     protected $job_id = 0;
@@ -61,6 +63,7 @@ class BundleController extends Controller
         SpecimenInterface $specimenInterface,
         ObservationLabInterface $observationLabInterface,
         DiagnosticReportInterface $diagnosticReportInterface,
+        ServiceRequestRadiologyInterface $serviceRequestRadiologyInterface
     ) {
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;
@@ -74,7 +77,9 @@ class BundleController extends Controller
         $this->service_request_repo = $serviceRequestInterface;
         $this->specimen_repo = $specimenInterface;
         $this->observation_lab_repo = $observationLabInterface;
+        $this->observation_lab_repo = $observationLabInterface;
         $this->diagnostic_report_repo = $diagnosticReportInterface;
+        $this->service_request_radiology_repo = $serviceRequestRadiologyInterface;
     }
     public function runJob(Request $request)
     {
@@ -110,6 +115,7 @@ class BundleController extends Controller
                         $this->specimen_repo,
                         $this->observation_lab_repo,
                         $this->diagnostic_report_repo,
+                        $this->service_request_radiology_repo,
                     );
                 }
             }

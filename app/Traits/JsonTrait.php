@@ -235,6 +235,7 @@ trait JsonTrait
         $data_specimen = $param['specimen'];
         $data_observation_lab = $param['observation_lab'];
         $data_diagnostic_report = $param['diagnostic_report'];
+        $data_service_request_radiology = $param['service_request_radiology'];
 
 
         // return $this->getJadwalSet();
@@ -355,6 +356,14 @@ trait JsonTrait
                 foreach ($data_diagnostic_report as $item_diagnostic_report) {
                     $bodyDiagnosticReport = $this->bodyBundleDiagnosticReport($data_encounter['uuid'],  $item_diagnostic_report, $data_parameter);
                     array_push($bodyBundle['entry'], $bodyDiagnosticReport);
+                }
+            }
+        }
+        if ($this->getJadwalSet()->where('resource', 'service_request_radiology')->first()->status == 1) {
+            if (count($data_service_request_radiology) > 0) {
+                foreach ($data_service_request_radiology as $item_service_request_radiology) {
+                    $bodyServiceRequestRadiology = $this->bodyBundleServiceRequestRadiology($data_encounter['uuid'],  $item_service_request_radiology, $data_parameter);
+                    array_push($bodyBundle['entry'], $bodyServiceRequestRadiology);
                 }
             }
         }
@@ -1493,7 +1502,87 @@ trait JsonTrait
         ];
         return $bodyBundleDiagnosticReport;
     }
-
+    public function bodyBundleServiceRequestRadiology($encounter_uuid, $data_service_request, $data_parameter)
+    {
+        $bodyBundleServiceRequest = [
+            "fullUrl" => "urn:uuid:" . $data_service_request['uuid'],
+            "resource" => [
+                "resourceType" => "ServiceRequest",
+                "identifier" => [
+                    [
+                        "system" => "http://sys-ids.kemkes.go.id/servicerequest/" . $data_parameter['organization_id'],
+                        "value" => $data_service_request['identifier_1'] . '|' . $data_service_request['procedure_code_original']
+                    ],
+                    [
+                        "use" => "usual",
+                        "type" => [
+                            "coding" => [
+                                [
+                                    "system" => "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                    "code" => $data_service_request['identifier_2_code']
+                                ]
+                            ]
+                        ],
+                        "system" => "http://sys-ids.kemkes.go.id/acsn/" . $data_parameter['organization_id'],
+                        "value" => $data_service_request['identifier_2']
+                    ]
+                ],
+                "status" => "active",
+                "intent" => "original-order",
+                "priority" => "routine",
+                "category" => [
+                    [
+                        "coding" => [
+                            [
+                                "system" => "http://snomed.info/sct",
+                                "code" => $data_service_request['category_code'],
+                                "display" => $data_service_request['category_display']
+                            ]
+                        ]
+                    ]
+                ],
+                "code" => [
+                    "coding" => [
+                        [
+                            "system" => "http://loinc.org",
+                            "code" => $data_service_request['coding_code'],
+                            "display" => $data_service_request['coding_display']
+                        ]
+                    ],
+                    "text" => $data_service_request['reason_text']
+                ],
+                "subject" => [
+                    "reference" => "Patient/" . $data_service_request['subject_reference']
+                ],
+                "encounter" => [
+                    "reference" => "urn:uuid:" . $encounter_uuid,
+                    "display" => "-"
+                ],
+                "occurrenceDateTime" => $this->convertTimeStamp($data_service_request['occurrence_datetime']),
+                "authoredOn" => $this->convertTimeStamp($data_service_request['authored_on']),
+                "requester" => [
+                    "reference" => "Practitioner/" . $data_service_request['participant_individual_reference'],
+                    "display" =>  $data_service_request['participant_individual_display']
+                ],
+                "performer" => [
+                    [
+                        "reference" => "Organization/" . $data_parameter['laboratory_id'],
+                        "display" => "Laboratorium"
+                    ]
+                ],
+                "reasonCode" => [
+                    [
+                        "text" => $data_service_request['reason_text']
+                    ]
+                ]
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "ServiceRequest"
+            ]
+        ];
+        return $bodyBundleServiceRequest;
+    }
 
 
     #############################  MANUAL ###################################
