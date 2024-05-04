@@ -32,6 +32,7 @@
                                     <th>Praktisi</th>
                                     <th>Catatan</th>
                                     <th>Satu Sehat ID</th>
+                                    <th>Response</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -84,6 +85,7 @@
               {data: 'author_display', name: 'author_display'},
               {data: 'text_div', name: 'text_div'},
               {data: 'satusehat_id', name: 'satusehat_id'},
+              {data: 'satusehat_statuscode', name: 'satusehat_statuscode'},
               {data: 'status', name: 'status', orderable: false, searchable: false},
               {data: 'action', name: 'action', orderable: false, searchable: false},
           ]

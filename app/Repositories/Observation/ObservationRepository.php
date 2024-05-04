@@ -88,4 +88,18 @@ class ObservationRepository implements ObservationInterface
 
         return $data;
     }
+    public function getDataObservationReadyJob()
+    {
+        return $this->model->join('ss_encounter', 'ss_observation.encounter_original_code', 'ss_encounter.original_code')
+            ->whereNotNull('ss_encounter.satusehat_id')
+            ->take(env('MAX_RECORD')) //ambil hanya 100 saja
+            ->where('ss_encounter.satusehat_send', '=', 1)
+            ->where('ss_encounter.satusehat_statuscode', '=', '200')
+            ->where('ss_observation.satusehat_send', '!=', 1)
+            ->whereNull('ss_observation.satusehat_statuscode')
+            ->whereIn('ss_observation.type_observation', ['suhu', 'sistol', 'nadi', 'pernapasan', 'diastole'])
+            // ->whereIn('original_code', ['A112306380'])
+            ->select('ss_observation.*')
+            ->get();
+    }
 }

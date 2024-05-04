@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
         // menjalan scheduler Jadwal
         $data_jadwal = Jadwal::where('status', 1)->where('command', '!=', '')->get();
         foreach ($data_jadwal as $item_jadwal_kernel) {
-            $schedule->call($item_jadwal_kernel->command)->cron($item_jadwal_kernel->cron);
+            $schedule->call($item_jadwal_kernel->command, ["param_id_jadwal" => $item_jadwal_kernel->kode])->cron($item_jadwal_kernel->cron);
         }
         // menjalan scheduler Sinkronisasi
         $data_sinkronisasi = Sinkronisasi::where('status', 1)->get();

@@ -81,14 +81,14 @@ class BundleController extends Controller
         $this->diagnostic_report_repo = $diagnosticReportInterface;
         $this->service_request_radiology_repo = $serviceRequestRadiologyInterface;
     }
-    public function runJob(Request $request)
+    public function runJob(Request $request, $param_id_jadwal)
     {
         try {
 
             # Jalankan Job
             $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
             $param_start['start'] = $this->currentNow(); //dari APITrait
-            $param_start['id'] = config('constan.job_name.bundle'); //id
+            $param_start['id'] = $param_id_jadwal; //config('constan.job_name.bundle'); //id
             $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
 
 

@@ -3,8 +3,8 @@
 use App\Http\Controllers\BundleController;
 use App\Http\Controllers\BundleDevController;
 use App\Http\Controllers\CategoryRequestController;
-use App\Http\Controllers\CompositionControlller;
-use App\Http\Controllers\ConditionControlller;
+use App\Http\Controllers\CompositionController;
+use App\Http\Controllers\ConditionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DiagnosticReportController;
 use App\Http\Controllers\EncounterController;
@@ -20,13 +20,13 @@ use App\Http\Controllers\MasterProcedureController;
 use App\Http\Controllers\MedicationController;
 use App\Http\Controllers\MedicationDispenseController;
 use App\Http\Controllers\MedicationRequestController;
-use App\Http\Controllers\ObservationControlller;
+use App\Http\Controllers\ObservationController;
 use App\Http\Controllers\ObservationLabController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PatientController;
 use App\Http\Controllers\PractitionerController;
-use App\Http\Controllers\ProcedureControlller;
+use App\Http\Controllers\ProcedureController;
 use App\Http\Controllers\ServiceRequestController;
 use App\Http\Controllers\ServiceRequestRadiologyController;
 use App\Http\Controllers\SinkronisasiController;
@@ -52,6 +52,8 @@ Route::get('/tes-sinkronisasi', [SinkronisasiController::class, 'tesRunJob'])->n
 
 # BUNDLE
 Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
+
+Route::get('/aloneJob/{param_id_jadwal}', [ProcedureController::class, 'runJob']);
 
 #Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');
@@ -122,7 +124,7 @@ Route::get('/pasien-ubah-ihs/{id}', [PatientController::class, 'ubahIHS'])->name
 Route::post('/pasien-update-ihs', [PatientController::class, 'updateIHS'])->name('pasien-update-ihs')->middleware('auth');
 Route::get('/pasien-ubah/{id}', [PatientController::class, 'ubah'])->name('pasien-ubah')->middleware('auth');
 Route::post('/pasien-update', [PatientController::class, 'update'])->name('pasien-update')->middleware('auth');
-Route::post('/pasien-run-job', [PatientController::class, 'runJob'])->name('pasien-run-job')->middleware('auth');
+Route::post('/pasien-run-job/{param_id_jadwal}', [PatientController::class, 'runJob'])->name('pasien-run-job')->middleware('auth');
 Route::get('/pasien-tambah', [PatientController::class, 'tambah'])->name('pasien-tambah')->middleware('auth');
 Route::get('/pasien-check-nik', [PatientController::class, 'checkNik'])->name('pasien-check-nik')->middleware('auth');
 Route::post('/pasien-simpan', [PatientController::class, 'storePatient'])->name('pasien-simpan')->middleware('auth');
@@ -133,7 +135,7 @@ Route::get('/praktisi-ubah-ihs/{id}', [PractitionerController::class, 'ubahIHS']
 Route::post('/praktisi-update-ihs', [PractitionerController::class, 'updateIHS'])->name('praktisi-update-ihs')->middleware('auth');
 Route::get('/praktisi-ubah/{id}', [PractitionerController::class, 'ubah'])->name('praktisi-ubah')->middleware('auth');
 Route::post('/praktisi-update', [PractitionerController::class, 'update'])->name('praktisi-update')->middleware('auth');
-Route::post('/praktisi-run-job', [PractitionerController::class, 'runJob'])->name('praktisi-run-job')->middleware('auth');
+Route::post('/praktisi-run-job/{param_id_jadwal}', [PractitionerController::class, 'runJob'])->name('praktisi-run-job')->middleware('auth');
 Route::get('/praktisi-tambah', [PractitionerController::class, 'tambah'])->name('praktisi-tambah')->middleware('auth');
 Route::get('/praktisi-check-nik', [PractitionerController::class, 'checkNik'])->name('praktisi-check-nik')->middleware('auth');
 Route::post('/praktisi-simpan', [PractitionerController::class, 'storePractitioner'])->name('praktisi-simpan')->middleware('auth');
@@ -168,35 +170,35 @@ Route::get('/encounter-edit/{id}', [EncounterController::class, 'formEdit'])->na
 Route::post('/encounter-update/{id}', [EncounterController::class, 'updateEncounter'])->name('encounter-update')->middleware('auth');
 
 
-Route::get('/condition', [ConditionControlller::class, 'index'])->name('condition')->middleware('auth');
-Route::get('/condition-response-ss/{id}', [ConditionControlller::class, 'responseSS'])->name('condition-response-ss')->middleware('auth');
-Route::get('/condition-modal-kirim-ss/{id}', [ConditionControlller::class, 'modalKirimSS'])->name('condition-modal-kirim-ss')->middleware('auth');
-Route::post('/condition-kirim-ss/{id}', [ConditionControlller::class, 'kirimSS'])->name('condition-kirim-ss')->middleware('auth');
-Route::get('/condition-tambah', [ConditionControlller::class, 'formTambah'])->name('condition-tambah')->middleware('auth');
-Route::post('/condition-simpan', [ConditionControlller::class, 'saveCondition'])->name('condition-simpan')->middleware('auth');
-Route::get('/condition-search-icd-10/{id}', [ConditionControlller::class, 'searchIcd10'])->name('condition-search-icd-10')->middleware('auth');
-Route::get('/condition-edit/{id}', [ConditionControlller::class, 'formEdit'])->name('condition-edit')->middleware('auth');
-Route::post('/condition-update/{id}', [ConditionControlller::class, 'updateCondition'])->name('condition-update')->middleware('auth');
+Route::get('/condition', [ConditionController::class, 'index'])->name('condition')->middleware('auth');
+Route::get('/condition-response-ss/{id}', [ConditionController::class, 'responseSS'])->name('condition-response-ss')->middleware('auth');
+Route::get('/condition-modal-kirim-ss/{id}', [ConditionController::class, 'modalKirimSS'])->name('condition-modal-kirim-ss')->middleware('auth');
+Route::post('/condition-kirim-ss/{id}', [ConditionController::class, 'kirimSS'])->name('condition-kirim-ss')->middleware('auth');
+Route::get('/condition-tambah', [ConditionController::class, 'formTambah'])->name('condition-tambah')->middleware('auth');
+Route::post('/condition-simpan', [ConditionController::class, 'saveCondition'])->name('condition-simpan')->middleware('auth');
+Route::get('/condition-search-icd-10/{id}', [ConditionController::class, 'searchIcd10'])->name('condition-search-icd-10')->middleware('auth');
+Route::get('/condition-edit/{id}', [ConditionController::class, 'formEdit'])->name('condition-edit')->middleware('auth');
+Route::post('/condition-update/{id}', [ConditionController::class, 'updateCondition'])->name('condition-update')->middleware('auth');
 
-Route::get('/observation', [ObservationControlller::class, 'index'])->name('observation')->middleware('auth');
-Route::get('/observation-response-ss/{id}', [ObservationControlller::class, 'responseSS'])->name('observation-response-ss')->middleware('auth');
-Route::get('/observation-modal-kirim-ss/{id}', [ObservationControlller::class, 'modalKirimSS'])->name('observation-modal-kirim-ss')->middleware('auth');
-Route::post('/observation-kirim-ss/{id}', [ObservationControlller::class, 'kirimSS'])->name('observation-kirim-ss')->middleware('auth');
-Route::get('/observation-tambah', [ObservationControlller::class, 'formTambah'])->name('observation-tambah')->middleware('auth');
-Route::post('/observation-simpan', [ObservationControlller::class, 'saveObservation'])->name('observation-simpan')->middleware('auth');
-Route::get('/observation-edit/{id}', [ObservationControlller::class, 'formEdit'])->name('observation-edit')->middleware('auth');
-Route::post('/observation-update/{id}', [ObservationControlller::class, 'updateObservation'])->name('observation-update')->middleware('auth');
+Route::get('/observation', [ObservationController::class, 'index'])->name('observation')->middleware('auth');
+Route::get('/observation-response-ss/{id}', [ObservationController::class, 'responseSS'])->name('observation-response-ss')->middleware('auth');
+Route::get('/observation-modal-kirim-ss/{id}', [ObservationController::class, 'modalKirimSS'])->name('observation-modal-kirim-ss')->middleware('auth');
+Route::post('/observation-kirim-ss/{id}', [ObservationController::class, 'kirimSS'])->name('observation-kirim-ss')->middleware('auth');
+Route::get('/observation-tambah', [ObservationController::class, 'formTambah'])->name('observation-tambah')->middleware('auth');
+Route::post('/observation-simpan', [ObservationController::class, 'saveObservation'])->name('observation-simpan')->middleware('auth');
+Route::get('/observation-edit/{id}', [ObservationController::class, 'formEdit'])->name('observation-edit')->middleware('auth');
+Route::post('/observation-update/{id}', [ObservationController::class, 'updateObservation'])->name('observation-update')->middleware('auth');
 
-Route::get('/procedure', [ProcedureControlller::class, 'index'])->name('procedure')->middleware('auth');
-Route::get('/procedure-response-ss/{id}', [ProcedureControlller::class, 'responseSS'])->name('procedure-response-ss')->middleware('auth');
-Route::get('/procedure-modal-kirim-ss/{id}', [ProcedureControlller::class, 'modalKirimSS'])->name('procedure-modal-kirim-ss')->middleware('auth');
-Route::post('/procedure-kirim-ss/{id}', [ProcedureControlller::class, 'kirimSS'])->name('procedure-kirim-ss')->middleware('auth');
+Route::get('/procedure', [ProcedureController::class, 'index'])->name('procedure')->middleware('auth');
+Route::get('/procedure-response-ss/{id}', [ProcedureController::class, 'responseSS'])->name('procedure-response-ss')->middleware('auth');
+Route::get('/procedure-modal-kirim-ss/{id}', [ProcedureController::class, 'modalKirimSS'])->name('procedure-modal-kirim-ss')->middleware('auth');
+Route::post('/procedure-kirim-ss/{id}', [ProcedureController::class, 'kirimSS'])->name('procedure-kirim-ss')->middleware('auth');
 
-Route::get('/composition', [CompositionControlller::class, 'index'])->name('composition')->middleware('auth');
-Route::get('/composition-response-ss/{id}', [CompositionControlller::class, 'responseSS'])->name('composition-response-ss')->middleware('auth');
-Route::get('/composition-detail/{id}', [CompositionControlller::class, 'detail'])->name('composition-detail')->middleware('auth');
-Route::get('/composition-modal-kirim-ss/{id}', [CompositionControlller::class, 'modalKirimSS'])->name('composition-modal-kirim-ss')->middleware('auth');
-Route::post('/composition-kirim-ss/{id}', [CompositionControlller::class, 'kirimSS'])->name('composition-kirim-ss')->middleware('auth');
+Route::get('/composition', [CompositionController::class, 'index'])->name('composition')->middleware('auth');
+Route::get('/composition-response-ss/{id}', [CompositionController::class, 'responseSS'])->name('composition-response-ss')->middleware('auth');
+Route::get('/composition-detail/{id}', [CompositionController::class, 'detail'])->name('composition-detail')->middleware('auth');
+Route::get('/composition-modal-kirim-ss/{id}', [CompositionController::class, 'modalKirimSS'])->name('composition-modal-kirim-ss')->middleware('auth');
+Route::post('/composition-kirim-ss/{id}', [CompositionController::class, 'kirimSS'])->name('composition-kirim-ss')->middleware('auth');
 
 
 Route::get('/sinkronisasi', [SinkronisasiController::class, 'index'])->name('sinkronisasi')->middleware('auth');

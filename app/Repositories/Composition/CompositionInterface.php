@@ -11,4 +11,6 @@ interface CompositionInterface
 
     public function getDataCompositionFind($id);
     public function updateStatusComposition($id, $satusehat_id, $request, $response);
+
+    public function getDataCompositionReadyJob();
 }

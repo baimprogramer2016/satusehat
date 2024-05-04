@@ -11,4 +11,6 @@ interface ProcedureInterface
     public function getDataProcedureFind($id);
 
     public function updateStatusProcedure($id, $satusehat_id, $request, $response);
+    public function getDataProcedureReadyJob();
+    public function getDataProcedureDistinct();
 }

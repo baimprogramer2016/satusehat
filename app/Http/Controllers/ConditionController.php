@@ -13,7 +13,7 @@ use App\Traits\JsonTrait;
 use Throwable;
 
 
-class ConditionControlller extends Controller
+class ConditionController extends Controller
 {
     use GeneralTrait;
     use ApiTrait;

@@ -169,7 +169,9 @@
                     cancelButtonText: 'Batal'
                 }).then((result) => {
                     if (result.value) {
-                        var url     = '{{ route("pasien-run-job") }}';
+
+                        var url     = '{{ route("pasien-run-job", ":param_id_jadwal") }}';
+                            url     = url.replace(':param_id_jadwal','patient_job');
                         $.ajax({
                             type:"POST",
                             url:url,

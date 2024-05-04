@@ -14,4 +14,5 @@ interface ObservationInterface
 
     public function storeObservation($request =  []);
     public function updateObservation($request =  [], $id);
+    public function getDataObservationReadyJob();
 }

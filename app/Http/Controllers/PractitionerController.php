@@ -175,13 +175,13 @@ class PractitionerController extends Controller
 
 
     # untuk Scheduler dan Manual
-    public function runJob(Request $request)
+    public function runJob(Request $request, $param_id_jadwal)
     {
         try {
             # buat job log
             $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
             $param_start['start'] = $this->currentNow(); //dari APITrait
-            $param_start['id'] = config('constan.job_name.practitioner'); //id
+            $param_start['id'] = $param_id_jadwal; //config('constan.job_name.practitioner'); //id
             $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
 
             # membuat Log status start job, job_report variable untuk mengambil last Id

@@ -30,6 +30,7 @@
                                     <th>ICD</th>
                                     <th>Deskripsi</th>
                                     <th>Satu Sehat ID</th>
+                                    <th>Response</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -79,6 +80,7 @@
               {data: 'code_icd', name: 'code_icd'},
               {data: 'code_icd_display', name: 'code_icd_display'},
               {data: 'satusehat_id', name: 'satusehat_id'},
+              {data: 'satusehat_statuscode', name: 'satusehat_statuscode'},
               {data: 'status', name: 'status', orderable: false, searchable: false},
               {data: 'action', name: 'action', orderable: false, searchable: false},
           ]

@@ -75,4 +75,31 @@ class ProcedureRepository implements ProcedureInterface
 
         return $data;
     }
+    public function getDataProcedureReadyJob()
+    {
+        return $this->model->join('ss_encounter', 'ss_procedure.encounter_original_code', 'ss_encounter.original_code')
+            ->whereNotNull('ss_encounter.satusehat_id')
+            ->take(env('MAX_RECORD')) //ambil hanya 100 saja
+            ->where('ss_encounter.satusehat_send', '=', 1)
+            ->where('ss_encounter.satusehat_statuscode', '=', '200')
+            ->where('ss_procedure.satusehat_send', '!=', 1)
+            ->whereNull('ss_procedure.satusehat_statuscode')
+            // ->whereIn('original_code', ['A112306380'])
+            ->select('ss_procedure.*')
+            ->get();
+    }
+
+    public function getDataProcedureDistinct()
+    {
+        return $this->model->join('ss_encounter', 'ss_procedure.encounter_original_code', 'ss_encounter.original_code')
+            ->whereNotNull('ss_encounter.satusehat_id')
+            ->take(env('MAX_RECORD')) //ambil hanya 100 saja
+            ->where('ss_encounter.satusehat_send', '=', 1)
+            ->where('ss_encounter.satusehat_statuscode', '=', '200')
+            ->where('ss_procedure.satusehat_send', '!=', 1)
+            ->whereNull('ss_procedure.satusehat_statuscode')
+            ->select('ss_procedure.encounter_original_code')
+            ->distinct()
+            ->get();
+    }
 }

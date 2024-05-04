@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcedureJob;
 use App\Repositories\Encounter\EncounterInterface;
+use App\Repositories\JobLogs\JobLogsInterface;
+use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\Procedure\ProcedureInterface;
 use App\Traits\JsonTrait;
 use Illuminate\Http\Request;
@@ -12,18 +15,25 @@ use App\Traits\ApiTrait;
 use Throwable;
 
 
-class ProcedureControlller extends Controller
+class ProcedureController extends Controller
 {
     use GeneralTrait;
     use ApiTrait;
     use JsonTrait;
     private $procedure_repo, $encounter_repo;
+    public $job_logs_repo, $parameter_repo;
+
+    protected $job_id = 0;
 
     public function __construct(
+        JobLogsInterface $jobLogsInterface,
+        ParameterInterface $parameterInterface,
         ProcedureInterface $procedureInterface,
         EncounterInterface $encounterInterface,
 
     ) {
+        $this->parameter_repo = $parameterInterface;
+        $this->job_logs_repo = $jobLogsInterface;
         $this->procedure_repo = $procedureInterface;
         $this->encounter_repo = $encounterInterface;
     }
@@ -136,6 +146,40 @@ class ProcedureControlller extends Controller
                 }
                 # update status ke database
                 return $response;
+            }
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function runJob(Request $request, $param_id_jadwal)
+    {
+        try {
+
+            # Jalankan Job
+            $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
+            $param_start['start'] = $this->currentNow(); //dari APITrait
+            $param_start['id'] = $param_id_jadwal; //id
+            $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
+
+            # membuat Log status start job, job_report variable untuk mengambil last Id
+            # jika tidak ada data,tidak usah insert job log
+            if ($this->procedure_repo->getDataProcedureReadyJob()->count() > 0) {
+                # jika sudah ada data yang lagi antri gk ush dijlankan di job log
+                if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
+                } else {
+                    $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
+                    $this->job_id = $job_report->id;
+                    ProcedureJob::dispatch(
+                        $this->parameter_repo,
+                        $this->job_logs_repo,
+                        $this->job_id,
+                        $this->procedure_repo,
+                        $this->encounter_repo,
+                    );
+                }
             }
         } catch (Throwable $e) {
             return view("layouts.error", [

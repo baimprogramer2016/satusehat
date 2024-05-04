@@ -725,9 +725,8 @@ where tindakan_id IN('000941','000995','000977','000969','001088')
 ALTER TABLE ss_jadwal
 ALTER COLUMN command TYPE VARCHAR(255);
 
+
 insert into ss_jadwal(kode,name,cron,command,status)
-select 'condition_job','Condition','* * * * *', 'App\Http\Controllers\ConditionController@runJob',0
-union all
 select 'observation_job','Observation TTV','* * * * *', 'App\Http\Controllers\ObservationController@runJob',0
 union all
 select 'procedure_job','Procedure','* * * * *', 'App\Http\Controllers\ProcedureController@runJob',0
@@ -738,14 +737,15 @@ select 'medication_request_job','Medication Request','* * * * *', 'App\Http\Cont
 union all
 select 'medication_dispense_job','Medication Dispense','* * * * *', 'App\Http\Controllers\MedicationDispenseController@runJob',0
 union all
-select 'service_request_job','Service Request ','* * * * *', 'App\Http\Controllers\ServiceRequestController@runJob',0
+select 'service_request_job','Service Request Lab','* * * * *', 'App\Http\Controllers\ServiceRequestController@runJob',0
 union all
-select 'speciment_job','Medication ','* * * * *', 'App\Http\Controllers\SpecimentController@runJob',0
+select 'observation_lab_job','Observation Lab','* * * * *', 'App\Http\Controllers\ObservationLabController@runJob',0
 union all
-select 'observation_job','Observation Lab / Radiologi','* * * * *', 'App\Http\Controllers\ObservationController@runJob',0
+select 'speciment_job','Speceiment Lab ','* * * * *', 'App\Http\Controllers\SpecimentController@runJob',0
 union all
-select 'diagnostic_report_job','Diagnostic Report','* * * * *', 'App\Http\Controllers\DiagnosticReportController@runJob',0
-
+select 'diagnostic_report_job','Diagnostic Report Lab','* * * * *', 'App\Http\Controllers\DiagnosticReportController@runJob',0
+union all
+select 'service_request_radiology_job','Service Request Radiology','* * * * *', 'App\Http\Controllers\ServiceRequestRadiologyController@runJob',0
 
 create table ss_bundle_set(
 resource varchar(100),
