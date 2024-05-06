@@ -167,4 +167,37 @@ class MedicationRequestController extends Controller
             ]);
         }
     }
+    public function runJob(Request $request, $param_id_jadwal)
+    {
+        return $this->medication_request_repo->getDataMedicationRequestReadyJob();
+
+        // try {
+        //     # Jalankan Job
+        //     $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
+        //     $param_start['start'] = $this->currentNow(); //dari APITrait
+        //     $param_start['id'] = $param_id_jadwal; //id
+        //     $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
+
+        //     # membuat Log status start job, job_report variable untuk mengambil last Id
+        //     # jika tidak ada data,tidak usah insert job log
+        //     if ($this->observation_repo->getDataObservationReadyJob()->count() > 0) {
+        //         # jika sudah ada data yang lagi antri gk ush dijlankan di job log
+        //         if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
+        //         } else {
+        //             $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
+        //             $this->job_id = $job_report->id;
+        //             ObservationJob::dispatch(
+        //                 $this->parameter_repo,
+        //                 $this->job_logs_repo,
+        //                 $this->job_id,
+        //                 $this->observation_repo,
+        //             );
+        //         }
+        //     }
+        // } catch (Throwable $e) {
+        //     return view("layouts.error", [
+        //         "message" => $e
+        //     ]);
+        // }
+    }
 }

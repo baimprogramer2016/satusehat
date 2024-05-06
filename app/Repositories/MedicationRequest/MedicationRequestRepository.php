@@ -99,4 +99,18 @@ class MedicationRequestRepository implements MedicationRequestInterface
     {
         return $this->model->where('identifier_1', $identifier_1)->where('identifier_2', $identifier_2)->first();
     }
+
+    public function getDataMedicationRequestReadyJob()
+    {
+        return $this->model->join('ss_encounter', 'ss_medication_request.encounter_original_code', 'ss_encounter.original_code')
+            ->whereNotNull('ss_encounter.satusehat_id')
+            ->take(env('MAX_RECORD')) //ambil hanya 100 saja
+            ->where('ss_encounter.satusehat_send', '=', 1)
+            ->where('ss_encounter.satusehat_statuscode', '=', '200')
+            ->where('ss_medication_request.satusehat_send', '!=', 1)
+            ->whereNull('ss_medication_request.satusehat_statuscode')
+            // ->whereIn('original_code', ['A112306380'])
+            ->select('ss_medication_request.*')
+            ->get();
+    }
 }

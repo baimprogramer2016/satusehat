@@ -17,4 +17,5 @@ interface MedicationRequestInterface
     public function updateStatusMedicationRequest($id, $satusehat_id, $request, $response);
     public function updateStatusMedication($id, $satusehat_id, $request, $response);
     public function getDataMedicationRequestIdentifier($identifier_1, $identifier_2);
+    public function getDataMedicationRequestReadyJob();
 }
