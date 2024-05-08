@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SpecimenJob;
+use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\Specimen\SpecimenInterface;
 use App\Traits\ApiTrait;
@@ -19,10 +21,15 @@ class SpecimenController extends Controller
 
     private $specimen_repo, $parameter_repo;
 
+    public $job_logs_repo;
+    protected $job_id = 0;
+
     public function __construct(
+        JobLogsInterface $jobLogsInterface,
         SpecimenInterface $specimenInterface,
         ParameterInterface $parameterInterface
     ) {
+        $this->job_logs_repo = $jobLogsInterface;
         $this->specimen_repo = $specimenInterface;
         $this->parameter_repo = $parameterInterface;
     }
@@ -146,6 +153,38 @@ class SpecimenController extends Controller
                 }
                 # update status ke database
                 return $response;
+            }
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+    public function runJob(Request $request, $param_id_jadwal)
+    {
+
+        try {
+            # Jalankan Job
+            $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
+            $param_start['start'] = $this->currentNow(); //dari APITrait
+            $param_start['id'] = $param_id_jadwal; //id
+            $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
+
+            # membuat Log status start job, job_report variable untuk mengambil last Id
+            # jika tidak ada data,tidak usah insert job log
+            if ($this->specimen_repo->getDataSpecimenReadyJob()->count() > 0) {
+                # jika sudah ada data yang lagi antri gk ush dijlankan di job log
+                if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
+                } else {
+                    $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
+                    $this->job_id = $job_report->id;
+                    SpecimenJob::dispatch(
+                        $this->parameter_repo,
+                        $this->job_logs_repo,
+                        $this->job_id,
+                        $this->specimen_repo,
+                    );
+                }
             }
         } catch (Throwable $e) {
             return view("layouts.error", [

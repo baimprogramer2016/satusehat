@@ -22,6 +22,10 @@ class ServiceRequestRadiologyRepository implements ServiceRequestRadiologyInterf
     {
         return $this->model->where('encounter_original_code', $original_code)->where('procedure', 'radiologi')->orderBy('id', 'asc')->get();
     }
+    public function getDataServiceRequestRadiologyBundleByOriginalCode($original_code)
+    {
+        return $this->model->whereNull('satusehat_id')->where('encounter_original_code', $original_code)->where('procedure', 'radiologi')->orderBy('id', 'asc')->get();
+    }
 
 
     public function updateDataBundleServiceRequestRadiologyJob($param = [])

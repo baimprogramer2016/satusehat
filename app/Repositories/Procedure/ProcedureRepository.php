@@ -18,6 +18,10 @@ class ProcedureRepository implements ProcedureInterface
     {
         return $this->model->where('encounter_original_code', $original_code)->get();
     }
+    public function getDataProcedureBundleByOriginalCode($original_code)
+    {
+        return $this->model->whereNull('satusehat_id')->where('encounter_original_code', $original_code)->get();
+    }
 
     public function getQuery()
     {

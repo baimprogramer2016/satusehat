@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\MedicationDispenseJob;
+use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\MedicationDispense\MedicationDispenseInterface;
 use App\Repositories\MedicationRequest\MedicationRequestInterface;
 use App\Repositories\Parameter\ParameterInterface;
@@ -19,12 +21,16 @@ class MedicationDispenseController extends Controller
     use JsonTrait;
 
     private $medication_dispense_repo, $medication_request_repo, $parameter_repo;
+    public $job_logs_repo;
+    protected $job_id = 0;
     public function __construct(
+        JobLogsInterface $jobLogsInterface,
         MedicationDispenseInterface $medicationDispenseInterface,
         ParameterInterface $parameterInterface,
         MedicationRequestInterface $medicationRequestInterface
 
     ) {
+        $this->job_logs_repo = $jobLogsInterface;
         $this->medication_dispense_repo = $medicationDispenseInterface;
         $this->parameter_repo = $parameterInterface;
         $this->medication_request_repo = $medicationRequestInterface;
@@ -108,7 +114,7 @@ class MedicationDispenseController extends Controller
         try {
             # untuk procedure bukan ID tapi encounter_original_code
             $data_medication_dispense = $this->medication_dispense_repo->getDataMedicationDispenseFind($this->dec($request->id));
-            $data_medication_request = $this->medication_request_repo->getDataMedicationRequestIdentifier($data_medication_dispense['identifier_1'], $data_medication_dispense['identifier_2']);
+            $data_medication_request = $this->medication_request_repo->getDataMedicationRequestIdentifier($data_medication_dispense['encounter_original_code'], $data_medication_dispense['identifier_1'], $data_medication_dispense['identifier_2']);
             $data_parameter = $this->parameter_repo->getDataParameterFirst();
 
             # encounter harus dikirim terlebih dahulu
@@ -144,6 +150,39 @@ class MedicationDispenseController extends Controller
                 }
                 # update status ke database
                 return $response;
+            }
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function runJob(Request $request, $param_id_jadwal)
+    {
+        try {
+            # Jalankan Job
+            $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
+            $param_start['start'] = $this->currentNow(); //dari APITrait
+            $param_start['id'] = $param_id_jadwal; //id
+            $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
+
+            # membuat Log status start job, job_report variable untuk mengambil last Id
+            # jika tidak ada data,tidak usah insert job log
+            if ($this->medication_dispense_repo->getDataMedicationDispenseReadyJob()->count() > 0) {
+                # jika sudah ada data yang lagi antri gk ush dijlankan di job log
+                if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
+                } else {
+                    $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
+                    $this->job_id = $job_report->id;
+                    MedicationDispenseJob::dispatch(
+                        $this->parameter_repo,
+                        $this->job_logs_repo,
+                        $this->job_id,
+                        $this->medication_dispense_repo,
+                        $this->medication_request_repo,
+                    );
+                }
             }
         } catch (Throwable $e) {
             return view("layouts.error", [

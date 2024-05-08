@@ -7,6 +7,7 @@ interface ServiceRequestRadiologyInterface
     public function getQuery();
 
     public function getDataServiceRequestRadiologyByOriginalCode($original_code);
+    public function getDataServiceRequestRadiologyBundleByOriginalCode($original_code);
     public function updateDataBundleServiceRequestRadiologyJob($param = []);
 
     public function getDataServiceRequestRadiologyFind($id);

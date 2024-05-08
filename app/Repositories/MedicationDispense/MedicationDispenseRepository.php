@@ -31,6 +31,10 @@ class MedicationDispenseRepository implements MedicationDispenseInterface
     {
         return $this->model->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
     }
+    public function getDataMedicationDispenseBundleByOriginalCode($original_code)
+    {
+        return $this->model->whereNull('satusehat_id')->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
+    }
     public function updateDataBundleMedicationDispenseJob($param = [])
     {
         $data = $this->model
@@ -63,5 +67,23 @@ class MedicationDispenseRepository implements MedicationDispenseInterface
 
 
         return $data;
+    }
+
+    public function getDataMedicationDispenseReadyJob()
+    {
+        return $this->model
+            ->select('ss_medication_dispense.*')
+            ->join('ss_encounter', 'ss_medication_dispense.encounter_original_code', '=', 'ss_encounter.original_code')
+            ->join('ss_medication_request', 'ss_medication_dispense.encounter_original_code', '=', 'ss_medication_request.encounter_original_code')
+            ->where('ss_medication_dispense.identifier_1', '=', DB::raw('ss_medication_request.identifier_1'))
+            ->where('ss_medication_dispense.identifier_2', '=', DB::raw('ss_medication_request.identifier_2'))
+            ->whereNotNull('ss_medication_request.satusehat_id')
+            ->whereNotNull('ss_encounter.satusehat_id')
+            ->where('ss_encounter.satusehat_send', '=', '1')
+            ->where('ss_encounter.satusehat_statuscode', '=', '200')
+            ->where('ss_medication_dispense.satusehat_send', '!=', '1')
+            ->whereNull('ss_medication_dispense.satusehat_id')
+            ->whereNull('ss_medication_dispense.satusehat_statuscode')
+            ->get();
     }
 }

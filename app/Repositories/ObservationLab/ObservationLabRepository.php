@@ -36,6 +36,17 @@ class ObservationLabRepository implements ObservationLabInterface
             // ->whereNotIn('procedure_unit', ['mm/jam', 'mm3', 'Pg'])
             ->orderBy('id', 'asc')->get();
     }
+    public function getDataObservationLabBundleByOriginalCode($original_code)
+    {
+        return $this->model
+            ->select('ss_service_request.*')
+            ->join('ss_observation', 'ss_service_request.uuid_observation', '=', 'ss_observation.uuid')
+            ->where('ss_service_request.encounter_original_code', $original_code)
+            ->where('ss_service_request.procedure', 'lab')
+            ->whereNull('ss_observation.satusehat_id')
+            ->orderBy('ss_service_request.id', 'asc')
+            ->get();
+    }
 
     public function getDataObservationLabFind($uuid)
     {

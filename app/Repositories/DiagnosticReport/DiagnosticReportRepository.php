@@ -22,6 +22,10 @@ class DiagnosticReportRepository implements DiagnosticReportInterface
     {
         return $this->model->where('encounter_original_code', $original_code)->where('procedure', 'lab')->orderBy('id', 'asc')->get();
     }
+    public function getDataDiagnosticReportBundleByOriginalCode($original_code)
+    {
+        return $this->model->whereNull('satusehat_id_diagnostic_report')->where('encounter_original_code', $original_code)->where('procedure', 'lab')->orderBy('id', 'asc')->get();
+    }
 
 
     public function updateDataBundleDiagnosticReportJob($param = [])

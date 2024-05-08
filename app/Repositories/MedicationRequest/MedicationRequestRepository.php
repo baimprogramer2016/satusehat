@@ -34,6 +34,10 @@ class MedicationRequestRepository implements MedicationRequestInterface
     {
         return $this->model->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
     }
+    public function getDataMedicationRequestBundleByOriginalCode($original_code)
+    {
+        return $this->model->whereNull('satusehat_id')->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
+    }
 
     # update medication
     public function updateDataBundleMedicationJob($param = [])
@@ -95,9 +99,9 @@ class MedicationRequestRepository implements MedicationRequestInterface
 
         return $data;
     }
-    public function getDataMedicationRequestIdentifier($identifier_1, $identifier_2)
+    public function getDataMedicationRequestIdentifier($encounter_original_code, $identifier_1, $identifier_2)
     {
-        return $this->model->where('identifier_1', $identifier_1)->where('identifier_2', $identifier_2)->first();
+        return $this->model->where('encounter_original_code', $encounter_original_code)->where('identifier_1', $identifier_1)->where('identifier_2', $identifier_2)->first();
     }
 
     public function getDataMedicationRequestReadyJob()

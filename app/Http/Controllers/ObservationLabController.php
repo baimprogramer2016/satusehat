@@ -151,4 +151,9 @@ class ObservationLabController extends Controller
             ]);
         }
     }
+
+    public function tes()
+    {
+        return $this->observation_lab_repo->getDataObservationLabBundleByOriginalCode('A012401654');
+    }
 }

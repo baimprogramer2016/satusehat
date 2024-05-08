@@ -22,6 +22,10 @@ class SpecimenRepository implements SpecimenInterface
     {
         return $this->model->where('encounter_original_code', $original_code)->where('procedure', 'lab')->orderBy('id', 'asc')->get();
     }
+    public function getDataSpecimenBundleByOriginalCode($original_code)
+    {
+        return $this->model->whereNull('satusehat_id_specimen')->where('encounter_original_code', $original_code)->where('procedure', 'lab')->orderBy('id', 'asc')->get();
+    }
 
 
     public function updateDataBundleSpecimenJob($param = [])
@@ -62,5 +66,26 @@ class SpecimenRepository implements SpecimenInterface
 
 
         return $data;
+    }
+
+    public function getDataSpecimenReadyJob()
+    {
+        return $this->model->join('ss_encounter', 'ss_service_request.encounter_original_code', 'ss_encounter.original_code')
+            ->whereNotNull('ss_encounter.satusehat_id')
+            ->take(env('MAX_RECORD')) //ambil hanya 100 saja
+            ->where('ss_service_request.procedure', 'lab')
+            ->where('ss_encounter.satusehat_send', '=', 1)
+            ->where('ss_encounter.satusehat_statuscode', '=', '200')
+
+            ->whereNotNull('ss_service_request.satusehat_id')
+            ->where('ss_service_request.satusehat_send', '=', 1)
+            ->where('ss_service_request.satusehat_statuscode', '=', '200')
+
+            ->where('ss_service_request.satusehat_send_specimen', '!=', 1)
+            ->whereNull('ss_service_request.satusehat_id_specimen')
+            ->whereNull('ss_service_request.satusehat_statuscode_specimen')
+            // ->whereIn('original_code', ['A112306380'])
+            ->select('ss_service_request.*')
+            ->get();
     }
 }

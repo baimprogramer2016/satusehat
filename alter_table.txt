@@ -741,7 +741,7 @@ select 'service_request_job','Service Request Lab','* * * * *', 'App\Http\Contro
 union all
 select 'observation_lab_job','Observation Lab','* * * * *', 'App\Http\Controllers\ObservationLabController@runJob',0
 union all
-select 'speciment_job','Speceiment Lab ','* * * * *', 'App\Http\Controllers\SpecimentController@runJob',0
+select 'specimen_job','Speceimen Lab ','* * * * *', 'App\Http\Controllers\SpecimenController@runJob',0
 union all
 select 'diagnostic_report_job','Diagnostic Report Lab','* * * * *', 'App\Http\Controllers\DiagnosticReportController@runJob',0
 union all

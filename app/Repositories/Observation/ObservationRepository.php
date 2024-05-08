@@ -30,6 +30,10 @@ class ObservationRepository implements ObservationInterface
     {
         return $this->model->whereIn('type_observation', ['suhu', 'sistol', 'nadi', 'pernapasan', 'diastole'])->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
     }
+    public function getDataObservationBundleByOriginalCode($original_code)
+    {
+        return $this->model->whereNull('satusehat_id')->whereIn('type_observation', ['suhu', 'sistol', 'nadi', 'pernapasan', 'diastole'])->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
+    }
 
     public function updateDataBundleObservationJob($param = [])
     {

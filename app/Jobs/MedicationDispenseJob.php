@@ -12,12 +12,13 @@ use App\Traits\ApiTrait;
 use App\Traits\JsonTrait;
 use Throwable;
 
-class MedicationRequestJob implements ShouldQueue
+class MedicationDispenseJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, ApiTrait, JsonTrait;
     /**
      * Create a new job instance.
      */
+    protected $medication_dispense_repo;
     protected $medication_request_repo;
     protected $parameter_repo;
     protected $job_id;
@@ -27,11 +28,13 @@ class MedicationRequestJob implements ShouldQueue
         $parameter_repo,
         $job_logs_repo,
         $job_id, #job_id untuk id unik job logs
+        $medication_dispense_repo,
         $medication_request_repo,
     ) {
         $this->parameter_repo = $parameter_repo;
         $this->job_logs_repo = $job_logs_repo;
         $this->job_id = $job_id;
+        $this->medication_dispense_repo = $medication_dispense_repo;
         $this->medication_request_repo = $medication_request_repo;
     }
 
@@ -41,7 +44,7 @@ class MedicationRequestJob implements ShouldQueue
     public function handle(): void
     {
         # ambil data 100 Record sekali eksekusi
-        $data_data = $this->medication_request_repo->getDataMedicationRequestReadyJob();
+        $data_data = $this->medication_dispense_repo->getDataMedicationDispenseReadyJob();
 
         if ($data_data->count() > 0) {
             # parameter body json
@@ -51,34 +54,18 @@ class MedicationRequestJob implements ShouldQueue
             #response default
             # INTI PERULANGAN PER REGNO
             foreach ($data_data as $item_data) {
+                $data_medication_dispense = $this->medication_dispense_repo->getDataMedicationDispenseFind($item_data->id);
+                $data_medication_request = $this->medication_request_repo->getDataMedicationRequestIdentifier($data_medication_dispense['encounter_original_code'], $data_medication_dispense['identifier_1'], $data_medication_dispense['identifier_2']);
+
                 $satusehat_id = null;
                 # response default
                 $id = $item_data->id; # id
 
                 # API POST Bundle
-                $payload_medication = $this->bodyManualMedication($item_data, $data_parameter);
+                $payload_medication_dispense = $this->bodyManualMedicationDispense($data_medication_dispense, $data_medication_request, $data_parameter);
 
-                # medication
-                $response = $this->post_general_ss('/Medication', $payload_medication);
+                $response = $this->post_general_ss('/MedicationDispense', $payload_medication_dispense);
                 $body_parse = json_decode($response->body());
-                $satusehat_id_medication = null;
-                if ($response->successful()) {
-                    # jika sukses tetapi hasil gagal
-                    if ($body_parse->resourceType == 'OperationOutcome') {
-                        $satusehat_id_medication = null;
-                    } else {
-                        $satusehat_id_medication = $body_parse->id;
-                        # hanya jika sukses baru update status
-                        $this->medication_request_repo->updateStatusMedication($id, $satusehat_id_medication, $payload_medication, $response);
-                    }
-                }
-
-                # medication request
-                $payload_medication_request = $this->bodyManualMedicationRequest($item_data, $data_parameter, $satusehat_id_medication);
-
-                $response = $this->post_general_ss('/MedicationRequest', $payload_medication_request);
-                $body_parse = json_decode($response->body());
-
 
                 # hasil response diolah
                 if ($response->successful()) {
@@ -88,10 +75,10 @@ class MedicationRequestJob implements ShouldQueue
                     } else {
                         $satusehat_id = $body_parse->id;
                         # hanya jika sukses baru update status
-                        $this->medication_request_repo->updateStatusMedicationRequest($id, $satusehat_id, $payload_medication_request, $response);
+                        $this->medication_dispense_repo->updateStatusMedicationDispense($id, $satusehat_id, $payload_medication_dispense, $response);
                     }
                 } else {
-                    $this->medication_request_repo->updateStatusMedicationRequest($id, $satusehat_id, $payload_medication_request, $response);
+                    $this->medication_dispense_repo->updateStatusMedicationDispense($id, $satusehat_id, $payload_medication_dispense, $response);
                 }
             }
             # membuat Update status Completed end job pada job Log

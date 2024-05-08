@@ -6,6 +6,7 @@ interface ObservationInterface
 {
     public function getQuery();
     public function getDataObservationByOriginalCode($original_code);
+    public function getDataObservationBundleByOriginalCode($original_code);
 
     public function updateDataBundleObservationJob($param = []);
 

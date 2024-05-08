@@ -22,6 +22,10 @@ class ServiceRequestRepository implements ServiceRequestInterface
     {
         return $this->model->where('encounter_original_code', $original_code)->where('procedure', 'lab')->orderBy('id', 'asc')->get();
     }
+    public function getDataServiceRequestBundleByOriginalCode($original_code)
+    {
+        return $this->model->whereNull('satusehat_id')->where('encounter_original_code', $original_code)->where('procedure', 'lab')->orderBy('id', 'asc')->get();
+    }
 
 
     public function updateDataBundleServiceRequestJob($param = [])
@@ -61,5 +65,20 @@ class ServiceRequestRepository implements ServiceRequestInterface
 
 
         return $data;
+    }
+
+    public function getDataServiceRequestReadyJob()
+    {
+        return $this->model->join('ss_encounter', 'ss_service_request.encounter_original_code', 'ss_encounter.original_code')
+            ->whereNotNull('ss_encounter.satusehat_id')
+            ->take(env('MAX_RECORD')) //ambil hanya 100 saja
+            ->where('ss_service_request.procedure', 'lab')
+            ->where('ss_encounter.satusehat_send', '=', 1)
+            ->where('ss_encounter.satusehat_statuscode', '=', '200')
+            ->where('ss_service_request.satusehat_send', '!=', 1)
+            ->whereNull('ss_service_request.satusehat_statuscode')
+            // ->whereIn('original_code', ['A112306380'])
+            ->select('ss_service_request.*')
+            ->get();
     }
 }

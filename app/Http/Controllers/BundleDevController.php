@@ -136,17 +136,16 @@ class BundleDevController extends Controller
                             $res['encounter_original_code'] = $item_bundle->original_code; # regno encounter
                             #parameter body json per item
                             $param_bundle['bundle'] = $item_bundle;
-
-                            $param_bundle['observation'] = $this->observation_repo->getDataObservationByOriginalCode($item_bundle->original_code);
-                            $param_bundle['procedure'] = $this->procedure_repo->getDataProcedureByOriginalCode($item_bundle->original_code);
-                            $param_bundle['composition'] = $this->composition_repo->getDataCompositionByOriginalCode($item_bundle->original_code);
-                            $param_bundle['medication_request'] = $this->medication_request_repo->getDataMedicationRequestByOriginalCodeReady($item_bundle->original_code);
-                            $param_bundle['medication_dispense'] = $this->medication_dispense_repo->getDataMedicationDispenseByOriginalCode($item_bundle->original_code);
-                            $param_bundle['service_request'] = $this->service_request_repo->getDataServiceRequestByOriginalCode($item_bundle->original_code);
-                            $param_bundle['specimen'] = $this->speciment_repo->getDataSpecimenByOriginalCode($item_bundle->original_code);
-                            $param_bundle['observation_lab'] = $this->observation_lab_repo->getDataObservationLabByOriginalCode($item_bundle->original_code);
-                            $param_bundle['diagnostic_report'] = $this->diagnostic_report_repo->getDataDiagnosticReportByOriginalCode($item_bundle->original_code);
-                            $param_bundle['service_request_radiology'] = $this->service_request_radiology_repo->getDataServiceRequestRadiologyByOriginalCode($item_bundle->original_code);
+                            $param_bundle['observation'] = $this->observation_repo->getDataObservationBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['procedure'] = $this->procedure_repo->getDataProcedureBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['composition'] = $this->composition_repo->getDataCompositionBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['medication_request'] = $this->medication_request_repo->getDataMedicationRequestBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['medication_dispense'] = $this->medication_dispense_repo->getDataMedicationDispenseBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['service_request'] = $this->service_request_repo->getDataServiceRequestBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['specimen'] = $this->speciment_repo->getDataSpecimenBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['observation_lab'] = $this->observation_lab_repo->getDataObservationLabBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['diagnostic_report'] = $this->diagnostic_report_repo->getDataDiagnosticReportBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['service_request_radiology'] = $this->service_request_radiology_repo->getDataServiceRequestRadiologyBundleByOriginalCode($item_bundle->original_code);
 
 
                             # API POST Bundle
