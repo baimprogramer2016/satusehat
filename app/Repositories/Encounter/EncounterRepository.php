@@ -36,6 +36,7 @@ class EncounterRepository implements EncounterInterface
             ->get();
     }
 
+    //tes
     public function updateDataBundleEncounterJob($param = [])
     {
         $data = $this->model->find($param['id']);
