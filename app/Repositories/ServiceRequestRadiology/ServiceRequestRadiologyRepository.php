@@ -67,4 +67,18 @@ class ServiceRequestRadiologyRepository implements ServiceRequestRadiologyInterf
 
         return $data;
     }
+    public function getDataServiceRequestRadiologyReadyJob()
+    {
+        return $this->model->join('ss_encounter', 'ss_service_request.encounter_original_code', 'ss_encounter.original_code')
+            ->whereNotNull('ss_encounter.satusehat_id')
+            ->take(env('MAX_RECORD')) //ambil hanya 100 saja
+            ->where('ss_service_request.procedure', 'radiologi')
+            ->where('ss_encounter.satusehat_send', '=', 1)
+            ->where('ss_encounter.satusehat_statuscode', '=', '200')
+            ->where('ss_service_request.satusehat_send', '!=', 1)
+            ->whereNull('ss_service_request.satusehat_statuscode')
+            // ->whereIn('original_code', ['A112306380'])
+            ->select('ss_service_request.*')
+            ->get();
+    }
 }

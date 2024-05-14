@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\DiagnosticReportJob;
 use App\Repositories\DiagnosticReport\DiagnosticReportInterface;
+use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\ServiceRequest\ServiceRequestInterface;
 use App\Traits\ApiTrait;
@@ -19,11 +21,16 @@ class DiagnosticReportController extends Controller
     use JsonTrait;
 
     private $diagnostic_report_repo, $parameter_repo;
+    public $job_logs_repo;
+    protected $job_id = 0;
+
 
     public function __construct(
+        JobLogsInterface $jobLogsInterface,
         DiagnosticReportInterface $diagnosticReportInterface,
         ParameterInterface $parameterInterface
     ) {
+        $this->job_logs_repo = $jobLogsInterface;
         $this->diagnostic_report_repo = $diagnosticReportInterface;
         $this->parameter_repo = $parameterInterface;
     }
@@ -155,6 +162,39 @@ class DiagnosticReportController extends Controller
                 }
                 # update status ke database
                 return $response;
+            }
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+    public function runJob(Request $request, $param_id_jadwal)
+    {
+
+        // return $this->diagnostic_report_repo->getDataDiagnosticReportReadyJob();
+        try {
+            # Jalankan Job
+            $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
+            $param_start['start'] = $this->currentNow(); //dari APITrait
+            $param_start['id'] = $param_id_jadwal; //id
+            $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
+
+            # membuat Log status start job, job_report variable untuk mengambil last Id
+            # jika tidak ada data,tidak usah insert job log
+            if ($this->diagnostic_report_repo->getDataDiagnosticReportReadyJob()->count() > 0) {
+                # jika sudah ada data yang lagi antri gk ush dijlankan di job log
+                if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
+                } else {
+                    $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
+                    $this->job_id = $job_report->id;
+                    DiagnosticReportJob::dispatch(
+                        $this->parameter_repo,
+                        $this->job_logs_repo,
+                        $this->job_id,
+                        $this->diagnostic_report_repo,
+                    );
+                }
             }
         } catch (Throwable $e) {
             return view("layouts.error", [

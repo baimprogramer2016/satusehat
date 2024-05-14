@@ -13,4 +13,5 @@ interface ServiceRequestRadiologyInterface
     public function getDataServiceRequestRadiologyFind($id);
 
     public function updateStatusServiceRequestRadiology($id, $satusehat_id, $request, $response);
+    public function getDataServiceRequestRadiologyReadyJob();
 }

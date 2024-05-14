@@ -67,4 +67,30 @@ class DiagnosticReportRepository implements DiagnosticReportInterface
 
         return $data;
     }
+
+    public function getDataDiagnosticReportReadyJob()
+    {
+        return $this->model->join('ss_encounter', 'ss_service_request.encounter_original_code', 'ss_encounter.original_code')
+            ->join('ss_observation', 'ss_service_request.uuid_observation', 'ss_observation.uuid')
+            ->whereNotNull('ss_encounter.satusehat_id')
+            ->take(env('MAX_RECORD')) //ambil hanya 100 saja
+            ->where('ss_service_request.procedure', 'lab')
+            ->where('ss_encounter.satusehat_send', '=', 1)
+            ->where('ss_encounter.satusehat_statuscode', '=', '200')
+
+            ->whereNotNull('ss_observation.satusehat_id')
+            ->where('ss_observation.satusehat_send', '=', 1)
+            ->where('ss_observation.satusehat_statuscode', '=', '200')
+
+            ->whereNotNull('ss_service_request.satusehat_id_specimen')
+            ->where('ss_service_request.satusehat_send_specimen', '=', 1)
+            ->where('ss_service_request.satusehat_statuscode_specimen', '=', '200')
+
+            ->where('ss_service_request.satusehat_send_diagnostic_report', '!=', 1)
+            ->whereNull('ss_service_request.satusehat_id_diagnostic_report')
+            ->whereNull('ss_service_request.satusehat_statuscode_diagnostic_report')
+            // ->whereIn('original_code', ['A112306380'])
+            ->select('ss_service_request.*')
+            ->get();
+    }
 }

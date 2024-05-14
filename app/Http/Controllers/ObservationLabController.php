@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ObservationLabJob;
+use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\ObservationLab\ObservationLabInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use App\Traits\ApiTrait;
@@ -18,11 +20,15 @@ class ObservationLabController extends Controller
     use JsonTrait;
 
     private $observation_lab_repo, $parameter_repo;
+    public $job_logs_repo;
+    protected $job_id = 0;
 
     public function __construct(
+        JobLogsInterface $jobLogsInterface,
         ObservationLabInterface $observationLabInterface,
         ParameterInterface $parameterInterface
     ) {
+        $this->job_logs_repo = $jobLogsInterface;
         $this->observation_lab_repo = $observationLabInterface;
         $this->parameter_repo = $parameterInterface;
     }
@@ -152,8 +158,38 @@ class ObservationLabController extends Controller
         }
     }
 
-    public function tes()
+
+    public function runJob(Request $request, $param_id_jadwal)
     {
-        return $this->observation_lab_repo->getDataObservationLabBundleByOriginalCode('A012401654');
+
+        // return $this->observation_lab_repo->getDataObservationLabReadyJob();
+        try {
+            # Jalankan Job
+            $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
+            $param_start['start'] = $this->currentNow(); //dari APITrait
+            $param_start['id'] = $param_id_jadwal; //id
+            $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
+
+            # membuat Log status start job, job_report variable untuk mengambil last Id
+            # jika tidak ada data,tidak usah insert job log
+            if ($this->observation_lab_repo->getDataObservationLabReadyJob()->count() > 0) {
+                # jika sudah ada data yang lagi antri gk ush dijlankan di job log
+                if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
+                } else {
+                    $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
+                    $this->job_id = $job_report->id;
+                    ObservationLabJob::dispatch(
+                        $this->parameter_repo,
+                        $this->job_logs_repo,
+                        $this->job_id,
+                        $this->observation_lab_repo,
+                    );
+                }
+            }
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
     }
 }

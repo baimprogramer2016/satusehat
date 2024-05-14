@@ -12,4 +12,6 @@ interface DiagnosticReportInterface
 
     public function getDataDiagnosticReportFind($id);
     public function updateStatusDiagnosticReport($id, $satusehat_id, $request, $response);
+
+    public function getDataDiagnosticReportReadyJob();
 }

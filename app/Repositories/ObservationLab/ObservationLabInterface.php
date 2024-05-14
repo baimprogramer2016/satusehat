@@ -12,4 +12,5 @@ interface ObservationLabInterface
 
     public function getDataObservationLabFind($uuid);
     public function updateStatusObservationLab($id, $satusehat_id, $request, $response);
+    public function getDataObservationLabReadyJob();
 }
