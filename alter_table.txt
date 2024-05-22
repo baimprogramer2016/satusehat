@@ -951,6 +951,164 @@ $BODY$;
 ALTER FUNCTION public.validasi_service_request_radiology()
 OWNER TO postgres;
 
-select * from ss_service_request
+---------------------
 
 
+alter table ss_snomed
+add code_system varchar(255)
+
+alter table ss_loinc
+add code_system varchar(255)
+
+alter table ss_act
+add code_system varchar(255)
+
+alter table ss_act
+add description varchar(255)
+
+ALTER TABLE ss_act
+ALTER COLUMN act_display
+SET DATA TYPE text;
+
+UPDATE ss_act set
+code_system = 'https://www.whocc.no/atc_ddd_index/',
+description = 'allergy'
+
+
+ALTER TABLE ss_snomed
+ALTER COLUMN snomed_display
+SET DATA TYPE text;
+
+create table ss_allergy_code(
+id serial,
+code varchar(30),
+display varchar(255),
+code_system varchar(255),
+category varchar(100)
+)
+
+
+create table ss_master_allergy(
+id serial,
+code varchar(50),
+display text,
+code_satusehat varchar(50),
+code_satusehat_display text,
+code_system varchar(255),
+category varchar(100)
+)
+
+
+INSERT MASTER ALLERGY
+
+
+------------------
+
+
+
+create table temp_allergy(
+id serial,
+ original_code varchar(30),
+ encounter_original_code varchar(30),
+ identifier_value varchar(30),
+ clinical_code varchar(30),
+ clinical_display varchar(30),
+ verification_status_code varchar(30),
+ verification_status_display varchar(30),
+ code_original varchar(30),
+ code_original_display varchar(255),
+ text text,
+ encounter_display varchar(255),
+ recorded_date timestamp
+)
+
+create table ss_allergy(
+id serial,
+ original_code varchar(30),
+ encounter_original_code varchar(30),
+ satusehat_id varchar(255),
+ identifier_value varchar(30),
+ clinical_code varchar(30),
+ clinical_display varchar(30),
+ verification_status_code varchar(30),
+ verification_status_display varchar(30),
+ category varchar(50),
+ coding_code varchar(30),
+ coding_display varchar(255),
+ text text,
+ subject_reference varchar(50),
+ subject_reference_display varchar(255),
+ encounter_display varchar(255),
+ recorded_date timestamp,
+ recorder_reference varchar(30),
+ satusehat_send int,
+ satusehat_date timestamp,
+ satusehat_request text,
+ satusehat_response text,
+ satusehat_statuscode varchar(30),
+ created_at timestamp,
+ updated_at timestamp,
+ uuid varchar(255)
+)
+
+
+-----------------------------------------
+-- FUNCTION: public.validasi_allergy()
+
+-- DROP FUNCTION IF EXISTS public.validasi_allergy();
+
+CREATE OR REPLACE FUNCTION public.validasi_allergy(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+	INSERT INTO ss_allergy(encounter_original_code,identifier_value,clinical_code,clinical_display,
+	verification_status_code,verification_status_display,category,coding_code,coding_display,
+	text,subject_reference,subject_reference_display,encounter_display,recorded_date,recorder_reference,
+	satusehat_send,uuid)
+
+	SELECT allergy_2.encounter_original_code, allergy_2.identifier_value,allergy_2.clinical_code,allergy_2.clinical_display,
+	allergy_2.verification_status_code,allergy_2.verification_status_display,allergy_2.category,allergy_2.code_satusehat as coding_code,allergy_2.code_satusehat_display as coding_display,
+	allergy_2.text,allergy_2.subject_reference,allergy_2.subject_display as subject_reference_display,
+	allergy_2.encounter_display,allergy_2.recorded_date,
+	allergy_2.recorder_reference,4,
+	uuid_generate_v4()
+	FROM
+	(
+		select allergy.*,ss_encounter.subject_reference,ss_encounter.subject_display, participant_individual_reference as recorder_reference
+		FROM
+		(
+			SELECT a.*, b.code_satusehat, b.code_satusehat_display,b.category FROM
+			temp_allergy a , ss_master_allergy b
+			WHERE a.code_original = b.code
+			AND b.code_satusehat is not null
+            AND b.category is not null
+		) as allergy
+		join
+		ss_encounter
+		ON allergy.encounter_original_code = ss_encounter.original_code
+	) as allergy_2
+	LEFT JOIN
+	ss_allergy
+	ON concat(allergy_2.encounter_original_code,allergy_2.identifier_value) = concat(ss_allergy.encounter_original_code,ss_allergy.identifier_value)
+	WHERE ss_allergy.encounter_original_code is null;
+
+	return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_allergy()
+    OWNER TO postgres;
+
+
+---------------
+INSERT INTO ss_bundle_set(resource,description,status)
+SELECT 'allergy','Allergy',0
+
+
+insert into ss_jadwal(kode,name,cron,command,status)
+select 'allergy_job','Allergy','* * * * *', 'App\Http\Controllers\AllergyController@runJob',0
+---------------------------------------

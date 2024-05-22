@@ -32,6 +32,9 @@ use App\Http\Controllers\ServiceRequestRadiologyController;
 use App\Http\Controllers\SinkronisasiController;
 use App\Http\Controllers\SnomedController;
 use App\Http\Controllers\SpecimenController;
+use App\Http\Controllers\AllergyController;
+use App\Http\Controllers\AllergyCodeController;
+use App\Http\Controllers\AllergyMasterController;
 use App\Http\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Encounter;
@@ -53,7 +56,7 @@ Route::get('/tes-sinkronisasi', [SinkronisasiController::class, 'tesRunJob'])->n
 # BUNDLE
 Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
 
-Route::get('/aloneJob/{param_id_jadwal}', [ServiceRequestRadiologyController::class, 'runJob']);
+Route::get('/aloneJob/{param_id_jadwal}', [AllergyController::class, 'runJob']);
 
 #Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');
@@ -273,3 +276,16 @@ Route::get('/service-request-radiology', [ServiceRequestRadiologyController::cla
 Route::get('/service-request-radiology-modal-kirim-ss/{id}', [ServiceRequestRadiologyController::class, 'modalKirimSS'])->name('service-request-radiology-modal-kirim-ss')->middleware('auth');
 Route::post('/service-request-radiology-kirim-ss/{id}', [ServiceRequestRadiologyController::class, 'kirimSS'])->name('service-request-radiology-kirim-ss')->middleware('auth');
 Route::get('/service-request-radiology-response-ss/{id}', [ServiceRequestRadiologyController::class, 'responseSS'])->name('service-request-radiology-response-ss')->middleware('auth');
+
+Route::get('/allergy-code', [AllergyCodeController::class, 'index'])->name('allergy-code')->middleware('auth');
+
+Route::get('/allergy-master', [AllergyMasterController::class, 'index'])->name('allergy-master')->middleware('auth');
+Route::get('/allergy-master-kode/{id}', [AllergyMasterController::class, 'modalKode'])->name('allergy-master-kode')->middleware('auth');
+Route::get('/allergy-master-data/{id}', [AllergyMasterController::class, 'getDataKode'])->name('allergy-master-data')->middleware('auth');
+Route::post('/allergy-master-kode-update', [AllergyMasterController::class, 'updateKode'])->name('allergy-master-kode-update')->middleware('auth');
+
+
+Route::get('/allergy', [AllergyController::class, 'index'])->name('allergy')->middleware('auth');
+Route::get('/allergy-response-ss/{id}', [AllergyController::class, 'responseSS'])->name('allergy-response-ss')->middleware('auth');
+Route::get('/allergy-modal-kirim-ss/{id}', [AllergyController::class, 'modalKirimSS'])->name('allergy-modal-kirim-ss')->middleware('auth');
+Route::post('/allergy-kirim-ss/{id}', [AllergyController::class, 'kirimSS'])->name('allergy-kirim-ss')->middleware('auth');

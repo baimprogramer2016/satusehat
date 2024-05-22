@@ -236,6 +236,7 @@ trait JsonTrait
         $data_observation_lab = $param['observation_lab'];
         $data_diagnostic_report = $param['diagnostic_report'];
         $data_service_request_radiology = $param['service_request_radiology'];
+        $data_allergy = $param['allergy'];
 
 
         // return $this->getJadwalSet();
@@ -364,6 +365,16 @@ trait JsonTrait
                 foreach ($data_service_request_radiology as $item_service_request_radiology) {
                     $bodyServiceRequestRadiology = $this->bodyBundleServiceRequestRadiology($data_encounter['uuid'],  $item_service_request_radiology, $data_parameter);
                     array_push($bodyBundle['entry'], $bodyServiceRequestRadiology);
+                }
+            }
+        }
+
+        # allergy
+        if ($this->getJadwalSet()->where('resource', 'allergy')->first()->status == 1) {
+            if (count($data_allergy) > 0) {
+                foreach ($data_allergy as $item_allergy) {
+                    $bodyAllergy = $this->bodyBundleAllergy($item_allergy, $data_parameter, $data_encounter['uuid']);
+                    array_push($bodyBundle['entry'], $bodyAllergy);
                 }
             }
         }
@@ -1584,8 +1595,131 @@ trait JsonTrait
         return $bodyBundleServiceRequest;
     }
 
+    public function bodyBundleAllergy($data_allergy, $data_parameter, $encounter_uuid)
+    {
+        $bodyBundleAllergy =  [
+            "fullUrl" => "urn:uuid: " . $data_allergy['uuid'],
+            "resource" => [
+                "resourceType" => "AllergyIntolerance",
+                "identifier" => [
+                    [
+                        "system" => "http://sys-ids.kemkes.go.id/allergy/" . $data_parameter['organization_id'],
+                        "use" => "official",
+                        "value" => $data_allergy['encounter_original_code']
+                    ]
+                ],
+                "clinicalStatus" => [
+                    "coding" => [
+                        [
+                            "system" => "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical",
+                            "code" => "active",
+                            "display" => "Active"
+                        ]
+                    ]
+                ],
+                // "verificationStatus" => [
+                //     "coding" => [
+                //         [
+                //             "system" => "http://terminology.hl7.org/CodeSystem/allergyintolerance-verification",
+                //             "code" => $data_allergy['verification_status_code'],
+                //             "display" => $data_allergy['verification_status_display']
+                //         ]
+                //     ]
+                // ],
+                "category" => [
+                    $data_allergy['category']
+                ],
+                "code" => [
+                    "coding" => [
+                        [
+                            "system" => "http://snomed.info/sct",
+                            "code" => $data_allergy['coding_code'],
+                            "display" => $data_allergy['coding_display']
+                        ]
+                    ],
+                    "text" => $data_allergy['text']
+                ],
+                "patient" => [
+                    "reference" => "Patient/" . $data_allergy['subject_reference'],
+                    "display" => $data_allergy['subject_reference_display']
+                ],
+                "encounter" => [
+                    "reference" => "urn:uuid:" . $encounter_uuid,
+                    "display" => $data_allergy['encounter_display']
+                ],
+                "recordedDate" => $this->convertTimeStamp($data_allergy['recorded_date']),
+                "recorder" => [
+                    "reference" => "Practitioner/" . $data_allergy['recorder_reference']
+                ]
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "AllergyIntolerance"
+            ]
+        ];
+        return $bodyBundleAllergy;
+    }
+
 
     #############################  MANUAL ###################################
+    public function bodyManualAllergy($data_allergy, $data_parameter)
+    {
+        $bodyManualAllergy = [
+            "resourceType" => "AllergyIntolerance",
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/allergy/" . $data_parameter['organization_id'],
+                    "use" => "official",
+                    "value" => $data_allergy['encounter_original_code']
+                ]
+            ],
+            "clinicalStatus" => [
+                "coding" => [
+                    [
+                        "system" => "http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical",
+                        "code" => "active",
+                        "display" => "Active"
+                    ]
+                ]
+            ],
+            // "verificationStatus" => [
+            //     "coding" => [
+            //         [
+            //             "system" => "http://terminology.hl7.org/CodeSystem/allergyintolerance-verification",
+            //             "code" => $data_allergy['verification_status_code'],
+            //             "display" => $data_allergy['verification_status_display']
+            //         ]
+            //     ]
+            // ],
+            "category" => [
+                $data_allergy['category']
+            ],
+            "code" => [
+                "coding" => [
+                    [
+                        "system" => $data_allergy['r_master_allergy']['code_system'],
+                        "code" => $data_allergy['coding_code'],
+                        "display" => $data_allergy['coding_display']
+                    ]
+                ],
+                "text" => $data_allergy['text']
+            ],
+            "patient" => [
+                "reference" => "Patient/" . $data_allergy['subject_reference'],
+                "display" => $data_allergy['subject_reference_display']
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_allergy['r_encounter']['satusehat_id'],
+                "display" => $data_allergy['encounter_display']
+            ],
+            "recordedDate" => $this->convertTimeStamp($data_allergy['recorded_date']),
+            "recorder" => [
+                "reference" => "Practitioner/" . $data_allergy['recorder_reference']
+            ]
+        ];
+        return $bodyManualAllergy;
+    }
+
     public function bodyManualServiceRequestRadiology($data_service_request, $data_parameter)
     {
         $bodyManualServiceRequestRadiology = [

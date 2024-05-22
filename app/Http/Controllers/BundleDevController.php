@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\BundleJob;
+use App\Repositories\Allergy\AllergyInterface;
 use App\Repositories\Composition\CompositionInterface;
 use App\Repositories\Condition\ConditionInterface;
 use App\Repositories\DiagnosticReport\DiagnosticReportInterface;
@@ -46,7 +47,8 @@ class BundleDevController extends Controller
         $speciment_repo,
         $observation_lab_repo,
         $diagnostic_report_repo,
-        $service_request_radiology_repo;
+        $service_request_radiology_repo,
+        $allergy_repo;
 
     public $parameter_repo;
     protected $job_id = 0;
@@ -64,7 +66,8 @@ class BundleDevController extends Controller
         SpecimenInterface $specimenInterface,
         ObservationLabInterface $observationLabInterface,
         DiagnosticReportInterface $diagnosticReportInterface,
-        ServiceRequestRadiologyInterface $serviceRequestRadiologyInterface
+        ServiceRequestRadiologyInterface $serviceRequestRadiologyInterface,
+        AllergyInterface $allergyInterface
 
     ) {
 
@@ -82,6 +85,7 @@ class BundleDevController extends Controller
         $this->observation_lab_repo = $observationLabInterface;
         $this->diagnostic_report_repo = $diagnosticReportInterface;
         $this->service_request_radiology_repo = $serviceRequestRadiologyInterface;
+        $this->allergy_repo = $allergyInterface;
     }
     public function runJob(Request $request)
     {
@@ -146,6 +150,7 @@ class BundleDevController extends Controller
                             $param_bundle['observation_lab'] = $this->observation_lab_repo->getDataObservationLabBundleByOriginalCode($item_bundle->original_code);
                             $param_bundle['diagnostic_report'] = $this->diagnostic_report_repo->getDataDiagnosticReportBundleByOriginalCode($item_bundle->original_code);
                             $param_bundle['service_request_radiology'] = $this->service_request_radiology_repo->getDataServiceRequestRadiologyBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['allergy'] = $this->allergy_repo->getDataAllergyBundleByOriginalCode($item_bundle->original_code);
 
 
                             # API POST Bundle

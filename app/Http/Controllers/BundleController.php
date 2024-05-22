@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\BundleJob;
+use App\Repositories\Allergy\AllergyInterface;
 use App\Repositories\Composition\CompositionInterface;
 use App\Repositories\Condition\ConditionInterface;
 use App\Repositories\DiagnosticReport\DiagnosticReportInterface;
@@ -45,7 +46,8 @@ class BundleController extends Controller
         $specimen_repo,
         $observation_lab_repo,
         $diagnostic_report_repo,
-        $service_request_radiology_repo;
+        $service_request_radiology_repo,
+        $allergy_repo;
 
     public $parameter_repo;
     protected $job_id = 0;
@@ -63,7 +65,8 @@ class BundleController extends Controller
         SpecimenInterface $specimenInterface,
         ObservationLabInterface $observationLabInterface,
         DiagnosticReportInterface $diagnosticReportInterface,
-        ServiceRequestRadiologyInterface $serviceRequestRadiologyInterface
+        ServiceRequestRadiologyInterface $serviceRequestRadiologyInterface,
+        AllergyInterface $allergyInterface
     ) {
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;
@@ -80,6 +83,7 @@ class BundleController extends Controller
         $this->observation_lab_repo = $observationLabInterface;
         $this->diagnostic_report_repo = $diagnosticReportInterface;
         $this->service_request_radiology_repo = $serviceRequestRadiologyInterface;
+        $this->allergy_repo = $allergyInterface;
     }
     public function runJob(Request $request, $param_id_jadwal)
     {
@@ -116,6 +120,7 @@ class BundleController extends Controller
                         $this->observation_lab_repo,
                         $this->diagnostic_report_repo,
                         $this->service_request_radiology_repo,
+                        $this->allergy_repo,
                     );
                 }
             }
