@@ -141,14 +141,6 @@
                                 </ul><!-- .nk-menu-sub -->
                             </li><!-- .nk-menu-item -->
 
-                            {{-- <li class="nk-menu-item">
-                                <a href="html/apps-chats.html" class="nk-menu-link"><span
-                                        class="nk-menu-text">Snomed</span></a>
-                            </li>
-                            <li class="nk-menu-item">
-                                <a href="html/apps-chats.html" class="nk-menu-link"><span
-                                        class="nk-menu-text">Loinc</span></a>
-                            </li> --}}
                             <li class="nk-menu-item has-sub">
                                 <a href="#" class="nk-menu-link nk-menu-toggle">
                                     <span class="nk-menu-text">Allergy</span>
@@ -161,6 +153,21 @@
                                     <li class="nk-menu-item">
                                         <a href="{{ route('allergy-master') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Mapping Allergy</span></a>
+                                    </li>
+                                </ul><!-- .nk-menu-sub -->
+                            </li>
+                            <li class="nk-menu-item has-sub">
+                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                    <span class="nk-menu-text">Prognosis</span>
+                                </a>
+                                <ul class="nk-menu-sub">
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('prognosis-code') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Kode Prognosis</span></a>
+                                    </li>
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('prognosis-master') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Mapping Prognosis</span></a>
                                     </li>
                                 </ul><!-- .nk-menu-sub -->
                             </li>
@@ -263,23 +270,6 @@
                                         <a href="{{ route('allergy') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Allergy</span></a>
                                     </li>
-                                    {{-- <li class="nk-menu-item">
-                                        <a href="{{ route('specimen') }}" class="nk-menu-link"><span
-                                                class="nk-menu-text">Speciment</span></a>
-                                    </li>
-                                    <li class="nk-menu-item">
-                                        <a href="{{ route('observation-lab') }}" class="nk-menu-link"><span
-                                                class="nk-menu-text">Observation</span></a>
-                                    </li>
-                                    <li class="nk-menu-item">
-                                        <a href="{{ route('diagnostic-report') }}" class="nk-menu-link"><span
-                                                class="nk-menu-text">Diagnostic Report</span></a>
-                                    </li> --}}
-
-                                    {{-- <li class="nk-menu-item">
-                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
-                                                class="nk-menu-text">Medication Dispense</span></a>
-                                    </li> --}}
                                 </ul><!-- .nk-menu-sub -->
                             </li><!-- .nk-menu-item -->
                             <li class="nk-menu-item has-sub">

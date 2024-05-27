@@ -50,6 +50,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\AllergyCode\AllergyCodeInterface::class, \App\Repositories\AllergyCode\AllergyCodeRepository::class);
         $this->app->bind(\App\Repositories\AllergyMaster\AllergyMasterInterface::class, \App\Repositories\AllergyMaster\AllergyMasterRepository::class);
         $this->app->bind(\App\Repositories\Allergy\AllergyInterface::class, \App\Repositories\Allergy\AllergyRepository::class);
+        $this->app->bind(\App\Repositories\PrognosisCode\PrognosisCodeInterface::class, \App\Repositories\PrognosisCode\PrognosisCodeRepository::class);
+        $this->app->bind(\App\Repositories\PrognosisMaster\PrognosisMasterInterface::class, \App\Repositories\PrognosisMaster\PrognosisMasterRepository::class);
     }
 
     /**

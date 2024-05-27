@@ -36,6 +36,8 @@ use App\Http\Controllers\AllergyController;
 use App\Http\Controllers\AllergyCodeController;
 use App\Http\Controllers\AllergyMasterController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\PrognosisCodeController;
+use App\Http\Controllers\PrognosisMasterController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Encounter;
 
@@ -289,3 +291,11 @@ Route::get('/allergy', [AllergyController::class, 'index'])->name('allergy')->mi
 Route::get('/allergy-response-ss/{id}', [AllergyController::class, 'responseSS'])->name('allergy-response-ss')->middleware('auth');
 Route::get('/allergy-modal-kirim-ss/{id}', [AllergyController::class, 'modalKirimSS'])->name('allergy-modal-kirim-ss')->middleware('auth');
 Route::post('/allergy-kirim-ss/{id}', [AllergyController::class, 'kirimSS'])->name('allergy-kirim-ss')->middleware('auth');
+
+
+Route::get('/prognosis-code', [PrognosisCodeController::class, 'index'])->name('prognosis-code')->middleware('auth');
+
+Route::get('/prognosis-master', [PrognosisMasterController::class, 'index'])->name('prognosis-master')->middleware('auth');
+Route::get('/prognosis-master-kode/{id}', [PrognosisMasterController::class, 'modalKode'])->name('prognosis-master-kode')->middleware('auth');
+Route::get('/prognosis-master-data/{id}', [PrognosisMasterController::class, 'getDataKode'])->name('prognosis-master-data')->middleware('auth');
+Route::post('/prognosis-master-kode-update', [PrognosisMasterController::class, 'updateKode'])->name('prognosis-master-kode-update')->middleware('auth');

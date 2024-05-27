@@ -4,7 +4,7 @@
 <div class="nk-block-head nk-block-head-sm">
     <div class="nk-block-between">
         <div class="nk-block-head-content">
-            <h3 class="nk-block-title page-title">Allergy Code</h3>
+            <h3 class="nk-block-title page-title">Prognosis Code</h3>
             <div class="nk-block-des text-soft">
                 <p>Halaman Pengaturan atau Master Data</p>
             </div>
@@ -29,7 +29,7 @@
                                     <th>Kode</th>
                                     <th>Keterangan</th>
                                     <th>Kode Sistem</th>
-                                    <th>Kategori</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -69,7 +69,7 @@
             language: {
                 sLengthMenu: "Show _MENU_"
             },
-            ajax: "{{ route('allergy-code') }}",
+            ajax: "{{ route('prognosis-code') }}",
             columns: [
 
                 //   {data: 'id', name: 'id'},
@@ -85,10 +85,7 @@
                     data: 'code_system',
                     name: 'code_system'
                 },
-                {
-                    data: 'category',
-                    name: 'category'
-                },
+
             ]
         });
 

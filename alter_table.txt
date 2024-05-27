@@ -978,6 +978,7 @@ description = 'allergy'
 ALTER TABLE ss_snomed
 ALTER COLUMN snomed_display
 SET DATA TYPE text;
+---------------------------
 
 create table ss_allergy_code(
 id serial,
@@ -1112,3 +1113,123 @@ SELECT 'allergy','Allergy',0
 insert into ss_jadwal(kode,name,cron,command,status)
 select 'allergy_job','Allergy','* * * * *', 'App\Http\Controllers\AllergyController@runJob',0
 ---------------------------------------
+
+
+
+//prognosis
+
+create table ss_prognosis_code(
+id serial,
+code varchar(30),
+display varchar(255),
+code_system varchar(255)
+)
+
+insert into ss_prognosis_code(code,display,code_system) values('PR000001','Prognosis baik','https://terminology.kemkes.go.id/CodeSystem/clinical-term')
+insert into ss_prognosis_code(code,display,code_system) values('PR000002','Prognosis dubiaet bonam /Cenderung Baik','https://terminology.kemkes.go.id/CodeSystem/clinical-term')
+insert into ss_prognosis_code(code,display,code_system) values('PR000003','Prognosis dubiaet malam / cenderung tidak baik','https://terminology.kemkes.go.id/CodeSystem/clinical-term')
+insert into ss_prognosis_code(code,display,code_system) values('PR000004','Prognosis tidak baik','https://terminology.kemkes.go.id/CodeSystem/clinical-term')
+
+create table ss_master_prognosis(
+id serial,
+code varchar(50),
+display text,
+code_satusehat varchar(50),
+code_satusehat_display text,
+code_system varchar(255)
+)
+
+
+
+create table temp_prognosis(
+ id serial,
+ original_code varchar(30),
+ encounter_original_code varchar(30),
+ identifier_value varchar(30),
+ status varchar(30),
+ description text,
+ encounter_display varchar(50),
+ effective_datetime timestamp,
+ date timestamp,
+ summary text,
+ code_original varchar(50),
+ code_original_display varchar(255)
+)
+
+
+create table ss_prognosis(
+ id serial,
+ original_code varchar(30),
+ encounter_original_code varchar(30),
+ identifier_value varchar(30),
+ status varchar(30),
+ description text,
+ subject_reference varchar(50),
+ subject_display varchar(100),
+ encounter_display varchar(50),
+ effective_datetime timestamp,
+ date timestamp,
+ assessor_reference varchar(50),
+ summary text,
+ satusehat_send int,
+ satusehat_date timestamp,
+ satusehat_request text,
+ satusehat_response text,
+ satusehat_statuscode varchar(30),
+ created_at timestamp,
+ updated_at timestamp,
+ uuid varchar(255)
+)
+
+
+CREATE OR REPLACE FUNCTION public.validasi_prognosis(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+	INSERT INTO ss_prognosis(encounter_original_code,identifier_value,status,description,subject_reference,subject_display,
+	encounter_display,effective_datetime,date,assessor_reference,summary,coding_code,coding_display,satusehat_send,uuid)
+
+	SELECT prognosis_2.encounter_original_code, prognosis_2.identifier_value,prognosis_2.status,prognosis_2.description,
+	prognosis_2.subject_reference,prognosis_2.subject_display as subject_display,
+	prognosis_2.encounter_display,prognosis_2.effective_datetime,prognosis_2.date,prognosis_2.assessor_reference,prognosis_2.summary,
+	prognosis_2.code_satusehat as coding_code,prognosis_2.code_satusehat_display as coding_display,4 satusehat_send,uuid_generate_v4() as uuid
+	FROM
+	(
+		select prognosis.*,ss_encounter.subject_reference,ss_encounter.subject_display, participant_individual_reference as assessor_reference
+		FROM
+		(
+			SELECT a.*, b.code_satusehat, b.code_satusehat_display FROM
+			temp_prognosis a , ss_master_prognosis b
+			WHERE a.code_original = b.code
+			AND b.code_satusehat is not null
+		) as prognosis
+		join
+		ss_encounter
+		ON prognosis.encounter_original_code = ss_encounter.original_code
+	) as prognosis_2
+	LEFT JOIN
+	ss_prognosis
+	ON concat(prognosis_2.encounter_original_code,prognosis_2.identifier_value) = concat(ss_prognosis.encounter_original_code,ss_prognosis.identifier_value)
+	WHERE ss_prognosis.encounter_original_code is null;
+
+	return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_prognosis()
+    OWNER TO postgres;
+
+
+
+INSERT INTO ss_bundle_set(resource,description,status)
+SELECT 'prognosis','Prognosis',0
+
+
+insert into ss_jadwal(kode,name,cron,command,status)
+select 'prognosis_job','Prognosis','* * * * *', 'App\Http\Controllers\PrognosisController@runJob',0
+
+
