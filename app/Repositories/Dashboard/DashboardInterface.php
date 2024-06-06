@@ -17,6 +17,8 @@ interface DashboardInterface
     public function getConditionAll();
     public function getConditionSuccessAll();
     public function getObservationAll();
+    public function getProcedureAll();
+    public function getCompositionAll();
     public function getObservationSuccessAll();
 
     public function getMedicationRequestAll();
@@ -24,8 +26,16 @@ interface DashboardInterface
 
     public function getMedicationDispenseAll();
     public function getMedicationDispenseSuccessAll();
-
+    public function getServiceRequestAll();
+    public function getSprecimenAll();
     public function getObservationLabAll();
+
+    public function getDiagnosticReportAll();
+    public function getAllergyAll();
+    public function getPrognosisAll();
+
+
+
     public function getObservationLabSuccessAll();
 
 

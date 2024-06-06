@@ -39,18 +39,33 @@ class DashboardController extends Controller
                 "data_year_waiting_all" => $this->data_dashboard_repo->getYearWaitingAll()
             ];
 
-            $data_progress = [
-                "encounter_persen" => $this->createPercent($this->data_dashboard_repo->getYearSuccesAll(), $this->data_dashboard_repo->getYearAll()),
-                "condition_persen" => $this->createPercent($this->data_dashboard_repo->getConditionSuccessAll(), $this->data_dashboard_repo->getConditionAll()),
-                "observation_persen" => $this->createPercent($this->data_dashboard_repo->getObservationSuccessAll(), $this->data_dashboard_repo->getObservationAll()),
-                "medication_request_persen" => $this->createPercent($this->data_dashboard_repo->getMedicationRequestSuccessAll(), $this->data_dashboard_repo->getMedicationRequestAll()),
-                "medication_dispense_persen" => $this->createPercent($this->data_dashboard_repo->getMedicationDispenseSuccessAll(), $this->data_dashboard_repo->getMedicationDispenseAll()),
-                "observation_lab_persen" => $this->createPercent($this->data_dashboard_repo->getObservationLabSuccessAll(), $this->data_dashboard_repo->getObservationLabAll()),
+            //     $data_progress = [
+            //         "encounter_persen" => $this->createPercent($this->data_dashboard_repo->getYearSuccesAll(), $this->data_dashboard_repo->getYearAll()),
+            //         "condition_persen" => $this->createPercent($this->data_dashboard_repo->getConditionSuccessAll(), $this->data_dashboard_repo->getConditionAll()),
+            //         "observation_persen" => $this->createPercent($this->data_dashboard_repo->getObservationSuccessAll(), $this->data_dashboard_repo->getObservationAll()),
+            //         "medication_request_persen" => $this->createPercent($this->data_dashboard_repo->getMedicationRequestSuccessAll(), $this->data_dashboard_repo->getMedicationRequestAll()),
+            //         "medication_dispense_persen" => $this->createPercent($this->data_dashboard_repo->getMedicationDispenseSuccessAll(), $this->data_dashboard_repo->getMedicationDispenseAll()),
+            //         "observation_lab_persen" => $this->createPercent($this->data_dashboard_repo->getObservationLabSuccessAll(), $this->data_dashboard_repo->getObservationLabAll()),
 
-            ];
+            //     ];
+            //     return view('pages.dashboard.dashboard', [
+            //         "data_dashboard" => $data_result,
+            //         "data_progress" => $data_progress
+            //     ]);
             return view('pages.dashboard.dashboard', [
                 "data_dashboard" => $data_result,
-                "data_progress" => $data_progress
+                "data_condition" => $this->data_dashboard_repo->getConditionAll(),
+                "data_observation" => $this->data_dashboard_repo->getObservationAll(),
+                "data_procedure" => $this->data_dashboard_repo->getProcedureAll(),
+                "data_composition" => $this->data_dashboard_repo->getCompositionAll(),
+                "data_medication_request" => $this->data_dashboard_repo->getMedicationRequestAll(),
+                "data_medication_dispense" => $this->data_dashboard_repo->getMedicationDispenseAll(),
+                "data_service_request" => $this->data_dashboard_repo->getServiceRequestAll(),
+                "data_specimen" => $this->data_dashboard_repo->getSprecimenAll(),
+                "data_observation_lab" => $this->data_dashboard_repo->getObservationLabAll(),
+                "data_diagnostic_report" => $this->data_dashboard_repo->getDiagnosticReportAll(),
+                "data_allergy" => $this->data_dashboard_repo->getAllergyAll(),
+                "data_prognosis" => $this->data_dashboard_repo->getPrognosisAll(),
             ]);
         } catch (Throwable $e) {
             return view("layouts.error", [
