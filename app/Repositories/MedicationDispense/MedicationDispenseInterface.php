@@ -4,7 +4,7 @@ namespace App\Repositories\MedicationDispense;
 
 interface MedicationDispenseInterface
 {
-    public function getQuery();
+    public function getQuery($request = []);
     public function getDataMedicationDispenseByOriginalCode($original_code);
     public function getDataMedicationDispenseBundleByOriginalCode($original_code);
 

@@ -38,7 +38,8 @@ class SpecimenController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->specimen_repo->getQuery();
+
+            $data = $this->specimen_repo->getQuery($request->all());
 
             return DataTables::of($data)
                 ->addIndexColumn()

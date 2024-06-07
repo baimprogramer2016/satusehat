@@ -36,7 +36,8 @@ class ConditionController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->condition_repo->getQuery();
+
+            $data = $this->condition_repo->getQuery($request->all());
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function ($item_condition) {

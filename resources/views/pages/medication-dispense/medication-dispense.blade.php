@@ -17,6 +17,36 @@
         <div class="col-xl-12 col-xxl-12">
 
             <div class="card card-bordered card-full">
+                <div class="row m-2">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label class="form-label text-secondary" for="default-06">Status</label>
+                            <div class="form-control-wrap">
+                                <div class="form-control-select">
+                                    <div class="form-icon form-icon-left">
+                                        <em class="icon ni ni-report"></em>
+                                    </div>
+                                    <select class="form-control form-control-sm" id="status_kirim">
+                                        <option value="success">
+                                            Terkirim
+                                        </option>
+                                        <option value="failed">
+                                            Gagal Terkirim
+                                        </option>
+                                        <option value="waiting">
+                                            Menunggu
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 align-content-end">
+                        <button id="btn-filter" class="btn btn-sm btn-round btn-secondary text-center"><em
+                                class="icon ni ni-search"></em><span></span> Search</button>
+                    </div>
+                </div>
                 @if (session('pesan'))
                 <x-alert pesan="{{ session('pesan') }}" warna="{{ session('warna','success') }}" />
                 @endif
@@ -29,7 +59,7 @@
                                     <th>Kode Resep</th>
                                     <th>Kode Item</th>
                                     <th>Satu Sehat ID</th>
-                                    <th>Tanggal</th>
+                                    <th>Response</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -63,7 +93,15 @@
 @push('script')
 
 <script type="text/javascript">
-    $(function () {
+    function load_datatable(p_status_kirim = 'success'){
+
+        //mendapatkan status param URL sebagai filter saat kirim data
+        const getParams = new URLSearchParams(window.location.search);
+
+        const par_status_kirim = getParams.get('status_kirim');
+        p_status_kirim = par_status_kirim;
+        document.getElementById('status_kirim').value = par_status_kirim;
+
 
       var table = $('.data-table').DataTable({
           processing: true,
@@ -72,7 +110,12 @@
           language : {
                 sLengthMenu: "Show _MENU_"
             },
-          ajax: "{{ route('medication-dispense') }}",
+          ajax: {
+            url : "{{ route('medication-dispense') }}",
+            data : {
+                status_kirim:  p_status_kirim,
+            }
+          },
           columns: [
 
             //   {data: 'id', name: 'id'},
@@ -80,14 +123,29 @@
               {data: 'identifier_1', name: 'identifier_1'},
               {data: 'identifier_2', name: 'identifier_2'},
               {data: 'satusehat_id', name: 'satusehat_id'},
-              {data: 'satusehat_date', name: 'satusehat_date'},
+              {data: 'satusehat_statuscode', name: 'satusehat_statuscode'},
               {data: 'status', name: 'status', orderable: false, searchable: false},
               {data: 'action', name: 'action', orderable: false, searchable: false},
           ]
       });
 
-    });
+    };
 
+
+    load_datatable();
+
+    $("#btn-filter").click(function(){
+
+        const status_kirim = ($("#status_kirim").val() === '') ? '' : $("#status_kirim").val();
+
+        //menangani filter
+        const url = new URL(window.location);
+        const params = new URLSearchParams(url.search);
+        window.history.replaceState({}, '', `${url.pathname}?status_kirim=${status_kirim}`);
+
+        $('.data-table').DataTable().destroy();
+        load_datatable(status_kirim);
+    })
 
 
     function modalResponseSS(id)

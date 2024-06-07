@@ -13,9 +13,36 @@ class DiagnosticReportRepository implements DiagnosticReportInterface
     ) {
         $this->model = $diagnosticReportModel;
     }
-    public function getQuery()
+
+    public function getQuery($request = [])
     {
-        return $this->model->query()->where('procedure', 'lab');
+        $q = $this->model->query()->where('procedure', 'lab');
+        //FILTER
+        $q->when($request['status_kirim'] != '', function ($query) use ($request) {
+            switch ($request['status_kirim']) {
+                case 'waiting':
+                    $query->whereNull('satusehat_statuscode_diagnostic_report');
+                    break;
+                case 'failed':
+                    $query->where('satusehat_statuscode_diagnostic_report', '500');
+                    break;
+                default:
+                    $query->where('satusehat_statuscode_diagnostic_report', '200');
+            }
+            return $query;
+        });
+        $q->when($request['tanggal_awal'] != '', function ($query) use ($request) {
+
+            $query->whereBetween('authored_on', [
+                Carbon::createFromFormat('Y-m-d', $request['tanggal_awal'])->startOfDay(),
+                Carbon::createFromFormat('Y-m-d', $request['tanggal_akhir'])->endOfDay(),
+            ]);
+
+            return $query;
+        });
+
+
+        return $q;
     }
 
     public function getDataDiagnosticReportByOriginalCode($original_code)

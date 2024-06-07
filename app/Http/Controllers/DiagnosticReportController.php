@@ -37,7 +37,8 @@ class DiagnosticReportController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->diagnostic_report_repo->getQuery();
+
+            $data = $this->diagnostic_report_repo->getQuery($request->all());
 
             return DataTables::of($data)
                 ->addIndexColumn()

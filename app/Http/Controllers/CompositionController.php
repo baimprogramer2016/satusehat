@@ -40,7 +40,7 @@ class CompositionController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->composition_repo->getQuery();
+            $data = $this->composition_repo->getQuery($request->all());
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function ($item_composition) {

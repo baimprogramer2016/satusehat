@@ -4,7 +4,7 @@ namespace App\Repositories\Specimen;
 
 interface SpecimenInterface
 {
-    public function getQuery();
+    public function getQuery($request = []);
 
     public function getDataSpecimenByOriginalCode($original_code);
     public function getDataSpecimenBundleByOriginalCode($original_code);

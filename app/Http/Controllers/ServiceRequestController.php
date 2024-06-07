@@ -35,7 +35,8 @@ class ServiceRequestController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->service_request_repo->getQuery();
+
+            $data = $this->service_request_repo->getQuery($request->all());
 
             return DataTables::of($data)
                 ->addIndexColumn()

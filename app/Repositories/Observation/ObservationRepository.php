@@ -15,10 +15,39 @@ class ObservationRepository implements ObservationInterface
         $this->model = $observationModel;
     }
 
-    public function getQuery()
+    public function getQuery($request = [])
     {
-        return $this->model->query()->whereIn('type_observation', ['suhu', 'sistol', 'nadi', 'pernapasan', 'diastole']);
+        $q = $this->model->query()->whereIn('type_observation', ['suhu', 'sistol', 'nadi', 'pernapasan', 'diastole']);
+
+        //FILTER
+        $q->when($request['status_kirim'] != '', function ($query) use ($request) {
+            switch ($request['status_kirim']) {
+                case 'waiting':
+                    $query->whereNull('satusehat_statuscode');
+                    break;
+                case 'failed':
+                    $query->where('satusehat_statuscode', '500');
+                    break;
+                default:
+                    $query->where('satusehat_statuscode', '200');
+            }
+            return $query;
+        });
+        $q->when($request['tanggal_awal'] != '', function ($query) use ($request) {
+
+            $query->whereBetween('effective_datetime', [
+                Carbon::createFromFormat('Y-m-d', $request['tanggal_awal'])->startOfDay(),
+                Carbon::createFromFormat('Y-m-d', $request['tanggal_akhir'])->endOfDay(),
+            ]);
+
+            return $query;
+        });
+
+
+        return $q;
     }
+
+
 
     public function getDataObservationFind($id)
     {

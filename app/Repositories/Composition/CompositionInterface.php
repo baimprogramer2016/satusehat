@@ -4,7 +4,7 @@ namespace App\Repositories\Composition;
 
 interface CompositionInterface
 {
-    public function getQuery();
+    public function getQuery($request = []);
     public function getDataCompositionById($id);
     public function getDataCompositionByOriginalCode($original_code);
     public function getDataCompositionBundleByOriginalCode($original_code);

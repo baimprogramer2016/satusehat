@@ -37,7 +37,8 @@ class ObservationLabController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->observation_lab_repo->getObservationLabQuery();
+
+            $data = $this->observation_lab_repo->getObservationLabQuery($request->all());
 
             return DataTables::of($data)
                 ->addIndexColumn()

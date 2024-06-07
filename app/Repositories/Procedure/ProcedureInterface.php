@@ -4,7 +4,7 @@ namespace App\Repositories\Procedure;
 
 interface ProcedureInterface
 {
-    public function getQuery();
+    public function getQuery($request = []);
     public function getDataProcedureByOriginalCode($original_code);
     public function getDataProcedureBundleByOriginalCode($original_code);
     public function updateDataBundleProcedureJob($param = []);

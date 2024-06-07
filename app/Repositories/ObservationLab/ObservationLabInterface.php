@@ -5,7 +5,8 @@ namespace App\Repositories\ObservationLab;
 interface ObservationLabInterface
 {
     public function getQuery();
-    public function getObservationLabQuery();
+
+    public function getObservationLabQuery($request = []);
 
     public function getDataObservationLabByOriginalCode($original_code);
     public function getDataObservationLabBundleByOriginalCode($original_code);

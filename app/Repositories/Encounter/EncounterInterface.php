@@ -4,7 +4,7 @@ namespace App\Repositories\Encounter;
 
 interface EncounterInterface
 {
-    public function getQuery();
+    public function getQuery($request = []);
 
     public function getDataBundleReadyJob();
 

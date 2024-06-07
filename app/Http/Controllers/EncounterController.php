@@ -56,7 +56,9 @@ class EncounterController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->encounter_repo->getQuery();
+
+            $data = $this->encounter_repo->getQuery($request->all());
+
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function ($item_encounter) {

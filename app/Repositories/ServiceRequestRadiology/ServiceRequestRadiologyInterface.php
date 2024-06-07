@@ -4,7 +4,7 @@ namespace App\Repositories\ServiceRequestRadiology;
 
 interface ServiceRequestRadiologyInterface
 {
-    public function getQuery();
+    public function getQuery($request = []);
 
     public function getDataServiceRequestRadiologyByOriginalCode($original_code);
     public function getDataServiceRequestRadiologyBundleByOriginalCode($original_code);

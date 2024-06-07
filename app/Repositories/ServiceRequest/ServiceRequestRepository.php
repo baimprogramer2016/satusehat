@@ -13,10 +13,37 @@ class ServiceRequestRepository implements ServiceRequestInterface
     ) {
         $this->model = $serviceRequestModel;
     }
-    public function getQuery()
+
+    public function getQuery($request = [])
     {
-        return $this->model->query()->where('procedure', 'lab');
+        $q = $this->model->query()->where('procedure', 'lab');
+
+        //FILTER
+        $q->when($request['status_kirim'] != '', function ($query) use ($request) {
+            switch ($request['status_kirim']) {
+                case 'waiting':
+                    $query->whereNull('satusehat_statuscode');
+                    break;
+                case 'failed':
+                    $query->where('satusehat_statuscode', '500');
+                    break;
+                default:
+                    $query->where('satusehat_statuscode', '200');
+            }
+            return $query;
+        });
+        $q->when($request['tanggal_awal'] != '', function ($query) use ($request) {
+
+            $query->whereBetween('authored_on', [
+                Carbon::createFromFormat('Y-m-d', $request['tanggal_awal'])->startOfDay(),
+                Carbon::createFromFormat('Y-m-d', $request['tanggal_akhir'])->endOfDay(),
+            ]);
+
+            return $query;
+        });
+        return $q;
     }
+
 
     public function getDataServiceRequestByOriginalCode($original_code)
     {

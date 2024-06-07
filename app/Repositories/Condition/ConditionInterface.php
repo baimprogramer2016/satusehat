@@ -4,7 +4,7 @@ namespace App\Repositories\Condition;
 
 interface ConditionInterface
 {
-    public function getQuery();
+    public function getQuery($request = []);
     public function getDataConditionByOriginalCode($original_code);
 
     public function updateDataBundleConditionJob($param = [], $rank);

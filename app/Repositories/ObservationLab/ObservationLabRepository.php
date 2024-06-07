@@ -22,10 +22,38 @@ class ObservationLabRepository implements ObservationLabInterface
     }
 
     //untuk observation
-    public function getObservationLabQuery()
+
+
+    public function getObservationLabQuery($request = [])
     {
-        return $this->observation_model->query()
-            ->where('type_observation', 'Laboratory');
+        $q = $this->observation_model->query()->where('type_observation', 'Laboratory');
+
+        //FILTER
+        $q->when($request['status_kirim'] != '', function ($query) use ($request) {
+            switch ($request['status_kirim']) {
+                case 'waiting':
+                    $query->whereNull('satusehat_statuscode');
+                    break;
+                case 'failed':
+                    $query->where('satusehat_statuscode', '500');
+                    break;
+                default:
+                    $query->where('satusehat_statuscode', '200');
+            }
+            return $query;
+        });
+        $q->when($request['tanggal_awal'] != '', function ($query) use ($request) {
+
+            $query->whereBetween('effective_datetime', [
+                Carbon::createFromFormat('Y-m-d', $request['tanggal_awal'])->startOfDay(),
+                Carbon::createFromFormat('Y-m-d', $request['tanggal_akhir'])->endOfDay(),
+            ]);
+
+            return $query;
+        });
+
+
+        return $q;
     }
 
     #ini untuk bundle

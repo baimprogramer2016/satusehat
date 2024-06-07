@@ -4,7 +4,7 @@ namespace App\Repositories\Observation;
 
 interface ObservationInterface
 {
-    public function getQuery();
+    public function getQuery($request = []);
     public function getDataObservationByOriginalCode($original_code);
     public function getDataObservationBundleByOriginalCode($original_code);
 

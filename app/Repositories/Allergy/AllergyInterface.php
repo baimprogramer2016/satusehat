@@ -4,7 +4,7 @@ namespace App\Repositories\Allergy;
 
 interface AllergyInterface
 {
-    public function getQuery();
+    public function getQuery($request = []);
     public function getDataAllergyById($id);
     public function getDataAllergyByOriginalCode($original_code);
     public function getDataAllergyBundleByOriginalCode($original_code);

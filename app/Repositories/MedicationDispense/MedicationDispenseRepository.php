@@ -17,9 +17,27 @@ class MedicationDispenseRepository implements MedicationDispenseInterface
     }
 
 
-    public function getQuery()
+    public function getQuery($request = [])
     {
-        return $this->model->query();
+        $q = $this->model->query();
+
+        //FILTER
+        $q->when($request['status_kirim'] != '', function ($query) use ($request) {
+            switch ($request['status_kirim']) {
+                case 'waiting':
+                    $query->whereNull('satusehat_statuscode');
+                    break;
+                case 'failed':
+                    $query->where('satusehat_statuscode', '500');
+                    break;
+                default:
+                    $query->where('satusehat_statuscode', '200');
+            }
+            return $query;
+        });
+
+
+        return $q;
     }
     public function getDataMedicationDispenseFind($id)
     {

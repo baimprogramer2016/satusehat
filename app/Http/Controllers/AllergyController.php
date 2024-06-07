@@ -39,7 +39,8 @@ class AllergyController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->allergy_repo->getQuery();
+
+            $data = $this->allergy_repo->getQuery($request->all());
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function ($item_allergy) {

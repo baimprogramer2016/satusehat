@@ -41,7 +41,8 @@ class ObservationController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->observation_repo->getQuery();
+
+            $data = $this->observation_repo->getQuery($request->all());
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function ($item_observation) {

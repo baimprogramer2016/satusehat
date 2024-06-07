@@ -19,11 +19,37 @@ class AllergyRepository implements AllergyInterface
         return $this->model->where('id', $id)->get();
     }
 
-    public function getQuery()
+    public function getQuery($request = [])
     {
-        return $this->model->query();
-    }
+        $q = $this->model->query();
 
+        //FILTER
+        $q->when($request['status_kirim'] != '', function ($query) use ($request) {
+            switch ($request['status_kirim']) {
+                case 'waiting':
+                    $query->whereNull('satusehat_statuscode');
+                    break;
+                case 'failed':
+                    $query->where('satusehat_statuscode', '500');
+                    break;
+                default:
+                    $query->where('satusehat_statuscode', '200');
+            }
+            return $query;
+        });
+        $q->when($request['tanggal_awal'] != '', function ($query) use ($request) {
+
+            $query->whereBetween('recorded_date', [
+                Carbon::createFromFormat('Y-m-d', $request['tanggal_awal'])->startOfDay(),
+                Carbon::createFromFormat('Y-m-d', $request['tanggal_akhir'])->endOfDay(),
+            ]);
+
+            return $query;
+        });
+
+
+        return $q;
+    }
     public function getDataAllergyByOriginalCode($original_code)
     {
         return $this->model->where('encounter_original_code', $original_code)->get();

@@ -40,7 +40,8 @@ class MedicationDispenseController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = $this->medication_dispense_repo->getQuery();
+
+            $data = $this->medication_dispense_repo->getQuery($request->all());
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('status', function ($item_medication_dispense) {
