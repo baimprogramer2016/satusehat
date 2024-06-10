@@ -855,9 +855,9 @@ trait JsonTrait
                     ]
                 ],
                 "status" => "active",
-                "manufacturer" => [
-                    "reference" => "Organization/" . $data_parameter['farmasi_id']
-                ],
+                // "manufacturer" => [
+                //     "reference" => "Organization/" . $data_parameter['farmasi_id']
+                // ],
                 "form" => [
                     "coding" => [
                         [
@@ -2087,9 +2087,9 @@ trait JsonTrait
                 ]
             ],
             "status" => "active",
-            "manufacturer" => [
-                "reference" => "Organization/" . $data_parameter['farmasi_id']
-            ],
+            // "manufacturer" => [
+            //     "reference" => "Organization/" . $data_parameter['farmasi_id']
+            // ],
             "form" => [
                 "coding" => [
                     [
