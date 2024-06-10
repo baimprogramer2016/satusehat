@@ -425,7 +425,7 @@
                 if (text === 'StopAutoRefresh') {
                     fetchData();
                 }
-            }, 10000);
+            }, 5000);
         }
         else if(text === 'StopAutoRefresh')
         {
