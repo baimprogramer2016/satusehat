@@ -28,45 +28,33 @@ class DashboardController extends Controller
     public function index()
     {
         try {
-            $data_result = [
-                "data_current_year" => $this->data_dashboard_repo->getCurrentYear(),
-                "data_current_year_success" => $this->data_dashboard_repo->getCurrentYearSucces(),
-                "data_current_year_failed" => $this->data_dashboard_repo->getCurrentYearFailed(),
-                "data_current_year_waiting" => $this->data_dashboard_repo->getCurrentYearWaiting(),
-                "data_year_all" => $this->data_dashboard_repo->getYearAll(),
-                "data_year_success_all" => $this->data_dashboard_repo->getYearSuccesAll(),
-                "data_year_failed_all" => $this->data_dashboard_repo->getYearFailedAll(),
-                "data_year_waiting_all" => $this->data_dashboard_repo->getYearWaitingAll()
-            ];
+            // $data_result = [
+            //     "data_current_year" => $this->data_dashboard_repo->getCurrentYear(),
+            //     "data_current_year_success" => $this->data_dashboard_repo->getCurrentYearSucces(),
+            //     "data_current_year_failed" => $this->data_dashboard_repo->getCurrentYearFailed(),
+            //     "data_current_year_waiting" => $this->data_dashboard_repo->getCurrentYearWaiting(),
+            //     "data_year_all" => $this->data_dashboard_repo->getYearAll(),
+            //     "data_year_success_all" => $this->data_dashboard_repo->getYearSuccesAll(),
+            //     "data_year_failed_all" => $this->data_dashboard_repo->getYearFailedAll(),
+            //     "data_year_waiting_all" => $this->data_dashboard_repo->getYearWaitingAll()
+            // ];
 
-            //     $data_progress = [
-            //         "encounter_persen" => $this->createPercent($this->data_dashboard_repo->getYearSuccesAll(), $this->data_dashboard_repo->getYearAll()),
-            //         "condition_persen" => $this->createPercent($this->data_dashboard_repo->getConditionSuccessAll(), $this->data_dashboard_repo->getConditionAll()),
-            //         "observation_persen" => $this->createPercent($this->data_dashboard_repo->getObservationSuccessAll(), $this->data_dashboard_repo->getObservationAll()),
-            //         "medication_request_persen" => $this->createPercent($this->data_dashboard_repo->getMedicationRequestSuccessAll(), $this->data_dashboard_repo->getMedicationRequestAll()),
-            //         "medication_dispense_persen" => $this->createPercent($this->data_dashboard_repo->getMedicationDispenseSuccessAll(), $this->data_dashboard_repo->getMedicationDispenseAll()),
-            //         "observation_lab_persen" => $this->createPercent($this->data_dashboard_repo->getObservationLabSuccessAll(), $this->data_dashboard_repo->getObservationLabAll()),
-
-            //     ];
-            //     return view('pages.dashboard.dashboard', [
-            //         "data_dashboard" => $data_result,
-            //         "data_progress" => $data_progress
-            //     ]);
-            return view('pages.dashboard.dashboard', [
-                "data_dashboard" => $data_result,
-                "data_condition" => $this->data_dashboard_repo->getConditionAll(),
-                "data_observation" => $this->data_dashboard_repo->getObservationAll(),
-                "data_procedure" => $this->data_dashboard_repo->getProcedureAll(),
-                "data_composition" => $this->data_dashboard_repo->getCompositionAll(),
-                "data_medication_request" => $this->data_dashboard_repo->getMedicationRequestAll(),
-                "data_medication_dispense" => $this->data_dashboard_repo->getMedicationDispenseAll(),
-                "data_service_request" => $this->data_dashboard_repo->getServiceRequestAll(),
-                "data_specimen" => $this->data_dashboard_repo->getSprecimenAll(),
-                "data_observation_lab" => $this->data_dashboard_repo->getObservationLabAll(),
-                "data_diagnostic_report" => $this->data_dashboard_repo->getDiagnosticReportAll(),
-                "data_allergy" => $this->data_dashboard_repo->getAllergyAll(),
-                "data_prognosis" => $this->data_dashboard_repo->getPrognosisAll(),
-            ]);
+            // , [
+            //     "data_dashboard" => $data_result,
+            //     "data_condition" => $this->data_dashboard_repo->getConditionAll(),
+            //     "data_observation" => $this->data_dashboard_repo->getObservationAll(),
+            //     "data_procedure" => $this->data_dashboard_repo->getProcedureAll(),
+            //     "data_composition" => $this->data_dashboard_repo->getCompositionAll(),
+            //     "data_medication_request" => $this->data_dashboard_repo->getMedicationRequestAll(),
+            //     "data_medication_dispense" => $this->data_dashboard_repo->getMedicationDispenseAll(),
+            //     "data_service_request" => $this->data_dashboard_repo->getServiceRequestAll(),
+            //     "data_specimen" => $this->data_dashboard_repo->getSprecimenAll(),
+            //     "data_observation_lab" => $this->data_dashboard_repo->getObservationLabAll(),
+            //     "data_diagnostic_report" => $this->data_dashboard_repo->getDiagnosticReportAll(),
+            //     "data_allergy" => $this->data_dashboard_repo->getAllergyAll(),
+            //     "data_prognosis" => $this->data_dashboard_repo->getPrognosisAll(),
+            // ]
+            return view('pages.dashboard.dashboard');
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e
@@ -101,5 +89,36 @@ class DashboardController extends Controller
         Artisan::call('queue:work');
 
         return response()->json(['message' => 'Schedule Worker started']);
+    }
+
+    public function refreshDashboard()
+    {
+        $data_result = [
+            "data_current_year" => $this->data_dashboard_repo->getCurrentYear(),
+            "data_current_year_success" => $this->data_dashboard_repo->getCurrentYearSucces(),
+            "data_current_year_failed" => $this->data_dashboard_repo->getCurrentYearFailed(),
+            "data_current_year_waiting" => $this->data_dashboard_repo->getCurrentYearWaiting(),
+            "data_year_all" => $this->data_dashboard_repo->getYearAll(),
+            "data_year_success_all" => $this->data_dashboard_repo->getYearSuccesAll(),
+            "data_year_failed_all" => $this->data_dashboard_repo->getYearFailedAll(),
+            "data_year_waiting_all" => $this->data_dashboard_repo->getYearWaitingAll()
+        ];
+        $data_json = [
+            "data_encounter" => $data_result,
+            "data_condition" => $this->data_dashboard_repo->getConditionAll(),
+            "data_observation" => $this->data_dashboard_repo->getObservationAll(),
+            "data_procedure" => $this->data_dashboard_repo->getProcedureAll(),
+            "data_composition" => $this->data_dashboard_repo->getCompositionAll(),
+            "data_medication_request" => $this->data_dashboard_repo->getMedicationRequestAll(),
+            "data_medication_dispense" => $this->data_dashboard_repo->getMedicationDispenseAll(),
+            "data_service_request" => $this->data_dashboard_repo->getServiceRequestAll(),
+            "data_specimen" => $this->data_dashboard_repo->getSprecimenAll(),
+            "data_observation_lab" => $this->data_dashboard_repo->getObservationLabAll(),
+            "data_diagnostic_report" => $this->data_dashboard_repo->getDiagnosticReportAll(),
+            "data_allergy" => $this->data_dashboard_repo->getAllergyAll(),
+            "data_prognosis" => $this->data_dashboard_repo->getPrognosisAll(),
+        ];
+
+        return response()->json($data_json);
     }
 }

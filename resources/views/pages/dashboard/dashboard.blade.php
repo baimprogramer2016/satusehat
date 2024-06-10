@@ -17,11 +17,15 @@
                         class="icon ni ni-more-v"></em></a>
                 <div class="toggle-expand-content" data-content="pageMenu">
                     <ul class="nk-block-tools g-3">
+                        <li><span id="auto_refresh" class="btn btn-success " onclick="refresh()"><em
+                                    class="icon ni ni-clock"></em>Start Auto
+                                Refresh</span>
+                        </li>
                         <li><a href="#" class="btn btn-white btn-dim btn-outline-primary"><em
                                     class="icon ni ni-download-cloud"></em><span>Panduan</span></a>
                         </li>
                         <li><a href="#file-upload" onClick="modalLaporan()" data-toggle="modal"
-                                class="btn btn-white btn-dim btn-outline-success"><em
+                                class="btn btn-white btn-dim btn-outline-info"><em
                                     class="icon ni ni-reports"></em><span>Laporan</span></a>
                         </li>
 
@@ -43,8 +47,7 @@
 
                     </div>
                     <div class="card-amount">
-                        <span class="amount"> {{ number_format($data_dashboard['data_current_year'] ?? 0) }} <span
-                                class="currency currency-usd">Encounter</span>
+                        <span class="amount" id="encounter_year">0 <span class="currency currency-usd">Encounter</span>
                         </span>
                         {{-- <span class="change up text-danger"><em class="icon ni ni-arrow-long-up"></em>1.93%</span>
                         --}}
@@ -53,21 +56,18 @@
                         <div class="invest-data-amount g-2 text-center">
                             <div class="invest-data-history border border-success border-5   rounded-lg">
                                 <div class="title text-success font-weight-bold">Berhasil Terkirim</div>
-                                <div class="amount  text-success font-weight-bold"> {{
-                                    number_format($data_dashboard['data_current_year_success'] ?? 0)
-                                    }} <span class="currency currency-usd"></span></div>
+                                <div id="encounter_year_success" class="amount  text-success font-weight-bold">0 <span
+                                        class="currency currency-usd"></span></div>
                             </div>
                             <div class="invest-data-history border border-danger  rounded-lg">
                                 <div class="title  text-danger font-weight-bold">Gagal Terkirim</div>
-                                <div class="amount  text-danger font-weight-bold"> {{
-                                    number_format($data_dashboard['data_current_year_failed'] ?? 0)
-                                    }} <span class="currency currency-usd"></span></div>
+                                <div id="encounter_year_failed" class="amount  text-danger font-weight-bold">0 <span
+                                        class="currency currency-usd"></span></div>
                             </div>
                             <div class="invest-data-history border border-warning  rounded-lg">
                                 <div class="title  text-warning font-weight-bold">Belum Dikirim</div>
-                                <div class="amount  text-warning font-weight-bold"> {{
-                                    number_format($data_dashboard['data_current_year_waiting'] ?? 0)
-                                    }} <span class="currency currency-usd"></span></div>
+                                <div id="encounter_year_waiting" class="amount  text-warning font-weight-bold">0<span
+                                        class="currency currency-usd"></span></div>
                             </div>
                         </div>
 
@@ -85,8 +85,7 @@
 
                     </div>
                     <div class="card-amount">
-                        <span class="amount"> {{ number_format($data_dashboard['data_year_all'] ?? 0) }} <span
-                                class="currency currency-usd">Encounter</span>
+                        <span id="encounter_all" class="amount"> 0 <span class="currency currency-usd">Encounter</span>
                         </span>
                         {{-- <span class="change up text-danger"><em class="icon ni ni-arrow-long-up"></em>1.93%</span>
                         --}}
@@ -95,24 +94,18 @@
                         <div class="invest-data-amount g-2 text-center">
                             <div class="invest-data-history border border-success rounded-lg">
                                 <div class="title  text-success font-weight-bold">Berhasil Terkirim</div>
-                                <div class="amount  text-success font-weight-bold"> {{
-                                    number_format($data_dashboard['data_year_success_all']
-                                    ?? 0)
-                                    }} <span class="currency currency-usd"></span></div>
+                                <div id="encounter_all_success" class="amount  text-success font-weight-bold"> 0 <span
+                                        class="currency currency-usd"></span></div>
                             </div>
                             <div class="invest-data-history border border-danger  rounded-lg">
                                 <div class="title  text-danger font-weight-bold">Gagal Terkirim</div>
-                                <div class="amount  text-danger font-weight-bold"> {{
-                                    number_format($data_dashboard['data_year_failed_all'] ??
-                                    0)
-                                    }} <span class="currency currency-usd"></span></div>
+                                <div id="encounter_all_failed" class="amount  text-danger font-weight-bold"> 0 <span
+                                        class="currency currency-usd"></span></div>
                             </div>
                             <div class="invest-data-history border border-warning  rounded-lg">
                                 <div class="title  text-warning font-weight-bold">Belum Dikirim</div>
-                                <div class="amount  text-warning font-weight-bold"> {{
-                                    number_format($data_dashboard['data_year_waiting_all']
-                                    ?? 0)
-                                    }} <span class="currency currency-usd"></span></div>
+                                <div id="encounter_all_waiting" class="amount  text-warning font-weight-bold"> 0<span
+                                        class="currency currency-usd"></span></div>
                             </div>
                         </div>
 
@@ -123,200 +116,144 @@
         </div><!-- .col -->
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{ number_format($data_condition['condition_success']) ??
-                        0 }}</span> /
-                    <span class='text-secondary'>{{ number_format($data_condition['condition_waiting']) ?? 0 }}</span>
+                <div class="amount"><span class='text-primary' id="condition_success">0</span> /
+                    <span class='text-secondary' id="condition_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_condition['condition_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="condition_failed">0</span></strong>
                 </div>
                 <div class="title">Condition</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_observation['observation_success'])
-                        ??
-                        0 }}</span> /
-                    <span class='text-secondary'>{{ number_format($data_observation['observation_waiting']) ?? 0
-                        }}</span>
+                <div class="amount"><span class='text-primary' id="observation_success">0</span> /
+                    <span class='text-secondary' id="observation_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_observation['observation_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="observation_failed">0</span></strong>
                 </div>
                 <div class="title">Observation</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_composition['composition_success']) ??
-                        0 }}</span> /
-                    <span class='text-secondary'>{{
-                        number_format($data_composition['composition_waiting']) ?? 0
-                        }}</span>
+                <div class="amount"><span class='text-primary' id="composition_success">0</span> /
+                    <span class='text-secondary' id="composition_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_composition['composition_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="composition_failed">0</span></strong>
                 </div>
                 <div class="title">Composition</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_procedure['procedure_success']) ??
-                        0 }}</span> /
-                    <span class='text-secondary'>{{
-                        number_format($data_procedure['procedure_waiting']) ?? 0
-                        }}</span>
+                <div class="amount"><span class='text-primary' id="procedure_success">0</span> /
+                    <span class='text-secondary' id="procedure_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_procedure['procedure_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="procedure_failed">0</span></strong>
                 </div>
                 <div class="title">Procedure</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_medication_request['medication_request_success']) ??
-                        0 }}</span> /
-                    <span class='text-secondary'>{{
-                        number_format($data_medication_request['medication_request_waiting']) ?? 0 }}</span>
+                <div class="amount"><span class='text-primary' id="medication_request_success">0</span> /
+                    <span class='text-secondary' id="medication_request_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_medication_request['medication_request_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="medication_request_failed">0</span></strong>
                 </div>
                 <div class="title">Medication Request</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_medication_dispense['medication_dispense_success']) ??
-                        0 }}</span> /
-                    <span class='text-secondary'>{{
-                        number_format($data_medication_dispense['medication_dispense_waiting']) ?? 0
-                        }}</span>
+                <div class="amount"><span class='text-primary' id="medication_dispense_success">0</span> /
+                    <span class='text-secondary' id="medication_dispense_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_medication_dispense['medication_dispense_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="medication_dispense_failed">0</span></strong>
                 </div>
                 <div class="title">Medication Dispense</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_service_request['service_request_success']) ??
-                        0 }}</span> /
-                    <span class='text-secondary'>{{
-                        number_format($data_service_request['service_request_waiting']) ?? 0
-                        }}</span>
+                <div class="amount"><span class='text-primary' id="service_request_success">0</span> /
+                    <span class='text-secondary' id="service_request_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_service_request['service_request_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="service_request_failed">0</span></strong>
                 </div>
                 <div class="title">Service Request</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_specimen['specimen_success']) ??
-                        0 }}</span> /
-                    <span class='text-secondary'>{{
-                        number_format($data_specimen['specimen_waiting']) ?? 0
-                        }}</span>
+                <div class="amount"><span class='text-primary' id="specimen_success">0</span> /
+                    <span class='text-secondary' id="specimen_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_specimen['specimen_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="specimen_failed">0</span></strong>
                 </div>
                 <div class="title">Specimen</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_observation_lab['observation_lab_success']) ??
-                        0 }}</span> /
-                    <span class='text-secondary'>{{
-                        number_format($data_observation_lab['observation_lab_waiting']) ?? 0
-                        }}</span>
+                <div class="amount"><span class='text-primary' id="observation_lab_success">0</span> /
+                    <span class='text-secondary' id="observation_lab_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_observation_lab['observation_lab_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="observation_lab_failed">0</span></strong>
                 </div>
                 <div class="title">Observation Lab</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_diagnostic_report['diagnostic_report_success']) ??
-                        0 }} </span> /
-                    <span class='text-secondary'>{{
-                        number_format($data_diagnostic_report['diagnostic_report_waiting']) ?? 0
-                        }}</span>
+                <div class="amount"><span class='text-primary' id="diagnostic_report_success">0</span> /
+                    <span class='text-secondary' id="diagnostic_report_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_diagnostic_report['diagnostic_report_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="diagnostic_report_failed">0</span></strong>
                 </div>
                 <div class="title">Diagnostic Report</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_allergy['allergy_success']) ??
-                        0 }} </span> /
-                    <span class='text-secondary'>{{
-                        number_format($data_allergy['allergy_waiting']) ?? 0
-                        }}</span>
+                <div class="amount"><span class='text-primary' id="allergy_success">0</span> /
+                    <span class='text-secondary' id="allergy_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_allergy['allergy_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="allergy_failed">0</span></strong>
                 </div>
                 <div class="title">Allergy</div>
             </div>
         </div>
         <div class="col-md-4 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
-                <div class="amount"><span class='text-primary'>{{
-                        number_format($data_prognosis['prognosis_success']) ??
-                        0 }} </span> /
-                    <span class='text-secondary'>{{
-                        number_format($data_prognosis['prognosis_waiting']) ?? 0
-                        }}</span>
+                <div class="amount"><span class='text-primary' id="prognosis_success">0</span> /
+                    <span class='text-secondary' id="prognosis_waiting">0</span>
                     <small class="currenct currency-usd"></small>
                 </div>
-                <div class="info text-danger">Gagal Kirim : <strong>{{
-                        number_format($data_prognosis['prognosis_failed']) ?? 0 }} <span
-                            class="currenct currency-usd"></span></strong>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="prognosis_failed">0</span></strong>
                 </div>
                 <div class="title">Clinical</div>
             </div>
@@ -393,6 +330,110 @@
                 // console.log(response);
             }
         })
+    }
+
+    function fetchData()
+    {
+        $.ajax({
+            type:"GET",
+            url:"{{ route('dashboard-refresh') }}",
+            success: function(response)
+            {
+                // console.log(response.data_encounter);
+                var encounter = response.data_encounter;
+                var condition = response.data_condition;
+                var observation = response.data_observation;
+                var procedure = response.data_procedure;
+                var composition = response.data_composition;
+                var medication_request = response.data_medication_request;
+                var medication_dispense = response.data_medication_dispense;
+                var service_request = response.data_service_request;
+                var specimen = response.data_specimen;
+                var observation_lab = response.data_observation_lab;
+                var diagnostic_report = response.data_diagnostic_report;
+                var allergy = response.data_allergy;
+                var prognosis = response.data_prognosis;
+
+                $("#encounter_year").html(encounter.data_current_year.toLocaleString('de-DE')+' Encounter');
+                $("#encounter_year_success").html(encounter.data_current_year_success.toLocaleString('de-DE'));
+                $("#encounter_year_failed").html(encounter.data_current_year_failed.toLocaleString('de-DE'));
+                $("#encounter_year_waiting").html(encounter.data_current_year_waiting.toLocaleString('de-DE'));
+                $("#encounter_all").html(encounter.data_year_all.toLocaleString('de-DE')+' Encounter');
+                $("#encounter_all_success").html(encounter.data_year_success_all.toLocaleString('de-DE'));
+                $("#encounter_all_failed").html(encounter.data_year_failed_all.toLocaleString('de-DE'));
+                $("#encounter_all_waiting").html(encounter.data_year_waiting_all.toLocaleString('de-DE'));
+                $("#condition_success").html(condition.condition_success.toLocaleString('de-DE'));
+                $("#condition_failed").html(condition.condition_failed.toLocaleString('de-DE'));
+                $("#condition_waiting").html(condition.condition_waiting.toLocaleString('de-DE'));
+                $("#observation_success").html(observation.observation_success.toLocaleString('de-DE'));
+                $("#observation_failed").html(observation.observation_failed.toLocaleString('de-DE'));
+                $("#observation_waiting").html(observation.observation_waiting.toLocaleString('de-DE'));
+                $("#procedure_success").html(procedure.procedure_success.toLocaleString('de-DE'));
+                $("#procedure_failed").html(procedure.procedure_failed.toLocaleString('de-DE'));
+                $("#procedure_waiting").html(procedure.procedure_waiting.toLocaleString('de-DE'));
+                $("#composition_success").html(composition.composition_success.toLocaleString('de-DE'));
+                $("#composition_failed").html(composition.composition_failed.toLocaleString('de-DE'));
+                $("#composition_waiting").html(composition.composition_waiting.toLocaleString('de-DE'));
+                $("#medication_request_success").html(medication_request.medication_request_success.toLocaleString('de-DE'));
+                $("#medication_request_failed").html(medication_request.medication_request_failed.toLocaleString('de-DE'));
+                $("#medication_request_waiting").html(medication_request.medication_request_waiting.toLocaleString('de-DE'));
+                $("#medication_dispense_success").html(medication_dispense.medication_dispense_success.toLocaleString('de-DE'));
+                $("#medication_dispense_failed").html(medication_dispense.medication_dispense_failed.toLocaleString('de-DE'));
+                $("#medication_dispense_waiting").html(medication_dispense.medication_dispense_waiting.toLocaleString('de-DE'));
+                $("#service_request_success").html(service_request.service_request_success.toLocaleString('de-DE'));
+                $("#service_request_failed").html(service_request.service_request_failed.toLocaleString('de-DE'));
+                $("#service_request_waiting").html(service_request.service_request_waiting.toLocaleString('de-DE'));
+                $("#specimen_success").html(specimen.specimen_success.toLocaleString('de-DE'));
+                $("#specimen_failed").html(specimen.specimen_failed.toLocaleString('de-DE'));
+                $("#specimen_waiting").html(specimen.specimen_waiting.toLocaleString('de-DE'));
+                $("#observation_lab_success").html(observation_lab.observation_lab_success.toLocaleString('de-DE'));
+                $("#observation_lab_failed").html(observation_lab.observation_lab_failed.toLocaleString('de-DE'));
+                $("#observation_lab_waiting").html(observation_lab.observation_lab_waiting.toLocaleString('de-DE'));
+                $("#diagnostic_report_success").html(diagnostic_report.diagnostic_report_success.toLocaleString('de-DE'));
+                $("#diagnostic_report_failed").html(diagnostic_report.diagnostic_report_failed.toLocaleString('de-DE'));
+                $("#diagnostic_report_waiting").html(diagnostic_report.diagnostic_report_waiting.toLocaleString('de-DE'));
+                $("#allergy_success").html(allergy.allergy_success.toLocaleString('de-DE'));
+                $("#allergy_failed").html(allergy.allergy_failed.toLocaleString('de-DE'));
+                $("#allergy_waiting").html(allergy.allergy_waiting.toLocaleString('de-DE'));
+                $("#prognosis_success").html(prognosis.prognosis_success.toLocaleString('de-DE'));
+                $("#prognosis_failed").html(prognosis.prognosis_failed.toLocaleString('de-DE'));
+                $("#prognosis_waiting").html(prognosis.prognosis_waiting.toLocaleString('de-DE'));
+
+
+
+            }
+        })
+    }
+    fetchData();
+
+    function refresh()
+    {
+        var text_button = $("#auto_refresh").html().replace(/\s+/g, '');
+        let text = $('<div>').html(text_button).text();
+        // let text = $tempDiv.find('span').text();
+
+        if(text === 'StartAutoRefresh')
+        {
+            $("#auto_refresh").html("<em class='icon ni ni-clock'></em>  Stop Auto Refresh");
+            $("#auto_refresh").first().removeClass('btn-success');
+            $("#auto_refresh").first().addClass('btn-danger');
+
+            setInterval(function() {
+                //get ulang lagi
+                var text_button = $("#auto_refresh").html().replace(/\s+/g, '');
+                let text = $('<div>').html(text_button).text();
+                if (text === 'StopAutoRefresh') {
+                    fetchData();
+                }
+            }, 10000);
+        }
+        else if(text === 'StopAutoRefresh')
+        {
+            $("#auto_refresh").html("<em class='icon ni ni-clock'></em> Start Auto Refresh");
+            $("#auto_refresh").first().removeClass('btn-danger');
+            $("#auto_refresh").first().addClass('btn-success');
+        }
+
     }
 
 
