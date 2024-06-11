@@ -12,4 +12,5 @@ interface ConditionInterface
     public function updateStatusCondition($id, $satusehat_id, $request, $response);
     public function storeCondition($request =  []);
     public function updateCondition($request =  [], $id);
+    public function getDataConditionReadyJob();
 }

@@ -58,7 +58,7 @@ Route::get('/tes-sinkronisasi', [SinkronisasiController::class, 'tesRunJob'])->n
 # BUNDLE
 Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
 
-Route::get('/aloneJob/{param_id_jadwal}', [AllergyController::class, 'runJob']);
+Route::get('/aloneJob/{param_id_jadwal}', [ConditionController::class, 'runJob']);
 
 #Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');

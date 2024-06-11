@@ -1232,4 +1232,7 @@ SELECT 'prognosis','Prognosis',0
 insert into ss_jadwal(kode,name,cron,command,status)
 select 'prognosis_job','Prognosis','* * * * *', 'App\Http\Controllers\PrognosisController@runJob',0
 
+insert into ss_jadwal(kode,name,cron,command,status)
+select 'condition_job','Condition','* * * * *', 'App\Http\Controllers\ConditionController@runJob',0
+
 

@@ -119,4 +119,18 @@ class ConditionRepository implements ConditionInterface
 
         return $data;
     }
+
+    public function getDataConditionReadyJob()
+    {
+        return $this->model->join('ss_encounter', 'ss_condition.encounter_original_code', 'ss_encounter.original_code')
+            ->whereNotNull('ss_encounter.satusehat_id')
+            ->take(env('MAX_RECORD')) //ambil hanya 100 saja
+            ->where('ss_encounter.satusehat_send', '=', 1)
+            ->where('ss_encounter.satusehat_statuscode', '=', '200')
+            ->where('ss_condition.satusehat_send', '!=', 1)
+            ->whereNull('ss_condition.satusehat_statuscode')
+            // ->whereIn('original_code', ['A112306380'])
+            ->select('ss_condition.*')
+            ->get();
+    }
 }

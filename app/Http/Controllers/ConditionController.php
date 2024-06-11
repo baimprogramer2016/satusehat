@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ConditionJob;
 use App\Repositories\Condition\ConditionInterface;
 use App\Repositories\Encounter\EncounterInterface;
 use App\Repositories\MasterIcd10\MasterIcd10Interface;
 use Illuminate\Http\Request;
+use App\Repositories\JobLogs\JobLogsInterface;
+use App\Repositories\Parameter\ParameterInterface;
 use Yajra\DataTables\Facades\Datatables;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
@@ -18,19 +21,24 @@ class ConditionController extends Controller
     use GeneralTrait;
     use ApiTrait;
     use JsonTrait;
-    private $condition_repo, $encounter_repo, $master_icd_10_repo;
+    private $condition_repo, $encounter_repo, $master_icd_10_repo, $parameter_repo;
     private $jumlah_form = [0, 1, 2, 3, 4];
 
+    public $job_logs_repo;
+    protected $job_id = 0;
+
     public function __construct(
+        JobLogsInterface $jobLogsInterface,
         ConditionInterface $conditionInterface,
         EncounterInterface $encounterInterface,
         MasterIcd10Interface $masterIcd10Interface,
-
-
+        ParameterInterface $parameterInterface
     ) {
+        $this->job_logs_repo = $jobLogsInterface;
         $this->condition_repo = $conditionInterface;
         $this->encounter_repo = $encounterInterface;
         $this->master_icd_10_repo = $masterIcd10Interface;
+        $this->parameter_repo = $parameterInterface;
     }
 
     public function index(Request $request)
@@ -286,6 +294,42 @@ class ConditionController extends Controller
         }
     }
 
+
+    public function runJob(Request $request, $param_id_jadwal)
+    {
+        try {
+            // $item_data = $this->condition_repo->getDataConditionReadyJob()[0];
+            // $payload_composition = $this->bodyManualCondition($item_data);
+            // return $payload_composition;
+            # return $this->composition_repo->getDataCompositionReadyJob();
+            # Jalankan Job
+            $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
+            $param_start['start'] = $this->currentNow(); //dari APITrait
+            $param_start['id'] = $param_id_jadwal; //id
+            $param_start['status'] = 'Process'; //status awal process , lalu ada Completed
+
+            # membuat Log status start job, job_report variable untuk mengambil last Id
+            # jika tidak ada data,tidak usah insert job log
+            if ($this->condition_repo->getDataConditionReadyJob()->count() > 0) {
+                # jika sudah ada data yang lagi antri gk ush dijlankan di job log
+                if ($this->job_logs_repo->getDataJobLogAlreadyRun($param_start['id']) > 0) {
+                } else {
+                    $job_report = $this->job_logs_repo->insertJobLogsStart($param_start);
+                    $this->job_id = $job_report->id;
+                    ConditionJob::dispatch(
+                        $this->parameter_repo,
+                        $this->job_logs_repo,
+                        $this->job_id,
+                        $this->condition_repo,
+                    );
+                }
+            }
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
 
     //
 }
