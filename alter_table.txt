@@ -1236,3 +1236,65 @@ insert into ss_jadwal(kode,name,cron,command,status)
 select 'condition_job','Condition','* * * * *', 'App\Http\Controllers\ConditionController@runJob',0
 
 
+//revisi medication dispense
+-- FUNCTION: public.validasi_medication_dispense()
+
+-- DROP FUNCTION IF EXISTS public.validasi_medication_dispense();
+--
+
+create table temp_master_allergy(
+code varchar(100),
+display varchar(255)
+)
+
+
+----
+-- FUNCTION: public.validasi_master_allergy()
+
+-- DROP FUNCTION IF EXISTS public.validasi_master_allergy();
+
+CREATE OR REPLACE FUNCTION public.validasi_master_allergy(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+    DROP TABLE IF EXISTS temp_master_xyz;
+	CREATE TEMPORARY TABLE temp_master_xyz AS
+	SELECT t1.code, t1.display, t2.code as code_satusehat, t2.display as code_satusehat_display, t2.code_system, t2.category
+	FROM
+	(
+        SELECT a.code, a.display
+        FROM
+        temp_master_allergy a
+        LEFT JOIN
+        ss_master_allergy b
+        ON a.code = b.code
+        WHERE b.id IS NULL
+    ) as t1
+    JOIN ss_allergy_code t2
+    ON t1.display ILIKE '%' || t2.display || '%'
+    OR t2.display ILIKE '%' || t1.display || '%';
+
+    INSERT INTO ss_master_allergy(code,display,code_satusehat,code_satusehat_display,code_system,category)
+    SELECT *
+    FROM
+    (
+    select *,
+    (select code_satusehat FROM temp_master_xyz WHERE temp_master_xyz.code = temp_master_allergy.code ORDER by code_satusehat ASC LIMIT 1 ),
+    (select code_satusehat_display FROM temp_master_xyz WHERE temp_master_xyz.code = temp_master_allergy.code ORDER by code_satusehat ASC LIMIT 1 ),
+    (select code_system FROM temp_master_xyz WHERE temp_master_xyz.code = temp_master_allergy.code ORDER by code_satusehat ASC LIMIT 1 ),
+    (select category FROM temp_master_xyz WHERE temp_master_xyz.code = temp_master_allergy.code ORDER by code_satusehat ASC LIMIT 1 )
+    from temp_master_allergy
+    ) as TAB_FINAL WHERE code_satusehat is not null
+    AND category is not null;
+
+	return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_master_allergy()
+    OWNER TO postgres;

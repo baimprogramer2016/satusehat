@@ -159,7 +159,7 @@
               {data: 'encounter_original_code', name: 'encounter_original_code'},
               {data: 'identifier_value', name: 'identifier_value'},
               {data: 'subject_reference_display', name: 'subject_reference_display'},
-              {data: 'text', name: 'text'},
+              {data: 'coding_display', name: 'coding_display'},
               {data: 'satusehat_id', name: 'satusehat_id'},
               {data: 'recorded_date', name: 'recorded_date'},
               {data: 'satusehat_statuscode', name: 'satusehat_statuscode'},
