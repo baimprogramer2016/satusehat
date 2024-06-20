@@ -425,7 +425,7 @@
                 if (text === 'StopAutoRefresh') {
                     fetchData();
                 }
-            }, 5000);
+            }, 3000);
         }
         else if(text === 'StopAutoRefresh')
         {
@@ -435,8 +435,6 @@
         }
 
     }
-
-
 
     </script>
     @endpush
