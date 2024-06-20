@@ -199,59 +199,6 @@ drop column original_code
 alter table ss_loinc
 drop column original_display
 
--------------------------------------------------------------
--- FUNCTION: public.validasi_composition()
-
--- DROP FUNCTION IF EXISTS public.validasi_composition();
-
-CREATE OR REPLACE FUNCTION public.validasi_composition(
-	)
-    RETURNS character varying
-    LANGUAGE 'plpgsql'
-    COST 100
-    VOLATILE PARALLEL UNSAFE
-AS $BODY$
-
-BEGIN
-INSERT INTO ss_composition(original_code,encounter_original_code,type_code,type_display,category_code,category_display,subject_reference,subject_display,date,author_reference,author_display,title,text_status,text_div,satusehat_send,uuid, section_code, section_code_display)
-
-SELECT composition.original_code,composition.encounter_original_code,'18842-5' as type_code,'Discharge summary' as type_display,'LP173421-1' as category_code,'Report' as category_display,
-composition.subject_reference,composition.subject_display,composition.date,composition.participant_individual_reference,composition.participant_individual_display,case when composition.title = '' then '-' else composition.title end as title,
-composition.text_status,composition.text_div,4 as satusehat_send,uuid_generate_v4() as uuid,composition.section_code, composition.section_code_display
-FROM
-(
-
-    SELECT tbl_composition.*, ss_master_procedure.loinc_code as section_code, ss_master_procedure.loinc_display as section_code_display
-    FROM
-    (
-
-        select temp_composition.*,ss_encounter.subject_reference,ss_encounter.subject_display,ss_encounter.participant_individual_reference,ss_encounter.participant_individual_display
-        FROM temp_composition
-        LEFT JOIN
-        ss_encounter
-        ON temp_composition.encounter_original_code = ss_encounter.original_code
-	    WHERE ss_encounter.original_code is not null
-	) as tbl_composition
-	LEFT join
-	ss_master_procedure
-	ON tbl_composition.original_code = ss_master_procedure.original_code
-	WHERE ss_master_procedure.id is not null
-) as composition
-LEFT JOIN
-ss_composition
-ON composition.encounter_original_code = ss_composition.encounter_original_code
-WHERE ss_composition.encounter_original_code is null;
-
-return 'success';
-END;
-
-$BODY$;
-
-ALTER FUNCTION public.validasi_composition()
-    OWNER TO postgres;
-
-----------------------------------------------------------------
-
 ---service request
 
 create table temp_service_request(
@@ -1304,7 +1251,7 @@ ALTER FUNCTION public.validasi_master_allergy()
     OWNER TO postgres;
 
 
-------------------
+-------------------------------------------------------------
 -- FUNCTION: public.validasi_composition()
 
 -- DROP FUNCTION IF EXISTS public.validasi_composition();
@@ -1321,7 +1268,7 @@ BEGIN
 INSERT INTO ss_composition(original_code,encounter_original_code,type_code,type_display,category_code,category_display,subject_reference,subject_display,date,author_reference,author_display,title,text_status,text_div,satusehat_send,uuid, section_code, section_code_display)
 
 SELECT composition.original_code,composition.encounter_original_code,'18842-5' as type_code,'Discharge summary' as type_display,'LP173421-1' as category_code,'Report' as category_display,
-composition.subject_reference,composition.subject_display,composition.date,composition.participant_individual_reference,composition.participant_individual_display,composition.title,
+composition.subject_reference,composition.subject_display,composition.date,composition.participant_individual_reference,composition.participant_individual_display,case when composition.title = '' then '-' else composition.title end as title,
 composition.text_status,composition.text_div,4 as satusehat_send,uuid_generate_v4() as uuid,composition.section_code, composition.section_code_display
 FROM
 (
@@ -1354,3 +1301,14 @@ $BODY$;
 
 ALTER FUNCTION public.validasi_composition()
     OWNER TO postgres;
+
+----------------------------------------------------------------
+
+
+create table ss_version(
+version varchar(200),
+description varchar(200),
+up_date date
+)
+
+INSERT INTO ss_version (version,description, up_date) values('1.0.0','Last Allergy','2024-06-20')
