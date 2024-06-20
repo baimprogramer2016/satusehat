@@ -1071,6 +1071,46 @@ select 'condition_job','Condition','* * * * *', 'App\Http\Controllers\ConditionC
 
 
 //revisi medication dispense
+-- FUNCTION: public.validasi_medication_dispense()
+
+-- DROP FUNCTION IF EXISTS public.validasi_medication_dispense();
+
+CREATE OR REPLACE FUNCTION public.validasi_medication_dispense(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+INSERT INTO ss_medication_dispense(identifier_1,identifier_2,encounter_original_code,satusehat_send,uuid, farmasi_id, farmasi_name)
+
+SELECT tab_dispense.*,uuid_generate_v4(),(select location_farmasi_id from ss_generate_token LIMIT 1) as location_reference,'Apotek' as  location_display FROM (
+    SELECT temp_dispense.identifier_1,temp_dispense.identifier_2,temp_dispense.encounter_original_code,4 as satusehat_send FROM
+    (
+        select a.* from
+        temp_medication_dispense a,
+        ss_medication_request b
+        WHERE concat(a.identifier_1,a.identifier_2) = concat(b.identifier_1,b.identifier_2)
+        AND a.encounter_original_code = b.encounter_original_code
+
+    ) as temp_dispense
+    LEFT JOIN ss_medication_dispense
+    ON temp_dispense.encounter_original_code = ss_medication_dispense.encounter_original_code
+    WHERE ss_medication_dispense.identifier_1 is null
+) as tab_dispense
+LEFT JOIN
+ss_encounter
+ON tab_dispense.encounter_original_code = ss_encounter.original_code;
+
+return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_medication_dispense()
+    OWNER TO postgres;
+
 
 
 create table temp_master_allergy(
@@ -1193,9 +1233,6 @@ up_date date
 
 INSERT INTO ss_version (version,description, up_date) values('1.0.0','Last Allergy','2024-06-20')
 
-
-
-//Prognosis
 
 
 //prognosis
