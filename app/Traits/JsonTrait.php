@@ -237,6 +237,9 @@ trait JsonTrait
         $data_diagnostic_report = $param['diagnostic_report'];
         $data_service_request_radiology = $param['service_request_radiology'];
         $data_allergy = $param['allergy'];
+        $data_prognosis = $param['prognosis'];
+
+
 
 
         // return $this->getJadwalSet();
@@ -281,7 +284,7 @@ trait JsonTrait
         if ($this->getJadwalSet()->where('resource', 'composition')->first()->status == 1) {
             if (count($data_composition) > 0) {
                 foreach ($data_composition as $item_composition) {
-                    $bodyComposition = $this->bodyBundlecomposition($item_composition, $data_parameter, $data_encounter['uuid']);
+                    $bodyComposition = $this->bodyBundleComposition($item_composition, $data_parameter, $data_encounter['uuid']);
                     array_push($bodyBundle['entry'], $bodyComposition);
                 }
             }
@@ -375,6 +378,16 @@ trait JsonTrait
                 foreach ($data_allergy as $item_allergy) {
                     $bodyAllergy = $this->bodyBundleAllergy($item_allergy, $data_parameter, $data_encounter['uuid']);
                     array_push($bodyBundle['entry'], $bodyAllergy);
+                }
+            }
+        }
+
+        # prognosis
+        if ($this->getJadwalSet()->where('resource', 'prognosis')->first()->status == 1) {
+            if (count($data_prognosis) > 0) {
+                foreach ($data_prognosis as $item_prognosis) {
+                    $bodyPrognosis = $this->bodyBundlePrognosis($item_prognosis, $data_parameter, $data_encounter['r_condition'], $data_encounter['uuid']);
+                    array_push($bodyBundle['entry'], $bodyPrognosis);
                 }
             }
         }
@@ -751,9 +764,9 @@ trait JsonTrait
         return $bodyBundleProcedureIcd10;
     }
 
-    public function bodyBundlecomposition($data_composition, $data_parameter, $encounter_uuid)
+    public function bodyBundleComposition($data_composition, $data_parameter, $encounter_uuid)
     {
-        $bodyBundlecomposition =  [
+        $bodyBundleComposition =  [
             "fullUrl" => "urn:uuid:" . $data_composition['uuid'],
             "resource" => [
                 "resourceType" => "Composition",
@@ -824,7 +837,7 @@ trait JsonTrait
                 "url" => "Composition"
             ]
         ];
-        return $bodyBundlecomposition;
+        return $bodyBundleComposition;
     }
 
     public function bodyBundleMedication($data_medication_request, $data_parameter, $encounter_uuid)
@@ -1660,8 +1673,258 @@ trait JsonTrait
         return $bodyBundleAllergy;
     }
 
+    public function bodyBundlePrognosis($data_prognosis, $data_parameter, $data_condition, $encounter_uuid)
+    {
+        $bodyBundlePrognosis = [
+            "fullUrl" => "urn:uuid:" . $data_prognosis['uuid'],
+            "resource" => [
+                "resourceType" => "ClinicalImpression",
+                "identifier" => [
+                    [
+                        "system" => "http://sys-ids.kemkes.go.id/clinicalimpression/" . $data_parameter['organization_id'],
+                        "use" => "official",
+                        "value" => $data_prognosis['identifier_value']
+                    ]
+                ],
+                "status" => $data_prognosis['status'],
+                "description" => $data_prognosis['description'],
+                "subject" => [
+                    "reference" => "Patient/" . $data_prognosis['subject_reference'],
+                    "display" => $data_prognosis['subject_display']
+                ],
+                "encounter" => [
+                    "reference" => "urn:uuid:" . $encounter_uuid,
+                    "display" => $data_prognosis['encounter_display']
+                ],
+                "effectiveDateTime" => $this->convertTimeStamp($data_prognosis['effective_datetime']),
+                "date" => $this->convertTimeStamp($data_prognosis['date']),
+                "assessor" => [
+                    "reference" => "Practitioner/" . $data_prognosis['assessor_reference']
+                ],
+                // "problem" => [
+                //     [
+                //         "reference" => "urn:uuid:c820f626-0dfd-4a9b-acda-5b8d526429f6"
+                //     ]
+                // ],
+                // "investigation" => [
+                //     [
+                //         "code" => [
+                //             "text" => "Pemeriksaan Sputum BTA"
+                //         ],
+                //         "item" => [
+                //             [
+                //                 "reference" => "urn:uuid:816f9852-5f2e-4fa2-b594-9c59486ba9e1"
+                //             ],
+                //             [
+                //                 "reference" => "urn:uuid:37139eb6-f6bb-42bc-b28e-cc36aac186f7"
+                //             ]
+                //         ]
+                //     ]
+                // ],
+                "summary" => $data_prognosis['summary'],
+                // "finding" => [
+                //     [
+                //         "itemCodeableConcept" => [
+                //             "coding" => [
+                //                 [
+                //                     "system" => "http://hl7.org/fhir/sid/icd-10",
+                //                     "code" => "A15.0",
+                //                     "display" => "Tuberculosis of lung, confirmed by sputum microscopy with or without culture"
+                //                 ]
+                //             ]
+                //         ],
+                //         "itemReference" => [
+                //             "reference" => "urn:uuid:c820f626-0dfd-4a9b-acda-5b8d526429f6"
+                //         ]
+                //     ]
+                // ],
+                "prognosisCodeableConcept" => [
+                    [
+                        "coding" => [
+                            [
+                                "system" => $data_prognosis['coding_system'],
+                                "code" => $data_prognosis['coding_code'],
+                                "display" => $data_prognosis['coding_display']
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "ClinicalImpression"
+            ]
+        ];
+
+        if (count($data_condition) > 0) {
+
+            $bodyItemPrognosisCondition = [];
+            $bodyItemPrognosisFinding = [];
+
+            foreach ($data_condition as $item_condition) {
+                array_push($bodyItemPrognosisCondition,  $this->bodyItemBundlePrognosisCondition($item_condition));
+                array_push($bodyItemPrognosisFinding,  $this->bodyItemBundlePrognosisFinding($item_condition));
+            }
+
+            $bodyBundlePrognosis['resource']['problem'] = $bodyItemPrognosisCondition;
+            $bodyBundlePrognosis['resource']['finding'] = $bodyItemPrognosisFinding;
+        }
+        return $bodyBundlePrognosis;
+    }
+
+    public function bodyItemBundlePrognosisFinding($item_condition)
+    {
+        $bodyItemPrognosisFinding =
+            [
+                "itemCodeableConcept" => [
+                    "coding" => [
+                        [
+                            "system" => "http://hl7.org/fhir/sid/icd-10",
+                            "code" => $item_condition['code_icd'],
+                            "display" => $item_condition['code_icd_display']
+                        ]
+                    ]
+                ],
+                "itemReference" => [
+                    "reference" => "Condition/" . $item_condition['uuid']
+                ]
+            ];
+        return $bodyItemPrognosisFinding;
+    }
+
+    public function bodyItemBundlePrognosisCondition($item_condition)
+    {
+        $bodyItemPrognosisCondition =
+            [
+                "reference" => "Condition/" . $item_condition['uuid']
+            ];
+        return $bodyItemPrognosisCondition;
+    }
+
 
     #############################  MANUAL ###################################
+    public function bodyManualPrognosis($data_prognosis, $data_parameter, $data_condition)
+    {
+
+        $bodyManualPrognosis = [
+            "resourceType" => "ClinicalImpression",
+            "identifier" => [
+                [
+                    "system" => "http://sys-ids.kemkes.go.id/clinicalimpression/" . $data_parameter['organization_id'],
+                    "use" => "official",
+                    "value" => $data_prognosis['identifier_value']
+                ]
+            ],
+            "status" => $data_prognosis['status'],
+            "description" => $data_prognosis['description'],
+            "subject" => [
+                "reference" => "Patient/" . $data_prognosis['subject_reference'],
+                "display" => $data_prognosis['subject_display']
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_prognosis['r_encounter']['satusehat_id'],
+                "display" => $data_prognosis['encounter_display']
+            ],
+            "effectiveDateTime" => $this->convertTimeStamp($data_prognosis['effective_datetime']),
+            "date" => $this->convertTimeStamp($data_prognosis['date']),
+            "assessor" => [
+                "reference" => "Practitioner/" . $data_prognosis['assessor_reference']
+            ],
+            // "problem" => [
+            //     [
+            //         "reference" => "Condition/f2bc12fe-0ab2-4e5c-a3cd-32c66150cbe9"
+            //     ]
+            // ],
+            // "investigation" => [
+            //     [
+            //         "code" => [
+            //             "text" => "Pemeriksaan Sputum BTA"
+            //         ],
+            //         "item" => [
+            //             [
+            //                 "reference" => "DiagnosticReport/a0fa6244-7638-43ba-bbc2-2af954761540"
+            //             ],
+            //             [
+            //                 "reference" => "Observation/56819f05-28b9-43c2-b0d1-3785768aa886"
+            //             ]
+            //         ]
+            //     ]
+            // ],
+            "summary" => $data_prognosis['summary'],
+            // "finding" => [
+            //     [
+            //         "itemCodeableConcept" => [
+            //             "coding" => [
+            //                 [
+            //                     "system" => "http://hl7.org/fhir/sid/icd-10",
+            //                     "code" => "A15.0",
+            //                     "display" => "Tuberculosis of lung, confirmed by sputum microscopy with or without culture"
+            //                 ]
+            //             ]
+            //         ],
+            //         "itemReference" => [
+            //             "reference" => "Condition/f2bc12fe-0ab2-4e5c-a3cd-32c66150cbe9"
+            //         ]
+            //     ]
+            // ],
+            "prognosisCodeableConcept" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => $data_prognosis['coding_system'],
+                            "code" => $data_prognosis['coding_code'],
+                            "display" => $data_prognosis['coding_display']
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        # Jika procedure ada , menambahkan tindakan pada encounter
+        if (count($data_condition) > 0) {
+
+            $bodyItemPrognosisCondition = [];
+            $bodyItemPrognosisFinding = [];
+
+            foreach ($data_condition as $item_condition) {
+                array_push($bodyItemPrognosisCondition,  $this->bodyItemPrognosisCondition($item_condition));
+                array_push($bodyItemPrognosisFinding,  $this->bodyItemPrognosisFinding($item_condition));
+            }
+
+            $bodyManualPrognosis['problem'] = $bodyItemPrognosisCondition;
+            $bodyManualPrognosis['finding'] = $bodyItemPrognosisFinding;
+        }
+        return $bodyManualPrognosis;
+    }
+
+    public function bodyItemPrognosisFinding($item_condition)
+    {
+        $bodyItemPrognosisFinding =
+            [
+                "itemCodeableConcept" => [
+                    "coding" => [
+                        [
+                            "system" => "http://hl7.org/fhir/sid/icd-10",
+                            "code" => $item_condition['code_icd'],
+                            "display" => $item_condition['code_icd_display']
+                        ]
+                    ]
+                ],
+                "itemReference" => [
+                    "reference" => "Condition/" . $item_condition['satusehat_id']
+                ]
+            ];
+        return $bodyItemPrognosisFinding;
+    }
+
+    public function bodyItemPrognosisCondition($item_condition)
+    {
+        $bodyItemPrognosisCondition =
+            [
+                "reference" => "Condition/" . $item_condition['satusehat_id']
+            ];
+        return $bodyItemPrognosisCondition;
+    }
     public function bodyManualAllergy($data_allergy, $data_parameter)
     {
         $bodyManualAllergy = [

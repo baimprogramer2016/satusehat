@@ -270,6 +270,10 @@
                                         <a href="{{ route('allergy') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Allergy</span></a>
                                     </li>
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('prognosis') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Prognosis</span></a>
+                                    </li>
                                 </ul><!-- .nk-menu-sub -->
                             </li><!-- .nk-menu-item -->
                             <li class="nk-menu-item has-sub">

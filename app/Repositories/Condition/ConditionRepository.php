@@ -22,6 +22,10 @@ class ConditionRepository implements ConditionInterface
     {
         return $this->model->where('encounter_original_code', $original_code)->get();
     }
+    public function getDataConditionByOriginalCodeSend($original_code)
+    {
+        return $this->model->where('encounter_original_code', $original_code)->whereNotNull('satusehat_id')->get();
+    }
 
     public function getDataConditionFind($id)
     {

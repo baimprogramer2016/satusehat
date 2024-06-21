@@ -17,6 +17,7 @@ use App\Repositories\Observation\ObservationInterface;
 use App\Repositories\ObservationLab\ObservationLabInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\Procedure\ProcedureInterface;
+use App\Repositories\Prognosis\PrognosisInterface;
 use App\Repositories\ServiceRequest\ServiceRequestInterface;
 use App\Repositories\ServiceRequestRadiology\ServiceRequestRadiologyInterface;
 use App\Repositories\Specimen\SpecimenInterface;
@@ -48,7 +49,8 @@ class BundleDevController extends Controller
         $observation_lab_repo,
         $diagnostic_report_repo,
         $service_request_radiology_repo,
-        $allergy_repo;
+        $allergy_repo,
+        $prognosis_repo;
 
     public $parameter_repo;
     protected $job_id = 0;
@@ -67,7 +69,8 @@ class BundleDevController extends Controller
         ObservationLabInterface $observationLabInterface,
         DiagnosticReportInterface $diagnosticReportInterface,
         ServiceRequestRadiologyInterface $serviceRequestRadiologyInterface,
-        AllergyInterface $allergyInterface
+        AllergyInterface $allergyInterface,
+        PrognosisInterface $prognosisInterface
 
     ) {
 
@@ -86,6 +89,7 @@ class BundleDevController extends Controller
         $this->diagnostic_report_repo = $diagnosticReportInterface;
         $this->service_request_radiology_repo = $serviceRequestRadiologyInterface;
         $this->allergy_repo = $allergyInterface;
+        $this->prognosis_repo = $prognosisInterface;
     }
     public function runJob(Request $request)
     {
@@ -119,6 +123,7 @@ class BundleDevController extends Controller
                     # ambil data 100 Record sekali eksekusi
                     $data_bundle = $this->bundle_repo->getDataBundleReadyJob();
 
+
                     if ($data_bundle->count() > 0) {
 
                         # parameter body json
@@ -151,6 +156,8 @@ class BundleDevController extends Controller
                             $param_bundle['diagnostic_report'] = $this->diagnostic_report_repo->getDataDiagnosticReportBundleByOriginalCode($item_bundle->original_code);
                             $param_bundle['service_request_radiology'] = $this->service_request_radiology_repo->getDataServiceRequestRadiologyBundleByOriginalCode($item_bundle->original_code);
                             $param_bundle['allergy'] = $this->allergy_repo->getDataAllergyBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['prognosis'] = $this->prognosis_repo->getDataPrognosisBundleByOriginalCode($item_bundle->original_code);
+
 
 
                             # API POST Bundle

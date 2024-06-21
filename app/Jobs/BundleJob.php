@@ -34,7 +34,8 @@ class BundleJob implements ShouldQueue
         $observation_lab_repo,
         $diagnostic_report_repo,
         $service_request_radiology_repo,
-        $allergy_repo;
+        $allergy_repo,
+        $prognosis_repo;
     protected $parameter_repo;
     protected $job_id;
     protected $job_logs_repo;
@@ -56,6 +57,7 @@ class BundleJob implements ShouldQueue
         $diagnostic_report_repo,
         $service_request_radiology_repo,
         $allergy_repo,
+        $prognosis_repo,
     ) {
         $this->bundle_repo = $bundle_repo; #data yang akan dieksekusi
         $this->condition_repo = $condition_repo;
@@ -73,6 +75,7 @@ class BundleJob implements ShouldQueue
         $this->diagnostic_report_repo = $diagnostic_report_repo;
         $this->service_request_radiology_repo = $service_request_radiology_repo;
         $this->allergy_repo = $allergy_repo;
+        $this->prognosis_repo = $prognosis_repo;
     }
 
     /**
@@ -112,6 +115,7 @@ class BundleJob implements ShouldQueue
                 $param_bundle['diagnostic_report'] = $this->diagnostic_report_repo->getDataDiagnosticReportBundleByOriginalCode($item_bundle->original_code);
                 $param_bundle['service_request_radiology'] = $this->service_request_radiology_repo->getDataServiceRequestRadiologyBundleByOriginalCode($item_bundle->original_code);
                 $param_bundle['allergy'] = $this->allergy_repo->getDataAllergyBundleByOriginalCode($item_bundle->original_code);
+                $param_bundle['prognosis'] = $this->prognosis_repo->getDataPrognosisBundleByOriginalCode($item_bundle->original_code);
 
                 # API POST Bundle
                 $payload_bundle = $this->bodyBundle($param_bundle); // data bundle
@@ -224,6 +228,12 @@ class BundleJob implements ShouldQueue
                                 $res['satusehat_id'] = $item_response->response->resourceID;
 
                                 $this->allergy_repo->updateDataBundleAllergyJob($res);
+                            }
+                            if ($item_response->response->resourceType == 'ClinicalImpression') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->prognosis_repo->updateDataBundlePrognosisJob($res);
                             }
                             # update status dari response
                         }

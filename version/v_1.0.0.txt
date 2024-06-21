@@ -1244,10 +1244,10 @@ display varchar(255),
 code_system varchar(255)
 )
 
-insert into ss_prognosis_code(code,display,code_system) values('PR000001','Prognosis baik','https://terminology.kemkes.go.id/CodeSystem/clinical-term')
-insert into ss_prognosis_code(code,display,code_system) values('PR000002','Prognosis dubiaet bonam /Cenderung Baik','https://terminology.kemkes.go.id/CodeSystem/clinical-term')
-insert into ss_prognosis_code(code,display,code_system) values('PR000003','Prognosis dubiaet malam / cenderung tidak baik','https://terminology.kemkes.go.id/CodeSystem/clinical-term')
-insert into ss_prognosis_code(code,display,code_system) values('PR000004','Prognosis tidak baik','https://terminology.kemkes.go.id/CodeSystem/clinical-term')
+insert into ss_prognosis_code(code,display,code_system) values('170968001','Prognosis good','http://snomed.info/sct')
+insert into ss_prognosis_code(code,display,code_system) values('65872000','Fair prognosis','http://snomed.info/sct')
+insert into ss_prognosis_code(code,display,code_system) values('67334001','Guarded prognosis','http://snomed.info/sct')
+insert into ss_prognosis_code(code,display,code_system) values('170969009','Prognosis bad','http://snomed.info/sct')
 
 create table ss_master_prognosis(
 id serial,
@@ -1279,6 +1279,7 @@ create table temp_prognosis(
 create table ss_prognosis(
  id serial,
  original_code varchar(30),
+ satusehat_id varchar(255),
  encounter_original_code varchar(30),
  identifier_value varchar(30),
  status varchar(30),
@@ -1286,6 +1287,9 @@ create table ss_prognosis(
  subject_reference varchar(50),
  subject_display varchar(100),
  encounter_display varchar(50),
+ coding_code varchar(255),
+ coding_display varchar(255),
+ coding_system varchar(255),
  effective_datetime timestamp,
  date timestamp,
  assessor_reference varchar(50),
@@ -1300,7 +1304,6 @@ create table ss_prognosis(
  uuid varchar(255)
 )
 
-
 CREATE OR REPLACE FUNCTION public.validasi_prognosis(
 	)
     RETURNS character varying
@@ -1310,18 +1313,18 @@ CREATE OR REPLACE FUNCTION public.validasi_prognosis(
 AS $BODY$
 BEGIN
 	INSERT INTO ss_prognosis(encounter_original_code,identifier_value,status,description,subject_reference,subject_display,
-	encounter_display,effective_datetime,date,assessor_reference,summary,coding_code,coding_display,satusehat_send,uuid)
+	encounter_display,effective_datetime,date,assessor_reference,summary,coding_code,coding_display,coding_system,satusehat_send,uuid)
 
 	SELECT prognosis_2.encounter_original_code, prognosis_2.identifier_value,prognosis_2.status,prognosis_2.description,
 	prognosis_2.subject_reference,prognosis_2.subject_display as subject_display,
 	prognosis_2.encounter_display,prognosis_2.effective_datetime,prognosis_2.date,prognosis_2.assessor_reference,prognosis_2.summary,
-	prognosis_2.code_satusehat as coding_code,prognosis_2.code_satusehat_display as coding_display,4 satusehat_send,uuid_generate_v4() as uuid
+	prognosis_2.code_satusehat as coding_code,prognosis_2.code_satusehat_display as coding_display,prognosis_2.code_system as coding_system,4 satusehat_send,uuid_generate_v4() as uuid
 	FROM
 	(
 		select prognosis.*,ss_encounter.subject_reference,ss_encounter.subject_display, participant_individual_reference as assessor_reference
 		FROM
 		(
-			SELECT a.*, b.code_satusehat, b.code_satusehat_display FROM
+			SELECT a.*, b.code_satusehat, b.code_satusehat_display,b.code_system FROM
 			temp_prognosis a , ss_master_prognosis b
 			WHERE a.code_original = b.code
 			AND b.code_satusehat is not null
@@ -1341,6 +1344,9 @@ $BODY$;
 
 ALTER FUNCTION public.validasi_prognosis()
     OWNER TO postgres;
+
+
+
 
 
 

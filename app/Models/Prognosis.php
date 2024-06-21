@@ -22,8 +22,8 @@ class Prognosis extends Model
     {
         return $this->hasOne(Encounter::class,  'original_code', 'encounter_original_code');
     }
-    public function r_master_allergy()
+    public function r_master_prognosis()
     {
-        return $this->hasOne(AllergyMaster::class,  'code_satusehat', 'coding_code');
+        return $this->hasOne(PrognosisMaster::class,  'code_satusehat', 'coding_code');
     }
 }

@@ -53,11 +53,11 @@ class CompositionRepository implements CompositionInterface
 
     public function getDataCompositionByOriginalCode($original_code)
     {
-        return $this->model->where('encounter_original_code', $original_code)->get();
+        return $this->model->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
     }
     public function getDataCompositionBundleByOriginalCode($original_code)
     {
-        return $this->model->whereNull('satusehat_id')->where('encounter_original_code', $original_code)->get();
+        return $this->model->whereNull('satusehat_id')->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
     }
 
     public function updateDataBundleCompositionJob($param = [])

@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Repositories\Allergy;
+namespace App\Repositories\Prognosis;
 
-use App\Models\Allergy;
+use App\Models\Prognosis;
 use Carbon\Carbon;
 
-class AllergyRepository implements AllergyInterface
+class PrognosisRepository implements PrognosisInterface
 {
     private $model;
-    public function __construct(Allergy $allergy_model)
+    public function __construct(Prognosis $prognosis_model)
     {
-        $this->model = $allergy_model;
+        $this->model = $prognosis_model;
     }
 
     # untuk mendapatkan keseluruhan data
-    public function getDataAllergyById($id)
+    public function getDataPrognosisById($id)
     {
         return $this->model->where('id', $id)->get();
     }
@@ -39,7 +39,7 @@ class AllergyRepository implements AllergyInterface
         });
         $q->when($request['tanggal_awal'] != '', function ($query) use ($request) {
 
-            $query->whereBetween('recorded_date', [
+            $query->whereBetween('effective_datetime', [
                 Carbon::createFromFormat('Y-m-d', $request['tanggal_awal'])->startOfDay(),
                 Carbon::createFromFormat('Y-m-d', $request['tanggal_akhir'])->endOfDay(),
             ]);
@@ -50,16 +50,16 @@ class AllergyRepository implements AllergyInterface
 
         return $q;
     }
-    public function getDataAllergyByOriginalCode($original_code)
+    public function getDataPrognosisByOriginalCode($original_code)
     {
         return $this->model->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
     }
-    public function getDataAllergyBundleByOriginalCode($original_code)
+    public function getDataPrognosisBundleByOriginalCode($original_code)
     {
         return $this->model->whereNull('satusehat_id')->where('encounter_original_code', $original_code)->orderBy('id', 'asc')->get();
     }
 
-    public function updateDataBundleAllergyJob($param = [])
+    public function updateDataBundlePrognosisJob($param = [])
     {
         $data = $this->model->where('encounter_original_code', $param['encounter_original_code'])
             ->whereNull('satusehat_id')
@@ -76,12 +76,12 @@ class AllergyRepository implements AllergyInterface
         }
         return $data;
     }
-    public function getDataAllergyFind($id)
+    public function getDataPrognosisFind($id)
     {
         return $this->model->find($id);
     }
 
-    public function updateStatusAllergy($id, $satusehat_id, $request, $response)
+    public function updateStatusPrognosis($id, $satusehat_id, $request, $response)
     {
         $data = $this->model->where('id', $id)
             ->update([
@@ -96,17 +96,17 @@ class AllergyRepository implements AllergyInterface
         return $data;
     }
 
-    public function getDataAllergyReadyJob()
+    public function getDataPrognosisReadyJob()
     {
-        return $this->model->join('ss_encounter', 'ss_allergy.encounter_original_code', 'ss_encounter.original_code')
+        return $this->model->join('ss_encounter', 'ss_prognosis.encounter_original_code', 'ss_encounter.original_code')
             ->whereNotNull('ss_encounter.satusehat_id')
             ->take(env('MAX_RECORD')) //ambil hanya 100 saja
             ->where('ss_encounter.satusehat_send', '=', 1)
             ->where('ss_encounter.satusehat_statuscode', '=', '200')
-            ->where('ss_allergy.satusehat_send', '!=', 1)
-            ->whereNull('ss_allergy.satusehat_statuscode')
+            ->where('ss_prognosis.satusehat_send', '!=', 1)
+            ->whereNull('ss_prognosis.satusehat_statuscode')
             // ->whereIn('original_code', ['A112306380'])
-            ->select('ss_allergy.*')
+            ->select('ss_prognosis.*')
             ->get();
     }
 }

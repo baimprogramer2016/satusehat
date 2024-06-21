@@ -37,6 +37,7 @@ use App\Http\Controllers\AllergyCodeController;
 use App\Http\Controllers\AllergyMasterController;
 use App\Http\Controllers\UploadController;
 use App\Http\Controllers\PrognosisCodeController;
+use App\Http\Controllers\PrognosisController;
 use App\Http\Controllers\PrognosisMasterController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Encounter;
@@ -301,3 +302,10 @@ Route::get('/prognosis-master', [PrognosisMasterController::class, 'index'])->na
 Route::get('/prognosis-master-kode/{id}', [PrognosisMasterController::class, 'modalKode'])->name('prognosis-master-kode')->middleware('auth');
 Route::get('/prognosis-master-data/{id}', [PrognosisMasterController::class, 'getDataKode'])->name('prognosis-master-data')->middleware('auth');
 Route::post('/prognosis-master-kode-update', [PrognosisMasterController::class, 'updateKode'])->name('prognosis-master-kode-update')->middleware('auth');
+
+
+
+Route::get('/prognosis', [PrognosisController::class, 'index'])->name('prognosis')->middleware('auth');
+Route::get('/prognosis-response-ss/{id}', [PrognosisController::class, 'responseSS'])->name('prognosis-response-ss')->middleware('auth');
+Route::get('/prognosis-modal-kirim-ss/{id}', [PrognosisController::class, 'modalKirimSS'])->name('prognosis-modal-kirim-ss')->middleware('auth');
+Route::post('/prognosis-kirim-ss/{id}', [PrognosisController::class, 'kirimSS'])->name('prognosis-kirim-ss')->middleware('auth');
