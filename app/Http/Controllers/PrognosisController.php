@@ -160,10 +160,11 @@ class PrognosisController extends Controller
         try {
 
 
-            // $item_data = $this->composition_repo->getDataCompositionReadyJob()[0];
-            // $payload_composition = $this->bodyManualComposition($item_data, $this->parameter_repo->getDataParameterFirst());
-            // return $payload_composition;
-            # return $this->composition_repo->getDataCompositionReadyJob();
+            // $item_data = $this->prognosis_repo->getDataPrognosisReadyJob()[0];
+            // $data_condition = $this->condition_repo->getDataConditionByOriginalCode($item_data['encounter_original_code']);
+            // $payload_prognosis = $this->bodyManualPrognosis($item_data, $this->parameter_repo->getDataParameterFirst(), $data_condition);
+            // return $payload_prognosis;
+            // return $this->prognosis_repo->getDataPrognosisReadyJob();
             # Jalankan Job
             $param_start['action'] = config('constan.job_name.job_scheduler'); // manual atau schedule
             $param_start['start'] = $this->currentNow(); //dari APITrait
@@ -183,6 +184,7 @@ class PrognosisController extends Controller
                         $this->job_logs_repo,
                         $this->job_id,
                         $this->prognosis_repo,
+                        $this->condition_repo,
                     );
                 }
             }
