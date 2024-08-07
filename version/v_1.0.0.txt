@@ -1248,7 +1248,7 @@ insert into ss_prognosis_code(code,display,code_system) values('170968001','Prog
 insert into ss_prognosis_code(code,display,code_system) values('65872000','Fair prognosis','http://snomed.info/sct')
 insert into ss_prognosis_code(code,display,code_system) values('67334001','Guarded prognosis','http://snomed.info/sct')
 insert into ss_prognosis_code(code,display,code_system) values('170969009','Prognosis bad','http://snomed.info/sct')
-insert into ss_prognosis_code(code,display,code_system) values('281131000000109','Prognosis uncertain','http://snomed.info/sct')
+insert into ss_prognosis_code(code,display,code_system) values('263493007','Prognosis','http://snomed.info/sct')
 
 create table ss_master_prognosis(
 id serial,

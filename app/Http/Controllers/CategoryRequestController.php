@@ -7,7 +7,7 @@ use App\Repositories\CategoryRequest\CategoryRequestInterface;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
 use Throwable;
-use Yajra\DataTables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables;
 
 class CategoryRequestController extends Controller
 {

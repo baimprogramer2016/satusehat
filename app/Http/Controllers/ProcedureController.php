@@ -9,7 +9,7 @@ use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\Procedure\ProcedureInterface;
 use App\Traits\JsonTrait;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
 use Throwable;

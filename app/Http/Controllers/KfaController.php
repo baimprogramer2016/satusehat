@@ -6,7 +6,7 @@ use App\Repositories\Kfa\KfaInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Yajra\DataTables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
 use Illuminate\Support\Facades\Http;

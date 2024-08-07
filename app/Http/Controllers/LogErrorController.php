@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\LogError\LogErrorInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Yajra\DataTables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use Throwable;
 
 class LogErrorController extends Controller

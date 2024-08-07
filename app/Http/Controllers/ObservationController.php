@@ -13,7 +13,7 @@ use App\Repositories\Encounter\EncounterInterface;
 use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\Observation\ObservationInterface;
 use App\Repositories\Parameter\ParameterInterface;
-use Yajra\DataTables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables;
 
 use Throwable;
 

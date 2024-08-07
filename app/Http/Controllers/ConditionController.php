@@ -9,7 +9,7 @@ use App\Repositories\MasterIcd10\MasterIcd10Interface;
 use Illuminate\Http\Request;
 use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\Parameter\ParameterInterface;
-use Yajra\DataTables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
 use App\Traits\JsonTrait;

@@ -6,7 +6,7 @@ use App\Repositories\AllergyCode\AllergyCodeInterface;
 use Illuminate\Http\Request;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
-use Yajra\DataTables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use Throwable;
 
 class AllergyCodeController extends Controller

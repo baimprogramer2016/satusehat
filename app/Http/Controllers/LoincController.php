@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Repositories\Loinc\LoincInterface;
 use App\Traits\GeneralTrait;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables;
 
 use Throwable;
 

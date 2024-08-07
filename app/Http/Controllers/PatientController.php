@@ -6,7 +6,7 @@ use App\Jobs\PatientJob;
 use App\Repositories\JobLogs\JobLogsInterface;
 use App\Repositories\Patient\PatientInterface;
 use Illuminate\Http\Request;
-use Yajra\DataTables\Facades\Datatables;
+use Yajra\DataTables\Facades\DataTables;
 use App\Traits\GeneralTrait;
 use App\Traits\ApiTrait;
 use Throwable;
