@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Models\Encounter;
 use App\Models\Queue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -35,7 +36,8 @@ class BundleJob implements ShouldQueue
         $diagnostic_report_repo,
         $service_request_radiology_repo,
         $allergy_repo,
-        $prognosis_repo;
+        $prognosis_repo,
+        $rencana_tindak_lanjut_repo;
     protected $parameter_repo;
     protected $job_id;
     protected $job_logs_repo;
@@ -58,6 +60,7 @@ class BundleJob implements ShouldQueue
         $service_request_radiology_repo,
         $allergy_repo,
         $prognosis_repo,
+        $rencana_tindak_lanjut_repo,
     ) {
         $this->bundle_repo = $bundle_repo; #data yang akan dieksekusi
         $this->condition_repo = $condition_repo;
@@ -76,6 +79,7 @@ class BundleJob implements ShouldQueue
         $this->service_request_radiology_repo = $service_request_radiology_repo;
         $this->allergy_repo = $allergy_repo;
         $this->prognosis_repo = $prognosis_repo;
+        $this->rencana_tindak_lanjut_repo = $rencana_tindak_lanjut_repo;
     }
 
     /**
@@ -87,6 +91,7 @@ class BundleJob implements ShouldQueue
         $data_bundle = $this->bundle_repo->getDataBundleReadyJob();
 
         if ($data_bundle->count() > 0) {
+
             # parameter body json
             $param_bundle['parameter'] = $this->parameter_repo->getDataParameterFirst();
 
@@ -116,9 +121,12 @@ class BundleJob implements ShouldQueue
                 $param_bundle['service_request_radiology'] = $this->service_request_radiology_repo->getDataServiceRequestRadiologyBundleByOriginalCode($item_bundle->original_code);
                 $param_bundle['allergy'] = $this->allergy_repo->getDataAllergyBundleByOriginalCode($item_bundle->original_code);
                 $param_bundle['prognosis'] = $this->prognosis_repo->getDataPrognosisBundleByOriginalCode($item_bundle->original_code);
+                $param_bundle['rencana_tindak_lanjut'] = $this->rencana_tindak_lanjut_repo->getDataRencanaTindakLanjutBundleByOriginalCode($item_bundle->original_code);
 
                 # API POST Bundle
                 $payload_bundle = $this->bodyBundle($param_bundle); // data bundle
+
+
 
                 $response = $this->post_general_ss('', $payload_bundle);
                 $body_parse = json_decode($response->body());
@@ -234,6 +242,12 @@ class BundleJob implements ShouldQueue
                                 $res['satusehat_id'] = $item_response->response->resourceID;
 
                                 $this->prognosis_repo->updateDataBundlePrognosisJob($res);
+                            }
+                            if ($item_response->response->resourceType == 'CarePlan') {
+                                # response default - replace
+                                $res['satusehat_id'] = $item_response->response->resourceID;
+
+                                $this->rencana_tindak_lanjut_repo->updateDataBundleRencanaTindakLanjutJob($res);
                             }
                             # update status dari response
                         }

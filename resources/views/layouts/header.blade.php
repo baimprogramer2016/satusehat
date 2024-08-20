@@ -171,6 +171,21 @@
                                     </li>
                                 </ul><!-- .nk-menu-sub -->
                             </li>
+                            <li class="nk-menu-item has-sub">
+                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                    <span class="nk-menu-text">Rencana Tindak Lanjut</span>
+                                </a>
+                                <ul class="nk-menu-sub">
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('rencana-tindak-lanjut-code') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Kode Rencana Tindak Lanjut</span></a>
+                                    </li>
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('rencana-tindak-lanjut-master') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Mapping Rencana Tindak Lanjut</span></a>
+                                    </li>
+                                </ul><!-- .nk-menu-sub -->
+                            </li>
 
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->
@@ -285,19 +300,19 @@
                                         <a href="{{ route('service-request-radiology') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Service Request</span></a>
                                     </li>
-                                    {{-- <li class="nk-menu-item">
-                                        <a href="{{ route('observation-lab') }}" class="nk-menu-link"><span
-                                                class="nk-menu-text">Observation</span></a>
-                                    </li>
-                                    <li class="nk-menu-item">
-                                        <a href="{{ route('diagnostic-report') }}" class="nk-menu-link"><span
-                                                class="nk-menu-text">Diagnostic Report</span></a>
-                                    </li> --}}
 
-                                    {{-- <li class="nk-menu-item">
-                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
-                                                class="nk-menu-text">Medication Dispense</span></a>
-                                    </li> --}}
+                                </ul><!-- .nk-menu-sub -->
+                            </li><!-- .nk-menu-item -->
+                            <li class="nk-menu-item has-sub">
+                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                    <span class="nk-menu-text">Lainnya</span>
+                                </a>
+                                <ul class="nk-menu-sub">
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('rencana-tindak-lanjut') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Rencana Tindak Lanjut</span></a>
+                                    </li>
+
                                 </ul><!-- .nk-menu-sub -->
                             </li><!-- .nk-menu-item -->
 

@@ -1360,3 +1360,144 @@ select 'prognosis_job','Prognosis','* * * * *', 'App\Http\Controllers\PrognosisC
 
 INSERT INTO ss_version (version,description, up_date) values('1.0.1','Last Prognosis','2024-06-20')
 
+
+//Recana tindak lanjut careplan
+
+INSERT INTO ss_bundle_set(resource,description,status)
+SELECT 'rencana_tindak_lanjut','Rencana Tindak Lanjut',0
+
+
+insert into ss_jadwal(kode,name,cron,command,status)
+select 'rencana_tindak_lanjut_job','Renacana Tindak Lanjut','* * * * *', 'App\Http\Controllers\RencanaTindakLanjutController@runJob',0
+
+INSERT INTO ss_version (version,description, up_date) values('1.0.1','Last Rencana Tindak Lanjut','2024-06-20')
+
+
+create table ss_rencana_tindak_lanjut_code(
+id serial,
+code varchar(30),
+display varchar(255),
+code_system varchar(255)
+)
+
+insert into ss_rencana_tindak_lanjut_code(code,display,code_system)
+select '736271009','Outpatient care plan','http://snomed.info/sct'
+union all
+select '306206005','Inpatient care plan','http://snomed.info/sct'
+union all
+select '419099009','Death','http://snomed.info/sct'
+union all
+select '183932001','Referral','http://snomed.info/sct'
+union all
+select '371824008','Discharge against medical advice','http://snomed.info/sct'
+
+
+create table ss_master_rencana_tindak_lanjut(
+id serial,
+code varchar(50),
+display text,
+code_satusehat varchar(50),
+code_satusehat_display text,
+code_system varchar(255)
+)
+
+insert into ss_master_rencana_tindak_lanjut(code,display, code_satusehat, code_satusehat_display,code_system)
+select '1' as code,'Pulang' as display,'736271009' as code_satusehat,'Outpatient care plan' as code_satusehat_display,'http://snomed.info/sct' as code_system
+union all
+select '2' as code,'Rawat Inap' as display,'306206005' as code_satusehat,'Inpatient care plan' as code_satusehat_display,'http://snomed.info/sct' as code_system
+union all
+select '3' as code,'Rujuk' as display,'183932001' as code_satusehat,'Referral' as code_satusehat_display,'http://snomed.info/sct' as code_system
+union all
+select '4' as code,'APS' as display,'371824008' as code_satusehat,'Discharge against medical advice' as code_satusehat_display,'http://snomed.info/sct' as code_system
+union all
+select '5' as code,'Meninggal' as display,'419099009' as code_satusehat,'Death' as code_satusehat_display,'http://snomed.info/sct' as code_system
+
+
+create table temp_rencana_tindak_lanjut
+(
+id serial,
+original_code varchar(50),
+encounter_original_code varchar(50),
+status varchar(30),
+intent varchar(30),
+care_plan_code varchar(2),
+description text,
+created date
+)
+
+
+create table ss_rencana_tindak_lanjut
+(
+id serial,
+original_code varchar(50),
+encounter_original_code varchar(50),
+satusehat_id varchar(200),
+status varchar(30),
+intent varchar(30),
+snomed_code varchar(50),
+snomed_display varchar(255),
+snomed_system varchar(100),
+description text,
+subject_reference varchar(30),
+subject_display varchar(255),
+author_reference varchar(50),
+created date,
+satusehat_send int,
+satusehat_date date,
+satusehat_request text,
+satusehat_response text,
+satusehat_statuscode varchar(5),
+created_at date,
+updated_at date,
+uuid varchar(100)
+)
+
+CREATE OR REPLACE FUNCTION public.validasi_rencana_tindak_lanjut(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+
+BEGIN
+INSERT INTO ss_rencana_tindak_lanjut(original_code,encounter_original_code,status,intent,description,subject_reference,subject_display,author_reference,created,satusehat_send,uuid, snomed_code,snomed_display,snomed_system)
+
+SELECT rencana_tindak_lanjut.original_code,rencana_tindak_lanjut.encounter_original_code,rencana_tindak_lanjut.status,rencana_tindak_lanjut.intent,rencana_tindak_lanjut.description,rencana_tindak_lanjut.subject_reference,rencana_tindak_lanjut.subject_display,
+rencana_tindak_lanjut.participant_individual_reference as author_reference,rencana_tindak_lanjut.created,
+4 as satusehat_send,uuid_generate_v4() as uuid,
+rencana_tindak_lanjut.code_satusehat,rencana_tindak_lanjut.code_satusehat_display,rencana_tindak_lanjut.code_system
+FROM
+(
+    SELECT mapping.*,ss_master_rencana_tindak_lanjut.code_satusehat,ss_master_rencana_tindak_lanjut.code_satusehat_display,ss_master_rencana_tindak_lanjut.code_system
+    FROM
+    (
+            select temp_rencana_tindak_lanjut.*,ss_encounter.subject_reference,ss_encounter.subject_display,ss_encounter.participant_individual_reference
+            FROM temp_rencana_tindak_lanjut
+            LEFT JOIN
+            ss_encounter
+            ON temp_rencana_tindak_lanjut.encounter_original_code = ss_encounter.original_code
+            WHERE ss_encounter.original_code is not null
+    ) as mapping
+    JOIN
+    ss_master_rencana_tindak_lanjut
+    ON  mapping.care_plan_code = ss_master_rencana_tindak_lanjut.code
+) as rencana_tindak_lanjut
+LEFT JOIN
+ss_rencana_tindak_lanjut
+ON rencana_tindak_lanjut.encounter_original_code = ss_rencana_tindak_lanjut.encounter_original_code
+WHERE ss_rencana_tindak_lanjut.encounter_original_code is null;
+
+return 'success';
+END;
+
+$BODY$;
+
+ALTER FUNCTION public.validasi_rencana_tindak_lanjut()
+    OWNER TO postgres;
+
+
+
+
+
+//Recana tindak lanjut careplan END

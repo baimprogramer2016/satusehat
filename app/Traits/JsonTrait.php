@@ -237,7 +237,8 @@ trait JsonTrait
         $data_diagnostic_report = $param['diagnostic_report'];
         $data_service_request_radiology = $param['service_request_radiology'];
         $data_allergy = $param['allergy'];
-        $data_prognosis = $param['prognosis'];
+        $data_rencana_tindak_lanjut = $param['prognosis'];
+        $data_rencana_tindak_lanjut = $param['rencana_tindak_lanjut'];
 
 
 
@@ -384,10 +385,19 @@ trait JsonTrait
 
         # prognosis
         if ($this->getJadwalSet()->where('resource', 'prognosis')->first()->status == 1) {
-            if (count($data_prognosis) > 0) {
-                foreach ($data_prognosis as $item_prognosis) {
+            if (count($data_rencana_tindak_lanjut) > 0) {
+                foreach ($data_rencana_tindak_lanjut as $item_prognosis) {
                     $bodyPrognosis = $this->bodyBundlePrognosis($item_prognosis, $data_parameter, $data_encounter['r_condition'], $data_encounter['uuid']);
                     array_push($bodyBundle['entry'], $bodyPrognosis);
+                }
+            }
+        }
+        # rencana tindak lanjut
+        if ($this->getJadwalSet()->where('resource', 'rencana_tindak_lanjut')->first()->status == 1) {
+            if (count($data_rencana_tindak_lanjut) > 0) {
+                foreach ($data_rencana_tindak_lanjut as $item_rencana_tindak_lanjut) {
+                    $bodyRencanaTindakLanjut = $this->bodyBundleRencanaTindakLanjut($item_rencana_tindak_lanjut, $data_encounter['uuid']);
+                    array_push($bodyBundle['entry'], $bodyRencanaTindakLanjut);
                 }
             }
         }
@@ -1673,33 +1683,33 @@ trait JsonTrait
         return $bodyBundleAllergy;
     }
 
-    public function bodyBundlePrognosis($data_prognosis, $data_parameter, $data_condition, $encounter_uuid)
+    public function bodyBundlePrognosis($data_rencana_tindak_lanjut, $data_parameter, $data_condition, $encounter_uuid)
     {
         $bodyBundlePrognosis = [
-            "fullUrl" => "urn:uuid:" . $data_prognosis['uuid'],
+            "fullUrl" => "urn:uuid:" . $data_rencana_tindak_lanjut['uuid'],
             "resource" => [
                 "resourceType" => "ClinicalImpression",
                 "identifier" => [
                     [
                         "system" => "http://sys-ids.kemkes.go.id/clinicalimpression/" . $data_parameter['organization_id'],
                         "use" => "official",
-                        "value" => $data_prognosis['identifier_value']
+                        "value" => $data_rencana_tindak_lanjut['identifier_value']
                     ]
                 ],
-                "status" => $data_prognosis['status'],
-                "description" => $data_prognosis['description'],
+                "status" => $data_rencana_tindak_lanjut['status'],
+                "description" => $data_rencana_tindak_lanjut['description'],
                 "subject" => [
-                    "reference" => "Patient/" . $data_prognosis['subject_reference'],
-                    "display" => $data_prognosis['subject_display']
+                    "reference" => "Patient/" . $data_rencana_tindak_lanjut['subject_reference'],
+                    "display" => $data_rencana_tindak_lanjut['subject_display']
                 ],
                 "encounter" => [
                     "reference" => "urn:uuid:" . $encounter_uuid,
-                    "display" => $data_prognosis['encounter_display']
+                    "display" => $data_rencana_tindak_lanjut['encounter_display']
                 ],
-                "effectiveDateTime" => $this->convertTimeStamp($data_prognosis['effective_datetime']),
-                "date" => $this->convertTimeStamp($data_prognosis['date']),
+                "effectiveDateTime" => $this->convertTimeStamp($data_rencana_tindak_lanjut['effective_datetime']),
+                "date" => $this->convertTimeStamp($data_rencana_tindak_lanjut['date']),
                 "assessor" => [
-                    "reference" => "Practitioner/" . $data_prognosis['assessor_reference']
+                    "reference" => "Practitioner/" . $data_rencana_tindak_lanjut['assessor_reference']
                 ],
                 // "problem" => [
                 //     [
@@ -1721,7 +1731,7 @@ trait JsonTrait
                 //         ]
                 //     ]
                 // ],
-                "summary" => $data_prognosis['summary'],
+                "summary" => $data_rencana_tindak_lanjut['summary'],
                 // "finding" => [
                 //     [
                 //         "itemCodeableConcept" => [
@@ -1742,9 +1752,9 @@ trait JsonTrait
                     [
                         "coding" => [
                             [
-                                "system" => $data_prognosis['coding_system'],
-                                "code" => $data_prognosis['coding_code'],
-                                "display" => $data_prognosis['coding_display']
+                                "system" => $data_rencana_tindak_lanjut['coding_system'],
+                                "code" => $data_rencana_tindak_lanjut['coding_code'],
+                                "display" => $data_rencana_tindak_lanjut['coding_display']
                             ]
                         ]
                     ]
@@ -1801,9 +1811,84 @@ trait JsonTrait
         return $bodyItemPrognosisCondition;
     }
 
+    public function bodyBundleRencanaTindakLanjut($data_rencana_tindak_lanjut, $encounter_uuid)
+    {
+        $bodyBundleRencanaTindakLanjut =   [
+            "fullUrl" => "urn:uuid:" . $data_rencana_tindak_lanjut['uuid'],
+            "resource" => [
+                "resourceType" => "CarePlan",
+                "status" => $data_rencana_tindak_lanjut['status'],
+                "intent" => $data_rencana_tindak_lanjut['intent'],
+                "category" => [
+                    [
+                        "coding" => [
+                            [
+                                "system" => $data_rencana_tindak_lanjut['snomed_system'],
+                                "code" => $data_rencana_tindak_lanjut['snomed_code'],
+                                "display" => $data_rencana_tindak_lanjut['snomed_display']
+                            ]
+                        ]
+                    ]
+                ],
+                "title" => $data_rencana_tindak_lanjut['description'],
+                "description" => $data_rencana_tindak_lanjut['description'],
+                "subject" => [
+                    "reference" => "Patient/" . $data_rencana_tindak_lanjut['subject_reference'],
+                    "display" => $data_rencana_tindak_lanjut['subject_display']
+                ],
+                "encounter" => [
+                    "reference" => "urn:uuid:" . $encounter_uuid
+                ],
+                "created" => $this->convertTimeStamp($data_rencana_tindak_lanjut['created']),
+                "author" => [
+                    "reference" => "Practitioner/" . $data_rencana_tindak_lanjut['author_reference']
+                ]
+            ],
+            "request" => [
+                "method" => "POST",
+                "url" => "CarePlan"
+            ]
+        ];
+        return $bodyBundleRencanaTindakLanjut;
+    }
+
 
     #############################  MANUAL ###################################
-    public function bodyManualPrognosis($data_prognosis, $data_parameter, $data_condition)
+    public function bodyManualRencanaTindakLanjut($data_rencana_tindak_lanjut)
+    {
+        $bodyManualRencanaTindakLanjut = [
+            "resourceType" => "CarePlan",
+            "status" => $data_rencana_tindak_lanjut['status'],
+            "intent" => $data_rencana_tindak_lanjut['intent'],
+            "category" => [
+                [
+                    "coding" => [
+                        [
+                            "system" => $data_rencana_tindak_lanjut['snomed_system'],
+                            "code" => $data_rencana_tindak_lanjut['snomed_code'],
+                            "display" => $data_rencana_tindak_lanjut['snomed_display'],
+                        ]
+                    ]
+                ]
+            ],
+            "title" => $data_rencana_tindak_lanjut['description'],
+            "description" => $data_rencana_tindak_lanjut['description'],
+            "subject" => [
+                "reference" => "Patient/" . $data_rencana_tindak_lanjut['subject_reference'],
+                "display" => $data_rencana_tindak_lanjut['subject_display'],
+            ],
+            "encounter" => [
+                "reference" => "Encounter/" . $data_rencana_tindak_lanjut['r_encounter']['satusehat_id'],
+            ],
+            "created" => $this->convertTimeStamp($data_rencana_tindak_lanjut['created']),
+            "author" => [
+                "reference" => "Practitioner/" . $data_rencana_tindak_lanjut['author_reference']
+            ]
+        ];
+
+        return $bodyManualRencanaTindakLanjut;
+    }
+    public function bodyManualPrognosis($data_rencana_tindak_lanjut, $data_parameter, $data_condition)
     {
 
         $bodyManualPrognosis = [
@@ -1812,23 +1897,23 @@ trait JsonTrait
                 [
                     "system" => "http://sys-ids.kemkes.go.id/clinicalimpression/" . $data_parameter['organization_id'],
                     "use" => "official",
-                    "value" => $data_prognosis['identifier_value']
+                    "value" => $data_rencana_tindak_lanjut['identifier_value']
                 ]
             ],
-            "status" => $data_prognosis['status'],
-            "description" => $data_prognosis['description'],
+            "status" => $data_rencana_tindak_lanjut['status'],
+            "description" => $data_rencana_tindak_lanjut['description'],
             "subject" => [
-                "reference" => "Patient/" . $data_prognosis['subject_reference'],
-                "display" => $data_prognosis['subject_display']
+                "reference" => "Patient/" . $data_rencana_tindak_lanjut['subject_reference'],
+                "display" => $data_rencana_tindak_lanjut['subject_display']
             ],
             "encounter" => [
-                "reference" => "Encounter/" . $data_prognosis['r_encounter']['satusehat_id'],
-                "display" => $data_prognosis['encounter_display']
+                "reference" => "Encounter/" . $data_rencana_tindak_lanjut['r_encounter']['satusehat_id'],
+                "display" => $data_rencana_tindak_lanjut['encounter_display']
             ],
-            "effectiveDateTime" => $this->convertTimeStamp($data_prognosis['effective_datetime']),
-            "date" => $this->convertTimeStamp($data_prognosis['date']),
+            "effectiveDateTime" => $this->convertTimeStamp($data_rencana_tindak_lanjut['effective_datetime']),
+            "date" => $this->convertTimeStamp($data_rencana_tindak_lanjut['date']),
             "assessor" => [
-                "reference" => "Practitioner/" . $data_prognosis['assessor_reference']
+                "reference" => "Practitioner/" . $data_rencana_tindak_lanjut['assessor_reference']
             ],
             // "problem" => [
             //     [
@@ -1850,7 +1935,7 @@ trait JsonTrait
             //         ]
             //     ]
             // ],
-            "summary" => $data_prognosis['summary'],
+            "summary" => $data_rencana_tindak_lanjut['summary'],
             // "finding" => [
             //     [
             //         "itemCodeableConcept" => [
@@ -1871,9 +1956,9 @@ trait JsonTrait
                 [
                     "coding" => [
                         [
-                            "system" => $data_prognosis['coding_system'],
-                            "code" => $data_prognosis['coding_code'],
-                            "display" => $data_prognosis['coding_display']
+                            "system" => $data_rencana_tindak_lanjut['coding_system'],
+                            "code" => $data_rencana_tindak_lanjut['coding_code'],
+                            "display" => $data_rencana_tindak_lanjut['coding_display']
                         ]
                     ]
                 ]

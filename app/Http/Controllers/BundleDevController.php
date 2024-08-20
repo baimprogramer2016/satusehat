@@ -18,6 +18,7 @@ use App\Repositories\ObservationLab\ObservationLabInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\Procedure\ProcedureInterface;
 use App\Repositories\Prognosis\PrognosisInterface;
+use App\Repositories\RencanaTindakLanjut\RencanaTindakLanjutInterface;
 use App\Repositories\ServiceRequest\ServiceRequestInterface;
 use App\Repositories\ServiceRequestRadiology\ServiceRequestRadiologyInterface;
 use App\Repositories\Specimen\SpecimenInterface;
@@ -50,7 +51,8 @@ class BundleDevController extends Controller
         $diagnostic_report_repo,
         $service_request_radiology_repo,
         $allergy_repo,
-        $prognosis_repo;
+        $prognosis_repo,
+        $rencana_tindak_lanjut_repo;
 
     public $parameter_repo;
     protected $job_id = 0;
@@ -70,7 +72,8 @@ class BundleDevController extends Controller
         DiagnosticReportInterface $diagnosticReportInterface,
         ServiceRequestRadiologyInterface $serviceRequestRadiologyInterface,
         AllergyInterface $allergyInterface,
-        PrognosisInterface $prognosisInterface
+        PrognosisInterface $prognosisInterface,
+        RencanaTindakLanjutInterface $rencanaTindakLanjutInterface,
 
     ) {
 
@@ -90,6 +93,7 @@ class BundleDevController extends Controller
         $this->service_request_radiology_repo = $serviceRequestRadiologyInterface;
         $this->allergy_repo = $allergyInterface;
         $this->prognosis_repo = $prognosisInterface;
+        $this->rencana_tindak_lanjut_repo = $rencanaTindakLanjutInterface;
     }
     public function runJob(Request $request)
     {
@@ -157,6 +161,7 @@ class BundleDevController extends Controller
                             $param_bundle['service_request_radiology'] = $this->service_request_radiology_repo->getDataServiceRequestRadiologyBundleByOriginalCode($item_bundle->original_code);
                             $param_bundle['allergy'] = $this->allergy_repo->getDataAllergyBundleByOriginalCode($item_bundle->original_code);
                             $param_bundle['prognosis'] = $this->prognosis_repo->getDataPrognosisBundleByOriginalCode($item_bundle->original_code);
+                            $param_bundle['rencana_tindak_lanjut'] = $this->rencana_tindak_lanjut_repo->getDataRencanaTindakLanjutBundleByOriginalCode($item_bundle->original_code);
 
 
 

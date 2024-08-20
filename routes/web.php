@@ -25,6 +25,9 @@ use App\Http\Controllers\ObservationLabController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\ParameterController;
 use App\Http\Controllers\PatientController;
+use App\Http\Controllers\RencanaTindakLanjutController;
+use App\Http\Controllers\RencanaTindakLanjutCodeController;
+use App\Http\Controllers\RencanaTindakLanjutMasterController;
 use App\Http\Controllers\PractitionerController;
 use App\Http\Controllers\ProcedureController;
 use App\Http\Controllers\ServiceRequestController;
@@ -59,7 +62,7 @@ Route::get('/tes-sinkronisasi', [SinkronisasiController::class, 'tesRunJob'])->n
 # BUNDLE
 Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
 
-Route::get('/aloneJob/{param_id_jadwal}', [PrognosisController::class, 'runJob']);
+Route::get('/aloneJob/{param_id_jadwal}', [RencanaTindakLanjutController::class, 'runJob']);
 
 #Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');
@@ -309,3 +312,16 @@ Route::get('/prognosis', [PrognosisController::class, 'index'])->name('prognosis
 Route::get('/prognosis-response-ss/{id}', [PrognosisController::class, 'responseSS'])->name('prognosis-response-ss')->middleware('auth');
 Route::get('/prognosis-modal-kirim-ss/{id}', [PrognosisController::class, 'modalKirimSS'])->name('prognosis-modal-kirim-ss')->middleware('auth');
 Route::post('/prognosis-kirim-ss/{id}', [PrognosisController::class, 'kirimSS'])->name('prognosis-kirim-ss')->middleware('auth');
+
+
+
+Route::get('/rencana-tindak-lanjut', [RencanaTindakLanjutController::class, 'index'])->name('rencana-tindak-lanjut')->middleware('auth');
+Route::get('/rencana-tindak-lanjut-response-ss/{id}', [RencanaTindakLanjutController::class, 'responseSS'])->name('rencana-tindak-lanjut-response-ss')->middleware('auth');
+Route::get('/rencana-tindak-lanjut-modal-kirim-ss/{id}', [RencanaTindakLanjutController::class, 'modalKirimSS'])->name('rencana-tindak-lanjut-modal-kirim-ss')->middleware('auth');
+Route::post('/rencana-tindak-lanjut-kirim-ss/{id}', [RencanaTindakLanjutController::class, 'kirimSS'])->name('rencana-tindak-lanjut-kirim-ss')->middleware('auth');
+
+Route::get('/rencana-tindak-lanjut-code', [RencanaTindakLanjutCodeController::class, 'index'])->name('rencana-tindak-lanjut-code')->middleware('auth');
+Route::get('/rencana-tindak-lanjut-master', [RencanaTindakLanjutMasterController::class, 'index'])->name('rencana-tindak-lanjut-master')->middleware('auth');
+Route::get('/rencana-tindak-lanjut-master-kode/{id}', [RencanaTindakLanjutMasterController::class, 'modalKode'])->name('rencana-tindak-lanjut-master-kode')->middleware('auth');
+Route::get('/rencana-tindak-lanjut-master-data/{id}', [RencanaTindakLanjutMasterController::class, 'getDataKode'])->name('rencana-tindak-lanjut-master-data')->middleware('auth');
+Route::post('/rencana-tindak-lanjut-master-kode-update', [RencanaTindakLanjutMasterController::class, 'updateKode'])->name('rencana-tindak-lanjut-master-kode-update')->middleware('auth');

@@ -60,9 +60,10 @@ class EncounterRepository implements EncounterInterface
             ->whereNull('satusehat_id')
             ->where('satusehat_send', '!=', 1)
             ->whereNull('satusehat_statuscode')
-            // ->whereIn('original_code', ['A122304622'])
+            // ->whereIn('original_code', ['A012300110'])
             ->get();
     }
+
 
     //tes2
     public function updateDataBundleEncounterJob($param = [])

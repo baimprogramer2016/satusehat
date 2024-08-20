@@ -1,6 +1,6 @@
 <div class="nk-upload-form">
     <h5 class="title mb-3">Pilih Kode</h5>
-    <p>Nama Obat : {{ Ucwords($data_prognosis_master['display']) }}</p>
+    <p>Deskripsi : {{ Ucwords($data_prognosis_master['display']) }}</p>
     <input type="hidden" id="id_prognosis_kode" value="{{ $data_prognosis_master['id'] }}">
 </div>
 {{--

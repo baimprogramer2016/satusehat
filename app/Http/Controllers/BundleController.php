@@ -17,6 +17,7 @@ use App\Repositories\Observation\ObservationInterface;
 use App\Repositories\ObservationLab\ObservationLabInterface;
 use App\Repositories\Parameter\ParameterInterface;
 use App\Repositories\Prognosis\PrognosisInterface;
+use App\Repositories\RencanaTindakLanjut\RencanaTindakLanjutInterface;
 use App\Repositories\ServiceRequest\ServiceRequestInterface;
 use App\Repositories\ServiceRequestRadiology\ServiceRequestRadiologyInterface;
 use App\Repositories\Specimen\SpecimenInterface;
@@ -49,7 +50,8 @@ class BundleController extends Controller
         $diagnostic_report_repo,
         $service_request_radiology_repo,
         $allergy_repo,
-        $prognosis_repo;
+        $prognosis_repo,
+        $rencanaTindakLanjutInterface;
 
     public $parameter_repo;
     protected $job_id = 0;
@@ -69,7 +71,8 @@ class BundleController extends Controller
         DiagnosticReportInterface $diagnosticReportInterface,
         ServiceRequestRadiologyInterface $serviceRequestRadiologyInterface,
         AllergyInterface $allergyInterface,
-        PrognosisInterface $prognosisInterface
+        PrognosisInterface $prognosisInterface,
+        RencanaTindakLanjutInterface $rencanaTindakLanjutInterface
     ) {
         $this->job_logs_repo = $jobLogsInterface;
         $this->bundle_repo = $encounterInterface;
@@ -88,6 +91,7 @@ class BundleController extends Controller
         $this->service_request_radiology_repo = $serviceRequestRadiologyInterface;
         $this->allergy_repo = $allergyInterface;
         $this->prognosis_repo = $prognosisInterface;
+        $this->rencanaTindakLanjutInterface = $rencanaTindakLanjutInterface;
     }
     public function runJob(Request $request, $param_id_jadwal)
     {
@@ -126,6 +130,7 @@ class BundleController extends Controller
                         $this->service_request_radiology_repo,
                         $this->allergy_repo,
                         $this->prognosis_repo,
+                        $this->rencanaTindakLanjutInterface,
                     );
                 }
             }

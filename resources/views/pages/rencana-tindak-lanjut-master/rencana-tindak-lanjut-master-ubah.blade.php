@@ -1,7 +1,7 @@
 <div class="nk-upload-form">
     <h5 class="title mb-3">Pilih Kode</h5>
-    <p>Deskripsi : {{ Ucwords($data_allergy_master['display']) }}</p>
-    <input type="hidden" id="id_allergy_kode" value="{{ $data_allergy_master['id'] }}">
+    <p>Deskripsi : {{ Ucwords($data_rencana_tindak_lanjut_master['display']) }}</p>
+    <input type="hidden" id="id_rencana_tindak_lanjut_kode" value="{{ $data_rencana_tindak_lanjut_master['id'] }}">
 </div>
 {{--
 <link rel="stylesheet" href="{{ asset('assets/css/jquery.dataTables.min.css') }}"> --}}
@@ -58,9 +58,9 @@
 
 $(function () {
 
-var id_allergy_kode = document.getElementById('id_allergy_kode').value;
-var url   ='{{ route("allergy-master-data",":id") }}';
-url       = url.replace(':id',id_allergy_kode);
+var id_rencana_tindak_lanjut_kode = document.getElementById('id_rencana_tindak_lanjut_kode').value;
+var url   ='{{ route("rencana-tindak-lanjut-master-data",":id") }}';
+url       = url.replace(':id',id_rencana_tindak_lanjut_kode);
 
 
 var table = $('.data-table-kode').DataTable({

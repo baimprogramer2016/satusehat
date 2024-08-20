@@ -8,6 +8,7 @@ interface EncounterInterface
 
     public function getDataBundleReadyJob();
 
+
     public function updateDataBundleEncounterJob($param = []);
 
     public function getDataEncounterFind($id);
