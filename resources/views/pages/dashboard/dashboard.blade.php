@@ -114,7 +114,7 @@
                 </div>
             </div><!-- .card -->
         </div><!-- .col -->
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="condition_success">0</span> /
                     <span class='text-secondary' id="condition_waiting">0</span>
@@ -126,7 +126,7 @@
                 <div class="title">Condition</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="observation_success">0</span> /
                     <span class='text-secondary' id="observation_waiting">0</span>
@@ -138,7 +138,7 @@
                 <div class="title">Observation</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="composition_success">0</span> /
                     <span class='text-secondary' id="composition_waiting">0</span>
@@ -150,7 +150,7 @@
                 <div class="title">Composition</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="procedure_success">0</span> /
                     <span class='text-secondary' id="procedure_waiting">0</span>
@@ -162,7 +162,7 @@
                 <div class="title">Procedure</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="medication_request_success">0</span> /
                     <span class='text-secondary' id="medication_request_waiting">0</span>
@@ -174,7 +174,7 @@
                 <div class="title">Medication Request</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="medication_dispense_success">0</span> /
                     <span class='text-secondary' id="medication_dispense_waiting">0</span>
@@ -186,7 +186,7 @@
                 <div class="title">Medication Dispense</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="service_request_success">0</span> /
                     <span class='text-secondary' id="service_request_waiting">0</span>
@@ -198,7 +198,7 @@
                 <div class="title">Service Request</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="specimen_success">0</span> /
                     <span class='text-secondary' id="specimen_waiting">0</span>
@@ -210,7 +210,7 @@
                 <div class="title">Specimen</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="observation_lab_success">0</span> /
                     <span class='text-secondary' id="observation_lab_waiting">0</span>
@@ -222,7 +222,7 @@
                 <div class="title">Observation Lab</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="diagnostic_report_success">0</span> /
                     <span class='text-secondary' id="diagnostic_report_waiting">0</span>
@@ -234,7 +234,7 @@
                 <div class="title">Diagnostic Report</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="allergy_success">0</span> /
                     <span class='text-secondary' id="allergy_waiting">0</span>
@@ -246,7 +246,7 @@
                 <div class="title">Allergy</div>
             </div>
         </div>
-        <div class="col-md-4 ">
+        <div class="col-md-3 ">
             <div class="nk-order-ovwg-data bg-white border border-opacity-5">
                 <div class="amount"><span class='text-primary' id="prognosis_success">0</span> /
                     <span class='text-secondary' id="prognosis_waiting">0</span>
@@ -256,6 +256,18 @@
                             id="prognosis_failed">0</span></strong>
                 </div>
                 <div class="title">Clinical</div>
+            </div>
+        </div>
+        <div class="col-md-3 ">
+            <div class="nk-order-ovwg-data bg-white border border-opacity-5">
+                <div class="amount"><span class='text-primary' id="rencana_tindak_lanjut_success">0</span> /
+                    <span class='text-secondary' id="rencana_tindak_lanjut_waiting">0</span>
+                    <small class="currenct currency-usd"></small>
+                </div>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="rencana_tindak_lanjut_failed">0</span></strong>
+                </div>
+                <div class="title">Rencana Tindak Lanjut</div>
             </div>
         </div>
     </div>
@@ -353,6 +365,7 @@
                 var diagnostic_report = response.data_diagnostic_report;
                 var allergy = response.data_allergy;
                 var prognosis = response.data_prognosis;
+                var rencana_tindak_lanjut = response.data_rencana_tindak_lanjut;
 
                 $("#encounter_year").html(encounter.data_current_year.toLocaleString('de-DE')+' Encounter');
                 $("#encounter_year_success").html(encounter.data_current_year_success.toLocaleString('de-DE'));
@@ -398,6 +411,9 @@
                 $("#prognosis_success").html(prognosis.prognosis_success.toLocaleString('de-DE'));
                 $("#prognosis_failed").html(prognosis.prognosis_failed.toLocaleString('de-DE'));
                 $("#prognosis_waiting").html(prognosis.prognosis_waiting.toLocaleString('de-DE'));
+                $("#rencana_tindak_lanjut_success").html(rencana_tindak_lanjut.rencana_tindak_lanjut_success.toLocaleString('de-DE'));
+                $("#rencana_tindak_lanjut_failed").html(rencana_tindak_lanjut.rencana_tindak_lanjut_failed.toLocaleString('de-DE'));
+                $("#rencana_tindak_lanjut_waiting").html(rencana_tindak_lanjut.rencana_tindak_lanjut_waiting.toLocaleString('de-DE'));
 
 
 

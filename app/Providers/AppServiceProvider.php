@@ -56,6 +56,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(\App\Repositories\RencanaTindakLanjut\RencanaTindakLanjutInterface::class, \App\Repositories\RencanaTindakLanjut\RencanaTindakLanjutRepository::class);
         $this->app->bind(\App\Repositories\RencanaTindakLanjutCode\RencanaTindakLanjutCodeInterface::class, \App\Repositories\RencanaTindakLanjutCode\RencanaTindakLanjutCodeRepository::class);
         $this->app->bind(\App\Repositories\RencanaTindakLanjutMaster\RencanaTindakLanjutMasterInterface::class, \App\Repositories\RencanaTindakLanjutMaster\RencanaTindakLanjutMasterRepository::class);
+        $this->app->bind(\App\Repositories\CatatanPengobatan\CatatanPengobatanInterface::class, \App\Repositories\CatatanPengobatan\CatatanPengobatanRepository::class);
     }
 
     /**

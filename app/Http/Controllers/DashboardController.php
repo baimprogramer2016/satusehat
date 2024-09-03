@@ -117,6 +117,7 @@ class DashboardController extends Controller
             "data_diagnostic_report" => $this->data_dashboard_repo->getDiagnosticReportAll(),
             "data_allergy" => $this->data_dashboard_repo->getAllergyAll(),
             "data_prognosis" => $this->data_dashboard_repo->getPrognosisAll(),
+            "data_rencana_tindak_lanjut" => $this->data_dashboard_repo->getRencanaTindakLanjutAll(),
         ];
 
         return response()->json($data_json);

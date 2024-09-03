@@ -12,6 +12,7 @@ use App\Models\MedicationRequest;
 use App\Models\Observation;
 use App\Models\Procedure;
 use App\Models\Prognosis;
+use App\Models\RencanaTindakLanjut;
 use App\Models\ServiceRequest;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\Log;
 class DashboardRepository implements DashboardInterface
 {
     private $model, $condition_model, $observation_model, $medication_request_model, $medication_dispense_model;
-    private $procedure_model, $composition_model, $service_request_model, $allergy_model, $prognosis_model;
+    private $procedure_model, $composition_model, $service_request_model, $allergy_model, $prognosis_model, $rencana_tindak_lanjut_model;
 
     public function __construct(
         Encounter $encounter_model,
@@ -33,6 +34,8 @@ class DashboardRepository implements DashboardInterface
         ServiceRequest $service_request_model,
         Allergy $allergy_model,
         Prognosis $prognosis_model,
+        RencanaTindakLanjut $rencana_tindak_lanjut_model
+
     ) {
         $this->model = $encounter_model;
         $this->condition_model = $condition_model;
@@ -44,6 +47,7 @@ class DashboardRepository implements DashboardInterface
         $this->service_request_model = $service_request_model;
         $this->allergy_model = $allergy_model;
         $this->prognosis_model = $prognosis_model;
+        $this->rencana_tindak_lanjut_model = $rencana_tindak_lanjut_model;
     }
 
 
@@ -104,9 +108,7 @@ class DashboardRepository implements DashboardInterface
         return $result;
     }
 
-    public function getConditionSuccessAll()
-    {
-    }
+    public function getConditionSuccessAll() {}
 
     public function getObservationAll()
     {
@@ -116,9 +118,7 @@ class DashboardRepository implements DashboardInterface
         return $result;
     }
 
-    public function getObservationSuccessAll()
-    {
-    }
+    public function getObservationSuccessAll() {}
 
     public function getMedicationRequestAll()
     {
@@ -127,9 +127,7 @@ class DashboardRepository implements DashboardInterface
         $result['medication_request_waiting'] = $this->medication_request_model->whereNull('satusehat_statuscode')->count();
         return $result;
     }
-    public function getMedicationRequestSuccessAll()
-    {
-    }
+    public function getMedicationRequestSuccessAll() {}
     public function getMedicationDispenseAll()
     {
         $result['medication_dispense_success'] = $this->medication_dispense_model->where('satusehat_statuscode', 200)->count();
@@ -179,13 +177,16 @@ class DashboardRepository implements DashboardInterface
         $result['prognosis_waiting'] = $this->prognosis_model->whereNull('satusehat_statuscode')->count();
         return $result;
     }
-    public function getMedicationDispenseSuccessAll()
+    public function getRencanaTindakLanjutAll()
     {
+        $result['rencana_tindak_lanjut_success'] = $this->rencana_tindak_lanjut_model->where('satusehat_statuscode', 200)->count();
+        $result['rencana_tindak_lanjut_failed'] = $this->rencana_tindak_lanjut_model->where('satusehat_statuscode', 500)->count();
+        $result['rencana_tindak_lanjut_waiting'] = $this->rencana_tindak_lanjut_model->whereNull('satusehat_statuscode')->count();
+        return $result;
     }
+    public function getMedicationDispenseSuccessAll() {}
 
-    public function getObservationLabSuccessAll()
-    {
-    }
+    public function getObservationLabSuccessAll() {}
 
     // public function getConditionAll()
     // {

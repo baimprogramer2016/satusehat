@@ -311,6 +311,8 @@
                                     <li class="nk-menu-item">
                                         <a href="{{ route('rencana-tindak-lanjut') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Rencana Tindak Lanjut</span></a>
+                                        <a href="{{ route('catatan-pengobatan') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Catatan Pengobatan</span></a>
                                     </li>
 
                                 </ul><!-- .nk-menu-sub -->

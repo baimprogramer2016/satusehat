@@ -33,6 +33,7 @@ interface DashboardInterface
     public function getDiagnosticReportAll();
     public function getAllergyAll();
     public function getPrognosisAll();
+    public function getRencanaTindakLanjutAll();
 
 
 

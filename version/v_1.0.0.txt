@@ -1501,3 +1501,26 @@ ALTER FUNCTION public.validasi_rencana_tindak_lanjut()
 
 
 //Recana tindak lanjut careplan END
+
+//CATATAN PENGOBATAN
+
+insert into ss_jadwal(kode,name,cron,command,status)
+select 'catatan_pengobatan_job','Catatan Pengobatan Job','* * * * *', 'App\Http\Controllers\CatatanPengobatanController@runJob',0
+
+INSERT INTO ss_version (version,description, up_date) values('1.0.1','Last Catatan Pengobatan','2024-09-05')
+
+
+alter table ss_medication_dispense
+add satusehat_id_catatan_pengobatan varchar(200)
+alter table ss_medication_dispense
+add satusehat_send_catatan_pengobatan int
+alter table ss_medication_dispense
+add satusehat_request_catatan_pengobatan text
+alter table ss_medication_dispense
+add satusehat_response_catatan_pengobatan text
+alter table ss_medication_dispense
+add satusehat_statuscode_catatan_pengobatan varchar(200)
+alter table ss_medication_dispense
+add satusehat_date_catatan_pengobatan varchar(200)
+
+//CATATAN PENGOBATAN END

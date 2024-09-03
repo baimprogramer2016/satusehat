@@ -42,6 +42,7 @@ use App\Http\Controllers\UploadController;
 use App\Http\Controllers\PrognosisCodeController;
 use App\Http\Controllers\PrognosisController;
 use App\Http\Controllers\PrognosisMasterController;
+use App\Http\Controllers\CatatanPengobatanController;
 use Illuminate\Support\Facades\Route;
 use App\Models\Encounter;
 
@@ -62,7 +63,7 @@ Route::get('/tes-sinkronisasi', [SinkronisasiController::class, 'tesRunJob'])->n
 # BUNDLE
 Route::get('/bundle', [BundleDevController::class, 'runJob'])->name('bundle')->middleware('auth');
 
-Route::get('/aloneJob/{param_id_jadwal}', [RencanaTindakLanjutController::class, 'runJob']);
+Route::get('/aloneJob/{param_id_jadwal}', [CatatanPengobatanController::class, 'runJob']);
 
 #Sinkronisasi
 // Route::get('/sinkronisasi-tes', [SinkronisasiController::class, 'tes'])->name('sinkronisasi-tes')->middleware('auth');
@@ -325,3 +326,9 @@ Route::get('/rencana-tindak-lanjut-master', [RencanaTindakLanjutMasterController
 Route::get('/rencana-tindak-lanjut-master-kode/{id}', [RencanaTindakLanjutMasterController::class, 'modalKode'])->name('rencana-tindak-lanjut-master-kode')->middleware('auth');
 Route::get('/rencana-tindak-lanjut-master-data/{id}', [RencanaTindakLanjutMasterController::class, 'getDataKode'])->name('rencana-tindak-lanjut-master-data')->middleware('auth');
 Route::post('/rencana-tindak-lanjut-master-kode-update', [RencanaTindakLanjutMasterController::class, 'updateKode'])->name('rencana-tindak-lanjut-master-kode-update')->middleware('auth');
+
+
+Route::get('/catatan-pengobatan', [CatatanPengobatanController::class, 'index'])->name('catatan-pengobatan')->middleware('auth');
+Route::get('/catatan-pengobatan-response-ss/{id}', [CatatanPengobatanController::class, 'responseSS'])->name('catatan-pengobatan-response-ss')->middleware('auth');
+Route::get('/catatan-pengobatan-modal-kirim-ss/{id}', [CatatanPengobatanController::class, 'modalKirimSS'])->name('catatan-pengobatan-modal-kirim-ss')->middleware('auth');
+Route::post('/catatan-pengobatan-kirim-ss/{id}', [CatatanPengobatanController::class, 'kirimSS'])->name('catatan-pengobatan-kirim-ss')->middleware('auth');

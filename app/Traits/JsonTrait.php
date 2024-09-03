@@ -1854,6 +1854,53 @@ trait JsonTrait
 
 
     #############################  MANUAL ###################################
+    public function bodyManualCatatanPengobatan($data_medication_dispense, $data_medication_request, $data_parameter)
+    {
+        $bodyManualCatatanPengobatan = [
+            "resourceType" => "MedicationStatement",
+            "status" => "completed",
+            "category" => [
+                "coding" => [
+                    [
+                        "system" => "http://terminology.hl7.org/CodeSystem/medication-statement-category",
+                        "code" => "outpatient",
+                        "display" => "Outpatient"
+                    ]
+                ]
+            ],
+            "medicationReference" => [
+                "reference" => "Medication/" . $data_medication_request['satusehat_id_medication'],
+                "display" => $data_medication_request['r_medication']['r_kfa'][0]['nama_kfa']
+            ],
+            "subject" => [
+                "reference" => "Patient/" . $data_medication_request['subject_reference'],
+                "display" => $data_medication_request['subject_display'],
+            ],
+            "dosage" => [
+                [
+                    "text" => $data_medication_request['ins_patient'],
+                    "timing" => [
+                        "repeat" => [
+                            "frequency" => (int)$data_medication_request['int_timing_frequency'],
+                            "period" => (int)$data_medication_request['int_timing_period'],
+                            //"periodMax" => (int)$data_medication_request['int_timing_frequency'],
+                            "periodUnit" => ($data_medication_request['int_timing_period_unit'] == 'd' ? 'h' : 'd'),
+                        ]
+                    ]
+                ]
+            ],
+            "effectiveDateTime" => $this->convertTimeStamp($data_medication_request['validity_period_start']),
+            "dateAsserted" => $this->convertTimeStamp($data_medication_request['int_timing_period_start']),
+            "informationSource" => [
+                "reference" => "Patient/" . $data_medication_request['subject_reference'],
+                "display" => $data_medication_request['subject_display']
+            ],
+            "context" => [
+                "reference" => "Encounter/" . $data_medication_request['r_encounter']['satusehat_id']
+            ]
+        ];
+        return $bodyManualCatatanPengobatan;
+    }
     public function bodyManualRencanaTindakLanjut($data_rencana_tindak_lanjut)
     {
         $bodyManualRencanaTindakLanjut = [

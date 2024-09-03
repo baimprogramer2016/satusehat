@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class MedicationRequest extends Model
 {
     use HasFactory;
-    use HasFactory;
+
     protected $table = 'ss_medication_request';
 
     protected $guarded = ['id'];
