@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Log;
 class DashboardRepository implements DashboardInterface
 {
     private $model, $condition_model, $observation_model, $medication_request_model, $medication_dispense_model;
-    private $procedure_model, $composition_model, $service_request_model, $allergy_model, $prognosis_model, $rencana_tindak_lanjut_model;
+    private $procedure_model, $composition_model, $service_request_model, $allergy_model, $prognosis_model, $rencana_tindak_lanjut_model, $catatan_pengobatan_model;
 
     public function __construct(
         Encounter $encounter_model,
@@ -29,6 +29,7 @@ class DashboardRepository implements DashboardInterface
         Observation $observation_model,
         MedicationRequest $medication_request_model,
         MedicationDispense $medication_dispense_model,
+        MedicationDispense $catatan_pengobatan_model,
         Procedure $procedure_model,
         Composition $composition_model,
         ServiceRequest $service_request_model,
@@ -48,6 +49,7 @@ class DashboardRepository implements DashboardInterface
         $this->allergy_model = $allergy_model;
         $this->prognosis_model = $prognosis_model;
         $this->rencana_tindak_lanjut_model = $rencana_tindak_lanjut_model;
+        $this->catatan_pengobatan_model = $catatan_pengobatan_model;
     }
 
 
@@ -182,6 +184,13 @@ class DashboardRepository implements DashboardInterface
         $result['rencana_tindak_lanjut_success'] = $this->rencana_tindak_lanjut_model->where('satusehat_statuscode', 200)->count();
         $result['rencana_tindak_lanjut_failed'] = $this->rencana_tindak_lanjut_model->where('satusehat_statuscode', 500)->count();
         $result['rencana_tindak_lanjut_waiting'] = $this->rencana_tindak_lanjut_model->whereNull('satusehat_statuscode')->count();
+        return $result;
+    }
+    public function getCatatanPengobatanAll()
+    {
+        $result['catatan_pengobatan_success'] = $this->catatan_pengobatan_model->where('satusehat_statuscode_catatan_pengobatan', 200)->count();
+        $result['catatan_pengobatan_failed'] = $this->catatan_pengobatan_model->where('satusehat_statuscode_catatan_pengobatan', 500)->count();
+        $result['catatan_pengobatan_waiting'] = $this->catatan_pengobatan_model->whereNull('satusehat_statuscode_catatan_pengobatan')->count();
         return $result;
     }
     public function getMedicationDispenseSuccessAll() {}

@@ -270,6 +270,18 @@
                 <div class="title">Rencana Tindak Lanjut</div>
             </div>
         </div>
+        <div class="col-md-3 ">
+            <div class="nk-order-ovwg-data bg-white border border-opacity-5">
+                <div class="amount"><span class='text-primary' id="catatan_pengobatan_success">0</span> /
+                    <span class='text-secondary' id="catatan_pengobatan_waiting">0</span>
+                    <small class="currenct currency-usd"></small>
+                </div>
+                <div class="info text-danger">Gagal Kirim : <strong> <span class="currenct currency-usd"
+                            id="catatan_pengobatan_failed">0</span></strong>
+                </div>
+                <div class="title">Catatan Pengobatan</div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" tabindex="-1" role="dialog" id="file-upload">
@@ -351,6 +363,7 @@
             url:"{{ route('dashboard-refresh') }}",
             success: function(response)
             {
+                console.log(response.data_catata)
                 // console.log(response.data_encounter);
                 var encounter = response.data_encounter;
                 var condition = response.data_condition;
@@ -366,6 +379,7 @@
                 var allergy = response.data_allergy;
                 var prognosis = response.data_prognosis;
                 var rencana_tindak_lanjut = response.data_rencana_tindak_lanjut;
+                var catatan_pengobatan = response.data_catatan_pengobatan;
 
                 $("#encounter_year").html(encounter.data_current_year.toLocaleString('de-DE')+' Encounter');
                 $("#encounter_year_success").html(encounter.data_current_year_success.toLocaleString('de-DE'));
@@ -414,6 +428,9 @@
                 $("#rencana_tindak_lanjut_success").html(rencana_tindak_lanjut.rencana_tindak_lanjut_success.toLocaleString('de-DE'));
                 $("#rencana_tindak_lanjut_failed").html(rencana_tindak_lanjut.rencana_tindak_lanjut_failed.toLocaleString('de-DE'));
                 $("#rencana_tindak_lanjut_waiting").html(rencana_tindak_lanjut.rencana_tindak_lanjut_waiting.toLocaleString('de-DE'));
+                $("#catatan_pengobatan_success").html(catatan_pengobatan.catatan_pengobatan_success.toLocaleString('de-DE'));
+                $("#catatan_pengobatan_failed").html(catatan_pengobatan.catatan_pengobatan_failed.toLocaleString('de-DE'));
+                $("#catatan_pengobatan_waiting").html(catatan_pengobatan.catatan_pengobatan_waiting.toLocaleString('de-DE'));
 
 
 

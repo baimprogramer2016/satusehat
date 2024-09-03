@@ -34,6 +34,7 @@ interface DashboardInterface
     public function getAllergyAll();
     public function getPrognosisAll();
     public function getRencanaTindakLanjutAll();
+    public function getCatatanPengobatanAll();
 
 
 
