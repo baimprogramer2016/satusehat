@@ -52,7 +52,7 @@ class CatatanPengobatanController extends Controller
                     if ($item_medication_dispense->satusehat_send_catatan_pengobatan == 1) {
                         $clr = 'text-success';
                     }
-                    $status = '<td><span class=' . $clr . '>' . $item_medication_dispense->r_status->description ?? '' . '</span></td>';
+                    $status = '<td><span class=' . $clr . '>' . $item_medication_dispense->r_status_catatan_pengobatan->description ?? '' . '</span></td>';
 
                     return $status;
                 })

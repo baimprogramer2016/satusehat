@@ -194,11 +194,20 @@
                             <span class="nk-menu-text">Resource</span>
                         </a>
                         <ul class="nk-menu-sub">
-                            <li class="nk-menu-item has-sub">
+                            <li class=" nk-menu-item has-sub">
+
                                 <a href="#" class="nk-menu-link nk-menu-toggle">
-                                    <span class="nk-menu-text">Resource 1</span>
+                                    <span class="nk-menu-text">Rawat Jalan</span>
                                 </a>
-                                <ul class="nk-menu-sub">
+                                <ul class="nk-menu-sub" style="overflow-y: auto; max-height: 500px">
+                                    <li class=" nk-menu-item">
+                                        <a href="{{ route('encounter') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Encounter</span></a>
+                                    </li>
+                                    <li class="nk-menu-item">
+                                        <a href="{{ route('condition') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Condition</span></a>
+                                    </li>
                                     <li class="nk-menu-item">
                                         <a href="{{ route('encounter') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Encounter</span></a>
@@ -207,13 +216,6 @@
                                         <a href="{{ route('condition') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Condition</span></a>
                                     </li>
-                                </ul><!-- .nk-menu-sub -->
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-item has-sub">
-                                <a href="#" class="nk-menu-link nk-menu-toggle">
-                                    <span class="nk-menu-text">Resource 2</span>
-                                </a>
-                                <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
                                         <a href="{{ route('observation') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Observation</span></a>
@@ -226,14 +228,6 @@
                                         <a href="{{ route('composition') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Composition</span></a>
                                     </li>
-                                </ul><!-- .nk-menu-sub -->
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-item has-sub">
-                                <a href="#" class="nk-menu-link nk-menu-toggle">
-                                    <span class="nk-menu-text">Resource 3</span>
-                                </a>
-                                <ul class="nk-menu-sub">
-
                                     <li class="nk-menu-item">
                                         <a href="{{ route('medication-request') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Medication Request</span></a>
@@ -242,20 +236,10 @@
                                         <a href="{{ route('medication-dispense') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Medication Dispense</span></a>
                                     </li>
-                                    {{-- <li class="nk-menu-item">
-                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
-                                                class="nk-menu-text">Medication Dispense</span></a>
-                                    </li> --}}
-                                </ul><!-- .nk-menu-sub -->
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-item has-sub">
-                                <a href="#" class="nk-menu-link nk-menu-toggle">
-                                    <span class="nk-menu-text">Resource 4 (Lab)</span>
-                                </a>
-                                <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
                                         <a href="{{ route('service-request') }}" class="nk-menu-link"><span
-                                                class="nk-menu-text">Service Request</span></a>
+                                                class="nk-menu-text">Service
+                                                Request</span></a>
                                     </li>
                                     <li class="nk-menu-item">
                                         <a href="{{ route('specimen') }}" class="nk-menu-link"><span
@@ -269,18 +253,6 @@
                                         <a href="{{ route('diagnostic-report') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Diagnostic Report</span></a>
                                     </li>
-
-                                    {{-- <li class="nk-menu-item">
-                                        <a href="html/transaction-crypto.html" class="nk-menu-link"><span
-                                                class="nk-menu-text">Medication Dispense</span></a>
-                                    </li> --}}
-                                </ul><!-- .nk-menu-sub -->
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-item has-sub">
-                                <a href="#" class="nk-menu-link nk-menu-toggle">
-                                    <span class="nk-menu-text">Resource 5</span>
-                                </a>
-                                <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
                                         <a href="{{ route('allergy') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Allergy</span></a>
@@ -289,34 +261,33 @@
                                         <a href="{{ route('prognosis') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Prognosis</span></a>
                                     </li>
-                                </ul><!-- .nk-menu-sub -->
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-item has-sub">
-                                <a href="#" class="nk-menu-link nk-menu-toggle">
-                                    <span class="nk-menu-text">Resource 6 (Radiologi)</span>
-                                </a>
-                                <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
                                         <a href="{{ route('service-request-radiology') }}" class="nk-menu-link"><span
-                                                class="nk-menu-text">Service Request</span></a>
+                                                class="nk-menu-text">Service Request (Radiologi)</span></a>
                                     </li>
-
-                                </ul><!-- .nk-menu-sub -->
-                            </li><!-- .nk-menu-item -->
-                            <li class="nk-menu-item has-sub">
-                                <a href="#" class="nk-menu-link nk-menu-toggle">
-                                    <span class="nk-menu-text">Lainnya</span>
-                                </a>
-                                <ul class="nk-menu-sub">
                                     <li class="nk-menu-item">
                                         <a href="{{ route('rencana-tindak-lanjut') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Rencana Tindak Lanjut</span></a>
+                                    </li>
+                                    <li class="nk-menu-item">
                                         <a href="{{ route('catatan-pengobatan') }}" class="nk-menu-link"><span
                                                 class="nk-menu-text">Catatan Pengobatan</span></a>
                                     </li>
-
                                 </ul><!-- .nk-menu-sub -->
                             </li><!-- .nk-menu-item -->
+                            {{-- <li class=" nk-menu-item has-sub">
+
+                                <a href="#" class="nk-menu-link nk-menu-toggle">
+                                    <span class="nk-menu-text">Rawat Inap</span>
+                                </a>
+                                <ul class="nk-menu-sub" style="overflow-y: auto; max-height: 500px">
+                                    <li class=" nk-menu-item">
+                                        <a href="{{ route('encounter') }}" class="nk-menu-link"><span
+                                                class="nk-menu-text">Encounter</span></a>
+                                    </li>
+
+                                </ul><!-- .nk-menu-sub -->
+                            </li><!-- .nk-menu-item --> --}}
 
                         </ul><!-- .nk-menu-sub -->
                     </li><!-- .nk-menu-item -->

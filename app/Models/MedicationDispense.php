@@ -17,6 +17,10 @@ class MedicationDispense extends Model
     {
         return $this->hasOne(Status::class, 'status', 'satusehat_send');
     }
+    public function r_status_catatan_pengobatan()
+    {
+        return $this->hasOne(Status::class, 'status', 'satusehat_send_catatan_pengobatan');
+    }
 
     public function r_medication()
     {
