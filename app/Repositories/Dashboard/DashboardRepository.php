@@ -188,9 +188,9 @@ class DashboardRepository implements DashboardInterface
     }
     public function getCatatanPengobatanAll()
     {
-        $result['catatan_pengobatan_success'] = $this->catatan_pengobatan_model->where('satusehat_statuscode_catatan_pengobatan', 200)->count();
-        $result['catatan_pengobatan_failed'] = $this->catatan_pengobatan_model->where('satusehat_statuscode_catatan_pengobatan', 500)->count();
-        $result['catatan_pengobatan_waiting'] = $this->catatan_pengobatan_model->whereNull('satusehat_statuscode_catatan_pengobatan')->count();
+        $result['catatan_pengobatan_success'] = $this->catatan_pengobatan_model->whereNotNull('satusehat_id')->where('satusehat_statuscode_catatan_pengobatan', 200)->count();
+        $result['catatan_pengobatan_failed'] = $this->catatan_pengobatan_model->whereNotNull('satusehat_id')->where('satusehat_statuscode_catatan_pengobatan', 500)->count();
+        $result['catatan_pengobatan_waiting'] = $this->catatan_pengobatan_model->whereNotNull('satusehat_id')->whereNull('satusehat_statuscode_catatan_pengobatan')->count();
         return $result;
     }
     public function getMedicationDispenseSuccessAll() {}

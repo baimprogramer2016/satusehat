@@ -103,6 +103,7 @@ class CatatanPengobatanRepository implements CatatanPengobatanInterface
             ->where('ss_medication_dispense.satusehat_send_catatan_pengobatan', '!=', '1')
             ->whereNull('ss_medication_dispense.satusehat_id_catatan_pengobatan')
             ->whereNull('ss_medication_dispense.satusehat_statuscode_catatan_pengobatan')
+            ->whereNotNull('ss_medication_dispense.satusehat_id')
             ->get();
     }
 }
