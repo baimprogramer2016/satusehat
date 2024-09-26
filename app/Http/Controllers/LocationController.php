@@ -156,6 +156,20 @@ class LocationController extends Controller
             ]);
         }
     }
+    public function modalKirimMultipleSS(Request $request)
+    {
+
+        // return json_decode($request->data);
+        try {
+            return view('pages.location.location-kirim-multiple-ss', [
+                "data_location" => $this->location_repo->getDataLocationByInId(json_decode($request->data)),
+            ]);
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
 
     public function kirimSS(Request $request)
     {
@@ -176,6 +190,47 @@ class LocationController extends Controller
             # update status ke database
             $this->location_repo->updateStatusLocation($this->dec($request->id), $satusehat_id, $payload_location, $response);
             return $response;
+        } catch (Throwable $e) {
+            return view("layouts.error", [
+                "message" => $e
+            ]);
+        }
+    }
+
+    public function kirimMultipleSS(Request $request)
+    {
+        try {
+            $result = "";
+            $data_location = $this->location_repo->getDataLocationByInId(json_decode($request->data));
+            foreach (json_decode($data_location) as $item) {
+
+                $data_location = $this->location_repo->getDataLocationFind($item->id);
+                // return $data_location;
+                $data_parameter = $this->parameter_repo->getDataParameterFirst();
+
+                $payload_location = $this->bodyLocation($data_location, $data_parameter);
+                // return $payload_location;
+                $response = $this->post_general_ss('/Location', $payload_location);
+
+                $body_parse = json_decode($response->body());
+
+                $satusehat_id = null;
+                if ($response->successful()) {
+                    $satusehat_id = $body_parse->id;
+                }
+                # update status ke database
+                $this->location_repo->updateStatusLocation($item->id, $satusehat_id, $payload_location, $response);
+
+                $result .=  $item->original_code . ' = ' . $satusehat_id . " success\n";
+            }
+
+            return response()->json([
+                "resourceType" => "success",
+                "data" => $result
+            ]);
+
+
+            // return $this->kirimSS($request);
         } catch (Throwable $e) {
             return view("layouts.error", [
                 "message" => $e

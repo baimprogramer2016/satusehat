@@ -129,6 +129,8 @@ Route::post('/lokasi-hapus-data', [LocationController::class, 'hapusData'])->nam
 Route::get('/lokasi-response-ss/{id}', [LocationController::class, 'responseSS'])->name('lokasi-response-ss')->middleware('auth');
 Route::get('/lokasi-modal-kirim-ss/{id}', [LocationController::class, 'modalKirimSS'])->name('lokasi-modal-kirim-ss')->middleware('auth');
 Route::post('/lokasi-kirim-ss/{id}', [LocationController::class, 'kirimSS'])->name('lokasi-kirim-ss')->middleware('auth');
+Route::get('/lokasi-modal-kirim-multiple-ss', [LocationController::class, 'modalKirimMultipleSS'])->name('lokasi-modal-kirim-multiple-ss')->middleware('auth');
+Route::post('/lokasi-multiple-kirim-ss', [LocationController::class, 'kirimMultipleSS'])->name('lokasi-multiple-kirim-ss')->middleware('auth');
 
 Route::get('/pasien', [PatientController::class, 'index'])->name('pasien')->middleware('auth');
 Route::get('/pasien-response-ss/{id}', [PatientController::class, 'responseSS'])->name('pasien-response-ss')->middleware('auth');

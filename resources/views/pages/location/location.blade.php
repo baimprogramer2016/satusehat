@@ -20,6 +20,10 @@
                                 class="btn btn-white btn-dim btn-outline-primary" data-toggle="modal"><em
                                     class="icon ni ni-plus"></em><span>Tambah</span></a>
                         </li>
+                        <li><a href="#file-upload" onClick="modalKirimMultipleSatuSehat()"
+                                class="btn btn-white btn-dim btn-outline-success" data-toggle="modal"><em
+                                    class="icon ni ni-send"></em><span>Kirim ke Satu Sehat (Multiple)</span></a>
+                        </li>
 
                     </ul>
                 </div><!-- .toggle-expand-content -->
@@ -42,6 +46,7 @@
                             <thead>
                                 <tr>
                                     <th>Kode</th>
+                                    <th>Kode</th>
                                     <th>Satu Sehat ID</th>
                                     <th>Nama</th>
                                     <th>Tipe</th>
@@ -54,8 +59,16 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($data_lokasi as $item_lokasi)
+                                @foreach ($data_lokasi as $index => $item_lokasi)
                                 <tr>
+                                    <td>
+                                        <div class="custom-control custom-checkbox flex justify-center items-center">
+                                            <input type="checkbox" class="custom-control-input"
+                                                onClick="clickCheckBoxSS({{ $item_lokasi->id }})"
+                                                id="pilih_{{ $index }}" />
+                                            <label class="custom-control-label" for="pilih_{{ $index }}"></label>
+                                        </div>
+                                    </td>
                                     <td>{{ $item_lokasi->original_code }}</td>
                                     <td>{{ $item_lokasi->satusehat_id }}</td>
                                     <td>{{ $item_lokasi->name }}</td>
@@ -134,6 +147,17 @@
                 sLengthMenu: "Show _MENU_"
             },
         });
+
+
+
+    var tampung_id = [];
+
+    function clickCheckBoxSS(param){
+        console.log(param)
+        tampung_id.push(param)
+        console.log(tampung_id)
+    }
+
 
     function modalTambah()
     {
@@ -255,8 +279,61 @@
             }
         })
     }
+    function modalKirimMultipleSatuSehat()
+    {
+        loadingProcess(); //dari custom.js
 
+        var url     = '{{ route("lokasi-modal-kirim-multiple-ss") }}';
+        $.ajax({
+            type:"GET",
+            url:url,
+            data: {
+                data:JSON.stringify(tampung_id),
+            },
+            success: function(response)
+            {
+                $("#content-modal").html("");
+                $("#content-modal").html(response);
+            }
+        })
+    }
+    function kirimMultipleSatuSehat()
+    {
+        // loadingProcess(); //dari custom.js
 
+        $(".btn-action").html('Proses Kirim....')
+        $(".btn-action").prop("disabled", true);
+        $(".result-message").html('...');
+        var url     = '{{ route("lokasi-multiple-kirim-ss") }}';
 
+        $.ajax({
+            type:"POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                data:JSON.stringify(tampung_id),
+            },
+            url:url,
+            success: function(response)
+            {//resourceType = OperationOutcome
+
+                    console.log(response)
+
+                    if(response.resourceType === 'OperationOutcome')
+                    {
+                        $(".result-message").html("<i class='text-danger'>Gagal di kirim</i>");
+                        $(".btn-action").hide();
+                    }else
+                    {
+                        $("#response_ss").val(response.data);
+                        setTimeout(() => {
+                            $(".result-message").html("<i class='text-success'>Berhasil di kirim</i>");
+                            $(".btn-action").html('Selesai');
+                        }, 2000);
+                            location.reload();
+                    }
+
+            }
+        })
+    }
 </script>
 @endpush

@@ -13,4 +13,5 @@ interface LocationInterface
     public function updateStatusLocation($id, $satusehat_id, $request, $response);
     public function getDataPoli();
     public function getDataLocationByIDSS($id);
+    public function getDataLocationByInId($param);
 }

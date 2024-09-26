@@ -129,7 +129,11 @@ class LocationRepository implements LocationInterface
 
     public function getDataPoli()
     {
-        $location_data = $this->model->select('original_code')->get();;
+        $location_data = $this->model->select('original_code')->get();
         return $this->poli_model->whereNotIn('original_code', $location_data)->get();
+    }
+    public function getDataLocationByInId($param)
+    {
+        return  $this->model->select('id', 'original_code')->whereIn("id", $param)->whereNull('satusehat_id')->get();
     }
 }
