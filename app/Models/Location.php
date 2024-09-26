@@ -20,4 +20,8 @@ class Location extends Model
     {
         return $this->hasOne(Organization::class, 'satusehat_id', 'managing_organization');
     }
+    public function r_partof_name()
+    {
+        return $this->hasOne(Location::class, 'satusehat_id', 'partof_id');
+    }
 }

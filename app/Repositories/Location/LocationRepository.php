@@ -88,8 +88,26 @@ class LocationRepository implements LocationInterface
         $data->name = $request['name'];
         $data->physical_type_code = $request['physical_type_code'];
         $data->physical_type_display = $physical_display;
-        $data->managing_organization = $request['managing_organization'];
+        $data->physical_type_display = $physical_display;
+        $data->partof_id = $request['partof_id'];
         $data->satusehat_send = $request['satusehat_send'];
+        $data->telecom_phone = config('constan.default_organization.phone');
+        $data->telecom_fax = config('constan.default_organization.fax');
+        $data->telecom_email = config('constan.default_organization.email');
+        $data->telecom_url = config('constan.default_organization.url');
+        $data->address = config('constan.default_organization.address');
+        $data->city = config('constan.default_organization.city');
+        $data->postal_code = config('constan.default_organization.postal_code');
+        $data->country = config('constan.default_organization.country_code');
+        $data->extension_province = config('constan.default_organization.province_code');
+        $data->extension_city = config('constan.default_organization.city_code');
+        $data->extension_district = config('constan.default_organization.district_code');
+        $data->extension_village = config('constan.default_organization.village_code');
+        $data->extension_rt = config('constan.default_organization.rt');
+        $data->extension_rw = config('constan.default_organization.rw');
+        $data->position_longitude = config('constan.default_organization.position_longitude');
+        $data->position_latitude = config('constan.default_organization.position_latitude');
+        $data->position_altitude = config('constan.default_organization.position_altitude');
         $data->update();
 
         return $data;

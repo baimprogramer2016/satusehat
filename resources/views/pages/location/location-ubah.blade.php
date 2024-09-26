@@ -70,6 +70,23 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
+                    <label class="form-label" for="default-06">Part</label>
+                    <div class="form-control-wrap ">
+                        <div class="form-control-select">
+                            <select class="form-control" id="default-06" name="partof_id" id="partof_id">
+                                <option value="{{ $data_locationl->r_partof_name->satusehat_id ?? null }}">
+                                    {{$data_location->r_partof_name->name ?? '' }}</option>
+                                @foreach ($data_location_all as $item_location_all)
+                                <option value="{{ $item_location_all->satusehat_id }}">{{ $item_location_all->name }}
+                                </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
                     <label class="form-label" for="satusehat_send">Status</label>
                     <div class="form-control-wrap">
                         <select class="form-control" id="default-06" name="satusehat_send" id="satusehat_send">

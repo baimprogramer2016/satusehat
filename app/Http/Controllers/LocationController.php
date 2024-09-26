@@ -96,9 +96,7 @@ class LocationController extends Controller
             ]);
         }
     }
-    public function struktur()
-    {
-    }
+    public function struktur() {}
     public function ubah(Request $request, $id)
     {
         try {
@@ -106,7 +104,8 @@ class LocationController extends Controller
                 "data_location" => $this->location_repo->getDataLocationFind($this->dec($id)),
                 "data_bagian" => $this->organization_repo->getDataOrganizationIdSuccess(),
                 "data_status" => $this->status_repo->getDataStatusNotSend(),
-                "data_type" => $this->physical_type_repo->getDataPhysicalType()
+                "data_type" => $this->physical_type_repo->getDataPhysicalType(),
+                "data_location_all" => $this->location_repo->getDataLocationReadySatuSehat(),
             ]);
         } catch (Throwable $e) {
             return $e;
@@ -165,8 +164,9 @@ class LocationController extends Controller
             $data_parameter = $this->parameter_repo->getDataParameterFirst();
 
             $payload_location = $this->bodyLocation($data_location, $data_parameter);
-
+            // return $payload_location;
             $response = $this->post_general_ss('/Location', $payload_location);
+
             $body_parse = json_decode($response->body());
 
             $satusehat_id = null;

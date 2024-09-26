@@ -44,7 +44,10 @@
                                     <th>Kode</th>
                                     <th>Satu Sehat ID</th>
                                     <th>Nama</th>
-                                    <th>Bagian</th>
+                                    <th>Tipe</th>
+                                    <th>Organisasi</th>
+                                    <th>Part Of Code</th>
+                                    <th>Part</th>
                                     <th>Status</th>
                                     <th>Aksi</th>
 
@@ -56,7 +59,10 @@
                                     <td>{{ $item_lokasi->original_code }}</td>
                                     <td>{{ $item_lokasi->satusehat_id }}</td>
                                     <td>{{ $item_lokasi->name }}</td>
+                                    <td>{{ $item_lokasi->physical_type_display }}</td>
                                     <td>{{ $item_lokasi->r_managing_organization->name ?? '' }}</td>
+                                    <td>{{ $item_lokasi->partof_code}}</td>
+                                    <td>{{ $item_lokasi->r_partof_name->name ?? ''}}</td>
                                     <td
                                         class="{{ (!empty($item_lokasi->r_status->status) ?? 1  == 1) ? 'text-success' : 'text-warning'  }}">
                                         {{ $item_lokasi->r_status->description ?? '' }}</td>
@@ -228,6 +234,7 @@
             success: function(response)
             {//resourceType = OperationOutcome
 
+
                 result = JSON.parse(response);
                 console.log(result.resourceType)
                 if(result.resourceType === 'OperationOutcome')
@@ -242,6 +249,7 @@
                 }
 
 
+                // $("#response_ss").val(JSON.stringify(response));
                 $("#response_ss").val(response);
 
             }

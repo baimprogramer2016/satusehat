@@ -1,0 +1,191 @@
+---------- START LOCATION BED/ROOM/WARD-------
+alter table ss_location
+add partof_id varchar(100)
+
+alter table ss_location
+add partof_display varchar(100)
+
+alter table ss_location
+add partof_code varchar(100)
+
+alter table ss_location
+add class varchar(10)
+
+alter table ss_location
+add class_display varchar(50)
+
+alter table ss_poli
+add physical_type_code varchar(10)
+alter table ss_poli
+add physical_type_code varchar(30)
+alter table ss_poli
+add physical_type_display varchar(30)
+alter table ss_poli
+add partof_id varchar(100)
+alter table ss_poli
+add partof_display varchar(100)
+alter table ss_poli
+add partof_code varchar(100)
+alter table ss_poli
+add class varchar(100)
+alter table ss_poli
+add class_display varchar(100)
+
+-- DROP FUNCTION public.validasi_location();
+
+CREATE OR REPLACE FUNCTION public.validasi_location()
+ RETURNS character varying
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+
+	INSERT INTO ss_location (original_code, identifier_value,status,name,description,
+	physical_type_code,physical_type_display,partof_code,class,class_display)
+
+	select a.original_code,a.original_code as identifier_value,'active' as status,a.name as name, a.name as description,
+	a.physical_type_code,a.physical_type_display,a.partof_code,a.class, a.class_display
+	from ss_poli a
+	LEFT JOIN
+	ss_location b
+	ON concat(a.original_code,a.physical_type_code) = concat(b.original_code,b.physical_type_code)
+	WHERE b.original_code is null;
+
+	--ro -> wa , bd -> ro
+--	SELECT wa.satusehat_id,ro.partof_id,ro.physical_type_code,ro.*
+	UPDATE ss_location ro SET
+	partof_id = wa.satusehat_id,
+	telecom_phone = wa.telecom_phone,
+	telecom_url = wa.telecom_url,
+	telecom_email = wa.telecom_email,
+	telecom_fax = wa.telecom_fax,
+	address = wa.address,
+	city = wa.city,
+	postal_code = wa.postal_code,
+	country = wa.country,
+	extension_province = wa.extension_province,
+	extension_city = wa.extension_city,
+	extension_district = wa.extension_district,
+	extension_village = wa.extension_village,
+	extension_rt = wa.extension_rt,
+	extension_rw = wa.extension_rw,
+	position_longitude = wa.position_longitude,
+	position_latitude = wa.position_latitude,
+	position_altitude = wa.position_altitude,
+	managing_organization = wa.managing_organization
+	FROM
+	ss_location wa
+	WHERE ro.partof_code = wa.original_code
+	AND wa.satusehat_id is not null
+	AND wa.physical_type_code = 'wa'
+	AND ro.physical_type_code = 'ro'
+	AND ro.partof_id is null
+	AND ro.satusehat_id is null;
+
+	UPDATE ss_location bd SET
+	partof_id = ro.satusehat_id,
+	telecom_phone = ro.telecom_phone,
+	telecom_url = ro.telecom_url,
+	telecom_email = ro.telecom_email,
+	telecom_fax = ro.telecom_fax,
+	address = ro.address,
+	city = ro.city,
+	postal_code = ro.postal_code,
+	country = ro.country,
+	extension_province = ro.extension_province,
+	extension_city = ro.extension_city,
+	extension_district = ro.extension_district,
+	extension_village = ro.extension_village,
+	extension_rt = ro.extension_rt,
+	extension_rw = ro.extension_rw,
+	position_longitude = ro.position_longitude,
+	position_latitude = ro.position_latitude,
+	position_altitude = ro.position_altitude,
+	managing_organization = ro.managing_organization
+	FROM
+	ss_location ro
+	WHERE bd.partof_code = ro.original_code
+	AND ro.satusehat_id is not null
+	AND ro.physical_type_code = 'ro'
+	AND bd.physical_type_code = 'bd'
+	AND bd.partof_id is null
+	AND bd.satusehat_id is null;
+
+
+
+	return 'success';
+END;
+$function$
+;
+
+INSERT INTO ss_version (version,description, up_date) values('2.0.1','Last Location Bed/Room/Ward','2024-09-13')
+
+---------- END LOCATION BED/ROOM/WARD-------
+alter table ss_encounter
+add class_room varchar(10)
+
+alter table ss_encounter
+add class_room_display varchar(30)
+
+
+-- DROP FUNCTION public.validasi_encounter();
+
+CREATE OR REPLACE FUNCTION public.validasi_encounter()
+ RETURNS character varying
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+
+
+	INSERT INTO ss_encounter(original_code,identifier_value,status,class_code, class_display,subject_nik,subject_reference,subject_display,participant_nik,participant_coding_code,participant_coding_display,participant_individual_reference,
+	participant_individual_display,period_start,period_end,location_reference,location_display,status_history_arrived_status,status_history_arrived_start,status_history_arrived_end,
+	status_history_inprogress_status,status_history_inprogress_start,status_history_inprogress_end,status_history_finished_status,status_history_finished_start,status_history_finished_end,satusehat_send,uuid,uuid_procedure,created_at, class_room, class_room_display)
+
+
+SELECT original_code,identifier_value,'finished' as status,class_code,class_code_display as class_display,subject_nik,subject_reference,subject_display,participant_nik,'ATND' as participant_coding_code,
+	'attender' as participant_coding_display,participant_individual_reference,participant_individual_display,period_start,period_end,location_reference,location_display,'arrived' as status_history_arrived_status,status_history_arrived_start,
+	status_history_arrived_end,'in-progress' as status_history_inprogress_status,status_history_inprogress_start,status_history_inprogress_end,'finished' as status_history_finished_status,status_history_finished_start,status_history_finished_end,
+	4 as satusehat_send,uuid_generate_v4(),uuid_generate_v4(),now(), class_room, class_room_display
+	FROM
+	(
+
+		SELECT encounter_location.*,ss_location.satusehat_id as location_reference,ss_location.name as location_display,ss_location.class as class_room, ss_location.class_display  as class_room_display
+		FROM
+		(
+
+			SELECT encounter_practitioner.*, ss_practitioner.satusehat_id as participant_individual_reference,ss_practitioner.nik as participant_nik
+			FROM
+			(
+
+				SELECT encounter_patient.*, ss_patient.satusehat_id as subject_reference
+				FROM (
+
+					select a.* from
+					temp_encounter a
+					left join
+					ss_encounter b
+					ON a.original_code = b.original_code
+					WHERE b.id is null
+				)  encounter_patient
+				JOIN
+				ss_patient
+				ON encounter_patient.no_mr = ss_patient.original_code
+				WHERE ss_patient.satusehat_id is not null
+			) as encounter_practitioner
+			JOIN
+			ss_practitioner
+			ON encounter_practitioner.dokter_id = ss_practitioner.original_code
+			WHERE ss_practitioner.satusehat_id is not null
+		) encounter_location
+		JOIN ss_location
+		ON encounter_location.kode_poli = ss_location.original_code
+		WHERE ss_location.satusehat_id is not null
+	) as TAB_FINAL;
+
+	return 'success';
+END;
+$function$
+;
+
+
+
+

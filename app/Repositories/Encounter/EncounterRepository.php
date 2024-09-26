@@ -24,6 +24,22 @@ class EncounterRepository implements EncounterInterface
         $q = $this->model->query();
 
         //FILTER
+        $q->when($request['class_code'] != '', function ($query) use ($request) {
+            switch ($request['class_code']) {
+                case 'AMB':
+                    $query->where('class_code', 'AMB');
+                    break;
+                case 'IMP':
+                    $query->where('class_code', 'IMP');
+                    break;
+                case 'EMER':
+                    $query->where('class_code', 'EMER');
+                    break;
+                default:
+                    $query->whereIn('class_code', ['AMB', 'IMP', 'EMER']);
+            }
+            return $query;
+        });
         $q->when($request['status_kirim'] != '', function ($query) use ($request) {
             switch ($request['status_kirim']) {
                 case 'waiting':
@@ -32,8 +48,11 @@ class EncounterRepository implements EncounterInterface
                 case 'failed':
                     $query->where('satusehat_statuscode', '500');
                     break;
-                default:
+                case 'success':
                     $query->where('satusehat_statuscode', '200');
+                    break;
+                default:
+                    $query;
             }
             return $query;
         });
@@ -60,7 +79,7 @@ class EncounterRepository implements EncounterInterface
             ->whereNull('satusehat_id')
             ->where('satusehat_send', '!=', 1)
             ->whereNull('satusehat_statuscode')
-            // ->whereIn('original_code', ['A012300110'])
+            // ->whereIn('original_code', ['A012400022', 'A012400038'])
             ->get();
     }
 

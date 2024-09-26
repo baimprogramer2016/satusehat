@@ -61,6 +61,7 @@ class EncounterController extends Controller
 
             return Datatables::of($data)
                 ->addIndexColumn()
+
                 ->addColumn('status', function ($item_encounter) {
                     // $actionBtn = '<a href="javascript:void(0)" class="edit btn btn-success btn-sm">' . $item_patient . '</a> <a href="javascript:void(0)" class="delete btn btn-danger btn-sm">Delete</a>';
                     $clr = 'text-warning';

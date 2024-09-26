@@ -34,7 +34,30 @@
         <div class="col-xl-12 col-xxl-12">
             <div class="card card-bordered card-full">
                 <div class="row m-2">
-                    <div class="col-md-3">
+                    <div class="col-md-2  mb-3">
+                        <div class="form-group">
+                            <label class="form-label text-secondary" for="default-06">Status</label>
+                            <div class="form-control-wrap">
+                                <div class="form-control-select">
+                                    <div class="form-icon form-icon-left">
+                                        <em class="icon ni ni-plus"></em>
+                                    </div>
+                                    <select class="form-control form-control-sm" id="class_code">
+                                        <option value="AMB">
+                                            AMB (Rawat Jalan)
+                                        </option>
+                                        <option value="IMP">
+                                            IMP (Rawat Inap)
+                                        </option>
+                                        <option value="EMER">
+                                            EMER (IGD)
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2  mb-3">
                         <div class="form-group">
                             <label class="form-label text-secondary" for="default-06">Status</label>
                             <div class="form-control-wrap">
@@ -57,7 +80,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2  mb-3">
                         <div class="form-group">
                             <label class="form-label">Tanggal Awal</label>
                             <div class="form-control-wrap">
@@ -69,7 +92,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2 mb-3">
                         <div class="form-group">
                             <label class="form-label">Tanggal Akhir</label>
                             <div class="form-control-wrap">
@@ -81,7 +104,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 align-content-end">
+                    <div class="col-md-2 align-content-end mb-3">
                         <button id="btn-filter" class="btn btn-sm btn-round btn-secondary text-center"><em
                                 class="icon ni ni-search"></em><span></span> Search</button>
                     </div>
@@ -99,6 +122,8 @@
                                     <th>Nama Pasien</th>
                                     <th>Nama Praktisi</th>
                                     <th>Poli</th>
+                                    <th>Kode Kelas</th>
+                                    <th>Kelas</th>
                                     <th>Tanggal</th>
                                     <th>Response</th>
                                     <th>Status</th>
@@ -134,10 +159,14 @@
 @push('script')
 
 <script type="text/javascript">
-    function load_datatable(p_status_kirim = 'success', p_tanggal_awal = null, p_tanggal_akhir=null){
+    function load_datatable(p_class_code = null,p_status_kirim = null, p_tanggal_awal = null, p_tanggal_akhir=null){
 
         //mendapatkan status param URL sebagai filter saat kirim data
         const getParams = new URLSearchParams(window.location.search);
+
+        const par_class_code = getParams.get('class_code');
+        p_class_code = par_class_code;
+        document.getElementById('class_code').value = par_class_code;
 
         const par_status_kirim = getParams.get('status_kirim');
         p_status_kirim = par_status_kirim;
@@ -163,6 +192,7 @@
           ajax: {
             url : "{{ route('encounter') }}",
             data : {
+                class_code:  p_class_code,
                 status_kirim:  p_status_kirim,
                 tanggal_awal:  p_tanggal_awal,
                 tanggal_akhir:  p_tanggal_akhir,
@@ -176,6 +206,8 @@
               {data: 'subject_display', name: 'subject_display'},
               {data: 'participant_individual_display', name: 'participant_individual_display'},
               {data: 'location_display', name: 'location_display'},
+              {data: 'class_code', name: 'class_code'},
+              {data: 'class_room_display', name: 'class_room_display'},
               {data: 'period_start', name: 'period_start'},
               {data: 'satusehat_statuscode', name: 'satusehat_statuscode'},
               {data: 'status', name: 'status', orderable: true, searchable: true},
@@ -189,6 +221,7 @@
 
     $("#btn-filter").click(function(){
 
+        const class_code = ($("#class_code").val() === '') ? '' : $("#class_code").val();
         const status_kirim = ($("#status_kirim").val() === '') ? '' : $("#status_kirim").val();
         const tanggal_awal = ($("#tanggal_awal").val() === '') ? '' : $("#tanggal_awal").val();
         const tanggal_akhir =($("#tanggal_akhir").val() === '') ? '' : $("#tanggal_akhir").val();
@@ -196,10 +229,10 @@
         //menangani filter
         const url = new URL(window.location);
         const params = new URLSearchParams(url.search);
-        window.history.replaceState({}, '', `${url.pathname}?status_kirim=${status_kirim}&tanggal_awal=${tanggal_awal}&tanggal_akhir=${tanggal_akhir}`);
+        window.history.replaceState({}, '', `${url.pathname}?class_code=${class_code}&status_kirim=${status_kirim}&tanggal_awal=${tanggal_awal}&tanggal_akhir=${tanggal_akhir}`);
 
         $('.data-table').DataTable().destroy();
-        load_datatable(status_kirim, tanggal_awal, tanggal_akhir);
+        load_datatable(class_code,status_kirim, tanggal_awal, tanggal_akhir);
     })
 
     function modalResponseSS(id)

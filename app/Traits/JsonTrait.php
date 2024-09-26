@@ -212,6 +212,29 @@ trait JsonTrait
             ]
         ];
 
+
+        if ($data_location['partof_id'] != null) {
+            $bodyLocation['partOf'] = [
+                "reference" => "Location/" . $data_location['partof_id'],
+                "display" => $data_location['r_partof_name']['name']
+            ];
+        }
+        if ($data_location['class'] != null || $data_location['class'] == '0') {
+            $bodyLocation['extension'] = [
+                [
+                    "url" => "https://fhir.kemkes.go.id/r4/StructureDefinition/LocationServiceClass",
+                    "valueCodeableConcept" => [
+                        "coding" => [
+                            [
+                                "system" => "http://terminology.kemkes.go.id/CodeSystem/locationServiceClass-Inpatient",
+                                "code" => $data_location['class'],
+                                "display" => $data_location['class_display']
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+        }
         return $bodyLocation;
     }
 
@@ -493,6 +516,11 @@ trait JsonTrait
             ]
         ];
 
+        if ($data_encounter['class_room'] != null) {
+            $data_class_room = $this->bodyBundleEncounterClassRoom($data_encounter['class_room'], $data_encounter['class_room_display']);
+            $bodyBundleEncounter['resource']['location'][0]['extension'] = $data_class_room;
+        }
+
         # Jika condition ada , menambahkan diagnosa pada encounter
         if (count($data_encounter['r_condition']) > 0) {
 
@@ -505,6 +533,31 @@ trait JsonTrait
             $bodyBundleEncounter['resource']['diagnosis'] =  $bodyBundleEncounterDiagnosis;
         }
         return $bodyBundleEncounter;
+    }
+
+    public function bodyBundleEncounterClassRoom($class_room, $class_room_display)
+    {
+        $bodyBundleEncounterClassRoom = [
+            [
+                "url" => "https://fhir.kemkes.go.id/r4/StructureDefinition/ServiceClass",
+                "extension" => [
+                    [
+                        "url" => "value",
+                        "valueCodeableConcept" => [
+                            "coding" => [
+                                [
+                                    "system" => "http://terminology.kemkes.go.id/CodeSystem/locationServiceClass-Inpatient",
+                                    "code" => $class_room,
+                                    "display" => $class_room_display
+                                ]
+                            ]
+                        ]
+                    ],
+                ]
+            ]
+        ];
+
+        return $bodyBundleEncounterClassRoom;
     }
 
     public function bodyBundleEncounterDiagnosis($data_diagnosa)
@@ -3066,6 +3119,10 @@ trait JsonTrait
             ]
         ];
 
+        if ($data_encounter['class_room'] != null) {
+            $data_class_room = $this->bodyBundleEncounterClassRoom($data_encounter['class_room'], $data_encounter['class_room_display']);
+            $bodyManualEncounter['location'][0]['extension'] = $data_class_room;
+        }
 
 
         return $bodyManualEncounter;
@@ -3172,6 +3229,10 @@ trait JsonTrait
                 "reference" => "Organization/" . $data_parameter['organization_id']
             ]
         ];
+        if ($data_encounter['class_room'] != null) {
+            $data_class_room = $this->bodyBundleEncounterClassRoom($data_encounter['class_room'], $data_encounter['class_room_display']);
+            $bodyManualEncounterUpdate['location'][0]['extension'] = $data_class_room;
+        }
 
         if (count($data_encounter['r_condition']) > 0) {
 
