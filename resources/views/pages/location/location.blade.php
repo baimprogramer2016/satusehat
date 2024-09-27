@@ -45,7 +45,7 @@
                         <table class="data-table table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>Kode</th>
+                                    <th>Checked</th>
                                     <th>Kode</th>
                                     <th>Satu Sehat ID</th>
                                     <th>Nama</th>
@@ -64,7 +64,7 @@
                                     <td>
                                         <div class="custom-control custom-checkbox flex justify-center items-center">
                                             <input type="checkbox" class="custom-control-input"
-                                                onClick="clickCheckBoxSS({{ $item_lokasi->id }})"
+                                                onClick="clickCheckBoxSS(event,{{ $item_lokasi->id }})"
                                                 id="pilih_{{ $index }}" />
                                             <label class="custom-control-label" for="pilih_{{ $index }}"></label>
                                         </div>
@@ -152,10 +152,15 @@
 
     var tampung_id = [];
 
-    function clickCheckBoxSS(param){
-        console.log(param)
-        tampung_id.push(param)
-        console.log(tampung_id)
+
+    function clickCheckBoxSS(event,param){
+
+        if(event.target.checked == true){
+            tampung_id.push(param)
+        }else{
+            tampung_id = tampung_id.filter(item => item !== param)
+
+        }
     }
 
 

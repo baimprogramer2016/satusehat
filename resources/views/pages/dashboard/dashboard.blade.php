@@ -363,7 +363,7 @@
             url:"{{ route('dashboard-refresh') }}",
             success: function(response)
             {
-                console.log(response.data_catata)
+                // console.log(response.data_catata
                 // console.log(response.data_encounter);
                 var encounter = response.data_encounter;
                 var condition = response.data_condition;
