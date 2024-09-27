@@ -220,8 +220,12 @@ class LocationController extends Controller
                 }
                 # update status ke database
                 $this->location_repo->updateStatusLocation($item->id, $satusehat_id, $payload_location, $response);
-
-                $result .=  $item->original_code . ' = ' . $satusehat_id . " success\n";
+                if ($satusehat_id != null) {
+                    $res = "SUCCESS\n";
+                } else {
+                    $res = "FAILED\n";
+                }
+                $result .=  $item->original_code . ' = ' . $satusehat_id . " " . $res;
             }
 
             return response()->json([
