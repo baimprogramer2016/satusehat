@@ -187,5 +187,152 @@ $function$
 ;
 
 
+-- UPDATE VALIDASI CONDITION
+-- DROP FUNCTION public.validasi_condition();
+
+CREATE OR REPLACE FUNCTION public.validasi_condition()
+ RETURNS character varying
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+--buat temporary dahulu
+CREATE TEMPORARY TABLE temp_encounter_temp (
+    encounter_original_code VARCHAR(50),     -- Ganti tipe data sesuai kebutuhan
+    code_icd VARCHAR(50),                    -- Ganti tipe data sesuai kebutuhan
+    code_icd_display VARCHAR(255),           -- Ganti tipe data sesuai kebutuhan
+    onset_datetime TIMESTAMP,                -- Tipe data untuk tanggal dan waktu
+    record_date DATE,                        -- Tipe data untuk tanggal saja
+    rank INTEGER,                            -- Tipe data untuk angka
+    subject_reference VARCHAR(100),          -- Ganti tipe data sesuai kebutuhan
+    subject_display VARCHAR(255)             -- Ganti tipe data sesuai kebutuhan
+);
+
+CREATE TEMPORARY TABLE temp_condition_temp(
+    encounter_original_code VARCHAR(50),     -- Ganti tipe data sesuai kebutuhan
+    code_icd VARCHAR(50),                    -- Ganti tipe data sesuai kebutuhan
+    code_icd_display VARCHAR(255)         -- Ganti tipe data sesuai kebutuhan
+);
+CREATE TEMPORARY TABLE temp_temp_condition_temp (
+    id int,                -- Kolom id dengan auto-increment
+    encounter_original_code VARCHAR(50),  -- Kolom untuk kode encounter
+    rank INTEGER,                         -- Kolom untuk peringkat
+    code_icd VARCHAR(50),                 -- Kolom untuk kode ICD
+    code_icd_display VARCHAR(255),        -- Kolom untuk display kode ICD
+    onset_datetime TIMESTAMP,             -- Kolom untuk tanggal dan waktu onset
+    record_date DATE                      -- Kolom untuk tanggal pencatatan
+);
+
+
+--masukan condition ke temp
+INSERT INTO temp_condition_temp
+SELECT encounter_original_code ,code_icd FROM ss_condition;
+
+--hapus yang duplikat
+INSERT INTO temp_temp_condition_temp
+WITH icd_dup AS (
+    SELECT *,
+           ROW_NUMBER() OVER (PARTITION BY encounter_original_code,code_icd ORDER BY onset_datetime ASC) AS row_num
+    FROM temp_condition
+)
+SELECT id,encounter_original_code,rank,code_icd,code_icd_display,onset_datetime,record_date
+FROM icd_dup
+WHERE row_num = 1;
+
+
+INSERT INTO temp_encounter_temp
+select condition_rank.*,ss_encounter.subject_reference,ss_encounter.subject_display
+FROM
+(
+	select t.encounter_original_code,REPLACE(t.code_icd,'''','') as code_icd,t.code_icd_display,t.onset_datetime,t.record_date,
+	ROW_NUMBER() OVER (PARTITION BY t.encounter_original_code ORDER BY t.rank asc) AS rank
+	from temp_temp_condition_temp t,
+	ss_master_icd_10 icd10
+	WHERE t.code_icd = icd10.code2
+) condition_rank
+join
+ss_encounter
+ON condition_rank.encounter_original_code = ss_encounter.original_code;
+
+
+INSERT INTO ss_condition(encounter_original_code,rank,clinical_code,clinical_display,category_code,category_display,code_icd,code_icd_display,subject_reference,subject_display,encounter_display,
+onset_datetime,record_date,satusehat_send,uuid)
+
+SELECT temp_encounter_temp.encounter_original_code,temp_encounter_temp.rank,'active' as clinical_code,'Active' as clinical_display,'encounter-diagnosis' as category_code,'Encounter Diagnosis' as category_display,
+temp_encounter_temp.code_icd,temp_encounter_temp.code_icd_display,temp_encounter_temp.subject_reference,temp_encounter_temp.subject_display,'Kunjungan' as encounter_display,temp_encounter_temp.onset_datetime,temp_encounter_temp.record_date,
+4 as satusehat_send,uuid_generate_v4()
+FROM
+temp_encounter_temp
+LEFT JOIN
+temp_condition_temp
+ON concat(temp_encounter_temp.encounter_original_code,temp_encounter_temp.code_icd) = concat(temp_condition_temp.encounter_original_code,temp_condition_temp.code_icd)
+WHERE temp_condition_temp.encounter_original_code is null;
+
+
+	return 'success';
+END;
+$function$
+;
+
+//yang tidak pake sinkro
+alter table temp_poli
+add partof_code varchar(20)
+
+alter table temp_poli
+add physical_type_code varchar(20)
+
+alter table temp_poli
+add physical_type_display varchar(100)
+
+alter table temp_poli
+add partof_code varchar(20)
+
+alter table temp_poli
+add class varchar(20)
+
+alter table temp_poli
+add class_display varchar(20)
+
+-- FUNCTION: public.validasi_poli()
+
+-- DROP FUNCTION IF EXISTS public.validasi_poli();
+
+CREATE OR REPLACE FUNCTION public.validasi_poli(
+	)
+    RETURNS character varying
+    LANGUAGE 'plpgsql'
+    COST 100
+    VOLATILE PARALLEL UNSAFE
+AS $BODY$
+BEGIN
+
+	INSERT INTO ss_poli(original_code,name,physical_type_code,physical_type_display,partof_code,class,class_display)
+	select
+	a.original_code,
+	a.name ,
+	a.physical_type_code,
+	a.physical_type_display,
+	a.partof_code,
+	a.class,
+	a.class_display
+	from
+	temp_poli a
+	left join
+	ss_poli b
+	ON concat(a.original_code,a.physical_type_code,a.class) = concat(b.original_code,b.physical_type_code,b.class)
+	WHERE b.id is null;
+
+	return 'success';
+END;
+$BODY$;
+
+ALTER FUNCTION public.validasi_poli()
+    OWNER TO postgres;
+
+
+
+
+
+
+
 
 

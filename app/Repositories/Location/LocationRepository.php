@@ -90,6 +90,7 @@ class LocationRepository implements LocationInterface
         $data->physical_type_display = $physical_display;
         $data->physical_type_display = $physical_display;
         $data->partof_id = $request['partof_id'];
+        $data->managing_organization = $request['managing_organization'];
         $data->satusehat_send = $request['satusehat_send'];
         $data->telecom_phone = config('constan.default_organization.phone');
         $data->telecom_fax = config('constan.default_organization.fax');

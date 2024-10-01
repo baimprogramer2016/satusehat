@@ -516,7 +516,7 @@ trait JsonTrait
             ]
         ];
 
-        if ($data_encounter['class_room'] != null) {
+        if ($data_encounter['class_room'] != null && $data_encounter['class_code'] == "IMP") {
             $data_class_room = $this->bodyBundleEncounterClassRoom($data_encounter['class_room'], $data_encounter['class_room_display']);
             $bodyBundleEncounter['resource']['location'][0]['extension'] = $data_class_room;
         }
@@ -3119,7 +3119,7 @@ trait JsonTrait
             ]
         ];
 
-        if ($data_encounter['class_room'] != null) {
+        if ($data_encounter['class_room'] != null && $data_encounter['class_code'] == "IMP") {
             $data_class_room = $this->bodyBundleEncounterClassRoom($data_encounter['class_room'], $data_encounter['class_room_display']);
             $bodyManualEncounter['location'][0]['extension'] = $data_class_room;
         }
@@ -3229,7 +3229,7 @@ trait JsonTrait
                 "reference" => "Organization/" . $data_parameter['organization_id']
             ]
         ];
-        if ($data_encounter['class_room'] != null) {
+        if ($data_encounter['class_room'] != null && $data_encounter['class_code'] == "IMP") {
             $data_class_room = $this->bodyBundleEncounterClassRoom($data_encounter['class_room'], $data_encounter['class_room_display']);
             $bodyManualEncounterUpdate['location'][0]['extension'] = $data_class_room;
         }
