@@ -219,10 +219,6 @@
                                         class="nk-menu-text">Condition</span></a>
                             </li>
                             <li class="nk-menu-item">
-                                <a href="{{ route('encounter') }}" class="nk-menu-link"><span
-                                        class="nk-menu-text">Encounter</span></a>
-                            </li>
-                            <li class="nk-menu-item">
                                 <a href="{{ route('condition') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Condition</span></a>
                             </li>
