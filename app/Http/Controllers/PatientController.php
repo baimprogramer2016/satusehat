@@ -242,6 +242,8 @@ class PatientController extends Controller
     function storePatient(Request $request)
     {
 
+
+
         $request->validate([
             'nik' => 'required|unique:ss_patient,nik',
             'name' => 'required',

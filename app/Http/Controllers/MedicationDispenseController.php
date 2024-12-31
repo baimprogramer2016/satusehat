@@ -135,6 +135,7 @@ class MedicationDispenseController extends Controller
                 # 2 tembak medication request
                 $payload_medication_dispense = $this->bodyManualMedicationDispense($data_medication_dispense, $data_medication_request, $data_parameter);
 
+
                 $response = $this->post_general_ss('/MedicationDispense', $payload_medication_dispense);
                 $body_parse = json_decode($response->body());
 

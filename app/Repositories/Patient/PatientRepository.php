@@ -77,7 +77,6 @@ class PatientRepository implements PatientInterface
             'satusehat_id' => $satusehat_id,
             'satusehat_process' => $satusehat_send,
             'original_code' => $request['original_code'],
-            // Tambahkan field-field lainnya di sini...
         ]);
 
         return $this->model;

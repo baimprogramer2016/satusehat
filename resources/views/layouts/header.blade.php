@@ -218,10 +218,7 @@
                                 <a href="{{ route('condition') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Condition</span></a>
                             </li>
-                            <li class="nk-menu-item">
-                                <a href="{{ route('condition') }}" class="nk-menu-link"><span
-                                        class="nk-menu-text">Condition</span></a>
-                            </li>
+
                             <li class="nk-menu-item">
                                 <a href="{{ route('observation') }}" class="nk-menu-link"><span
                                         class="nk-menu-text">Observation</span></a>

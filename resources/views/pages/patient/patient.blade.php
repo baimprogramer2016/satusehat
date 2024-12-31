@@ -48,6 +48,8 @@
                                     <th>ID</th>
                                     <th>Pesan</th>
                                     <th>Status</th>
+                                    <th>Tanggal Lahir</th>
+                                    <th>Jenis Kelamin</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -99,6 +101,8 @@
               {data: 'satusehat_id', name: 'satusehat_id'},
               {data: 'satusehat_message', name: 'satusehat_message'},
               {data: 'status_update', name: 'status_update'},
+              {data: 'tanggal_lahir', name: 'tanggal_lahir'},
+              {data: 'jenis_kelamin', name: 'jenis_kelamin'},
               {data: 'action', name: 'action', orderable: false, searchable: false},
           ]
       });
